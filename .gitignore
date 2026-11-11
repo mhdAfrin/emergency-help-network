@@ -1,0 +1,25 @@
+# Local runtime, toolchains, downloads and diagnostic logs
+/application/.local/
+
+# Maven-generated files
+**/target/
+
+# Private configuration and databases
+/application/config/server.properties
+/application/server.properties
+*.db
+*.db-wal
+*.db-shm
+
+# IDE/machine files
+.idea/
+.settings/
+.classpath
+.project
+.metadata/
+.DS_Store
+Thumbs.db
+
+# Keep only intentional verification logs
+*.log
+!docs/verification/evidence/**/*.log
