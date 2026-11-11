@@ -1,0 +1,2 @@
+PASS: seed + server JVM + three real console client JVMs; all roles, PONG, logout, team listing and private event.
+Evidence: C:\Users\Afrin\Desktop\5TH SEM\Network Programming\project\docs\verification\evidence\process-smoke

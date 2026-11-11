@@ -1,0 +1,5 @@
+# Copy to config/server.properties. Run the server from the repository root.
+server.host=127.0.0.1
+server.port=5050
+server.maxConnections=32
+database.path=.local/data/emergency.db

@@ -1,0 +1,203 @@
+[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] emergency-help-network                                             [pom]
+[INFO] common                                                             [jar]
+[INFO] server                                                             [jar]
+[INFO] client                                                             [jar]
+[INFO] 
+[INFO] ----------------< lk.ac.ruh.eng:emergency-help-network >----------------
+[INFO] Building emergency-help-network 1.0.0-SNAPSHOT                     [1/4]
+[INFO]   from pom.xml
+[INFO] --------------------------------[ pom ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.4.0:clean (default-clean) @ emergency-help-network ---
+[INFO] 
+[INFO] ------------------------< lk.ac.ruh.eng:common >------------------------
+[INFO] Building common 1.0.0-SNAPSHOT                                     [2/4]
+[INFO]   from common\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.4.0:clean (default-clean) @ common ---
+[INFO] Deleting C:\Users\Afrin\Desktop\5TH SEM\Network Programming\project\common\target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ common ---
+[INFO] skip non existing resourceDirectory C:\Users\Afrin\Desktop\5TH SEM\Network Programming\project\common\src\main\resources
+[INFO] 
+[INFO] --- compiler:3.14.0:compile (default-compile) @ common ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 8 source files with javac [debug release 21] to target\classes
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ common ---
+[INFO] skip non existing resourceDirectory C:\Users\Afrin\Desktop\5TH SEM\Network Programming\project\common\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.14.0:testCompile (default-testCompile) @ common ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 1 source file with javac [debug release 21] to target\test-classes
+[INFO] 
+[INFO] --- surefire:3.5.3:test (default-test) @ common ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running lk.emergency.common.FrameCodecTest
+[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.502 s -- in lk.emergency.common.FrameCodecTest
+[INFO] 
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] 
+[INFO] --- jar:3.4.2:jar (default-jar) @ common ---
+[INFO] Building jar: C:\Users\Afrin\Desktop\5TH SEM\Network Programming\project\common\target\common-1.0.0-SNAPSHOT.jar
+[INFO] 
+[INFO] ------------------------< lk.ac.ruh.eng:server >------------------------
+[INFO] Building server 1.0.0-SNAPSHOT                                     [3/4]
+[INFO]   from server\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.4.0:clean (default-clean) @ server ---
+[INFO] Deleting C:\Users\Afrin\Desktop\5TH SEM\Network Programming\project\server\target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ server ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.14.0:compile (default-compile) @ server ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 11 source files with javac [debug release 21] to target\classes
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ server ---
+[INFO] skip non existing resourceDirectory C:\Users\Afrin\Desktop\5TH SEM\Network Programming\project\server\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.14.0:testCompile (default-testCompile) @ server ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 4 source files with javac [debug release 21] to target\test-classes
+[INFO] 
+[INFO] --- surefire:3.5.3:test (default-test) @ server ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running lk.emergency.server.DatabaseMechanismsTest
+PBKDF2 sample (not benchmark): hash=328.6 ms verify=240.4 ms
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.393 s -- in lk.emergency.server.DatabaseMechanismsTest
+[INFO] Running lk.emergency.server.FoundationIntegrationTest
+[INFO] Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 15.54 s -- in lk.emergency.server.FoundationIntegrationTest
+[INFO] Running lk.emergency.server.RevisionTransactionTest
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.290 s -- in lk.emergency.server.RevisionTransactionTest
+[INFO] Running lk.emergency.server.SlowWriterTest
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.116 s -- in lk.emergency.server.SlowWriterTest
+[INFO] 
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 14, Failures: 0, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] 
+[INFO] --- jar:3.4.2:jar (default-jar) @ server ---
+[INFO] Building jar: C:\Users\Afrin\Desktop\5TH SEM\Network Programming\project\server\target\server-1.0.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- shade:3.6.0:shade (default) @ server ---
+[INFO] Including lk.ac.ruh.eng:common:jar:1.0.0-SNAPSHOT in the shaded jar.
+[INFO] Including com.fasterxml.jackson.core:jackson-databind:jar:2.21.2 in the shaded jar.
+[INFO] Including com.fasterxml.jackson.core:jackson-annotations:jar:2.21 in the shaded jar.
+[INFO] Including com.fasterxml.jackson.core:jackson-core:jar:2.21.2 in the shaded jar.
+[INFO] Including org.xerial:sqlite-jdbc:jar:3.49.1.0 in the shaded jar.
+[INFO] Including org.slf4j:slf4j-nop:jar:2.0.17 in the shaded jar.
+[INFO] Including org.slf4j:slf4j-api:jar:2.0.17 in the shaded jar.
+[WARNING] Discovered module-info.class. Shading will break its strong encapsulation.
+[WARNING] jackson-core-2.21.2.jar, jackson-databind-2.21.2.jar, slf4j-api-2.0.17.jar, slf4j-nop-2.0.17.jar, sqlite-jdbc-3.49.1.0.jar define 1 overlapping classes: 
+[WARNING]   - META-INF.versions.9.module-info
+[WARNING] slf4j-api-2.0.17.jar, slf4j-nop-2.0.17.jar define 1 overlapping resource: 
+[WARNING]   - META-INF/LICENSE.txt
+[WARNING] common-1.0.0-SNAPSHOT.jar, jackson-annotations-2.21.jar, jackson-core-2.21.2.jar, jackson-databind-2.21.2.jar, server-1.0.0-SNAPSHOT.jar, slf4j-api-2.0.17.jar, slf4j-nop-2.0.17.jar, sqlite-jdbc-3.49.1.0.jar define 1 overlapping resource: 
+[WARNING]   - META-INF/MANIFEST.MF
+[WARNING] jackson-annotations-2.21.jar, jackson-core-2.21.2.jar, jackson-databind-2.21.2.jar define 2 overlapping resources: 
+[WARNING]   - META-INF/LICENSE
+[WARNING]   - META-INF/NOTICE
+[WARNING] maven-shade-plugin has detected that some files are
+[WARNING] present in two or more JARs. When this happens, only one
+[WARNING] single version of the file is copied to the uber jar.
+[WARNING] Usually this is not harmful and you can skip these warnings,
+[WARNING] otherwise try to manually exclude artifacts based on
+[WARNING] mvn dependency:tree -Ddetail=true and the above output.
+[WARNING] See https://maven.apache.org/plugins/maven-shade-plugin/
+[INFO] Replacing original artifact with shaded artifact.
+[INFO] Replacing C:\Users\Afrin\Desktop\5TH SEM\Network Programming\project\server\target\server-1.0.0-SNAPSHOT.jar with C:\Users\Afrin\Desktop\5TH SEM\Network Programming\project\server\target\server-1.0.0-SNAPSHOT-shaded.jar
+[INFO] 
+[INFO] ------------------------< lk.ac.ruh.eng:client >------------------------
+[INFO] Building client 1.0.0-SNAPSHOT                                     [4/4]
+[INFO]   from client\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.4.0:clean (default-clean) @ client ---
+[INFO] Deleting C:\Users\Afrin\Desktop\5TH SEM\Network Programming\project\client\target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ client ---
+[INFO] skip non existing resourceDirectory C:\Users\Afrin\Desktop\5TH SEM\Network Programming\project\client\src\main\resources
+[INFO] 
+[INFO] --- compiler:3.14.0:compile (default-compile) @ client ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 3 source files with javac [debug release 21] to target\classes
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ client ---
+[INFO] skip non existing resourceDirectory C:\Users\Afrin\Desktop\5TH SEM\Network Programming\project\client\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.14.0:testCompile (default-testCompile) @ client ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 1 source file with javac [debug release 21] to target\test-classes
+[INFO] 
+[INFO] --- surefire:3.5.3:test (default-test) @ client ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running lk.emergency.client.ConnectionManagerTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.588 s -- in lk.emergency.client.ConnectionManagerTest
+[INFO] 
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] 
+[INFO] --- jar:3.4.2:jar (default-jar) @ client ---
+[INFO] Building jar: C:\Users\Afrin\Desktop\5TH SEM\Network Programming\project\client\target\client-1.0.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- shade:3.6.0:shade (default) @ client ---
+[INFO] Including lk.ac.ruh.eng:common:jar:1.0.0-SNAPSHOT in the shaded jar.
+[INFO] Including com.fasterxml.jackson.core:jackson-databind:jar:2.21.2 in the shaded jar.
+[INFO] Including com.fasterxml.jackson.core:jackson-annotations:jar:2.21 in the shaded jar.
+[INFO] Including com.fasterxml.jackson.core:jackson-core:jar:2.21.2 in the shaded jar.
+[WARNING] Discovered module-info.class. Shading will break its strong encapsulation.
+[WARNING] client-1.0.0-SNAPSHOT.jar, common-1.0.0-SNAPSHOT.jar, jackson-annotations-2.21.jar, jackson-core-2.21.2.jar, jackson-databind-2.21.2.jar define 1 overlapping resource: 
+[WARNING]   - META-INF/MANIFEST.MF
+[WARNING] jackson-core-2.21.2.jar, jackson-databind-2.21.2.jar define 1 overlapping classes: 
+[WARNING]   - META-INF.versions.9.module-info
+[WARNING] jackson-annotations-2.21.jar, jackson-core-2.21.2.jar, jackson-databind-2.21.2.jar define 2 overlapping resources: 
+[WARNING]   - META-INF/LICENSE
+[WARNING]   - META-INF/NOTICE
+[WARNING] maven-shade-plugin has detected that some files are
+[WARNING] present in two or more JARs. When this happens, only one
+[WARNING] single version of the file is copied to the uber jar.
+[WARNING] Usually this is not harmful and you can skip these warnings,
+[WARNING] otherwise try to manually exclude artifacts based on
+[WARNING] mvn dependency:tree -Ddetail=true and the above output.
+[WARNING] See https://maven.apache.org/plugins/maven-shade-plugin/
+[INFO] Replacing original artifact with shaded artifact.
+[INFO] Replacing C:\Users\Afrin\Desktop\5TH SEM\Network Programming\project\client\target\client-1.0.0-SNAPSHOT.jar with C:\Users\Afrin\Desktop\5TH SEM\Network Programming\project\client\target\client-1.0.0-SNAPSHOT-shaded.jar
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary for emergency-help-network 1.0.0-SNAPSHOT:
+[INFO] 
+[INFO] emergency-help-network ............................. SUCCESS [  0.255 s]
+[INFO] common ............................................. SUCCESS [  5.299 s]
+[INFO] server ............................................. SUCCESS [ 29.387 s]
+[INFO] client ............................................. SUCCESS [  3.033 s]
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  38.128 s
+[INFO] Finished at: 2026-11-11T15:42:43+05:30
+[INFO] ------------------------------------------------------------------------

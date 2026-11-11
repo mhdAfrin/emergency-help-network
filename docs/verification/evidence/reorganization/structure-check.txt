@@ -1,0 +1,6 @@
+Documentation links: PASS
+Seeded database unchanged: PASS (SHA-256 A66D3C36B004C4D6CFFF8A51848809DCDADB2F46E129CCA8DBBCB4DCF84823C0)
+Root diagnostic logs and local assets moved: PASS
+Automated tests: 21 passed; 0 failures/errors/skipped
+Separate-process console smoke check: PASS
+POM formatting: semantic XML unchanged in all four builds

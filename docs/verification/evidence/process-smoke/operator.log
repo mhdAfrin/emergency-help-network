@@ -1,0 +1,69 @@
+Academic demonstration — no real emergency dispatch.
+Server host [127.0.0.1]: Server port [5050]: 
+1 Register citizen | 2 Login | 3 Ping | 0 Exit
+> Username: Password input is visible in this console; use fictional credentials.
+Password: {
+  "id" : "6092a1e9-3f62-40cf-b9a0-72c83fad9e0d",
+  "username" : "operator",
+  "displayName" : "operator",
+  "role" : "OPERATOR"
+}
+
+operator [OPERATOR] — 1 My identity | 2 Ping | 3 List teams | 4 Private test event | 9 Logout | 0 Exit
+> {
+  "id" : "6092a1e9-3f62-40cf-b9a0-72c83fad9e0d",
+  "username" : "operator",
+  "displayName" : "operator",
+  "role" : "OPERATOR"
+}
+
+operator [OPERATOR] — 1 My identity | 2 Ping | 3 List teams | 4 Private test event | 9 Logout | 0 Exit
+> {
+  "message" : "PONG"
+}
+
+operator [OPERATOR] — 1 My identity | 2 Ping | 3 List teams | 4 Private test event | 9 Logout | 0 Exit
+> [ {
+  "id" : "797ccfd4-1c70-4df2-a1d9-230a087979ed",
+  "name" : "ambulance1 simulated team",
+  "serviceType" : "AMBULANCE",
+  "availability" : "AVAILABLE",
+  "revision" : 0,
+  "presence" : "OFFLINE"
+}, {
+  "id" : "68654335-08f0-4497-89e8-0d759c1a190a",
+  "name" : "fire1 simulated team",
+  "serviceType" : "FIRE_RESCUE",
+  "availability" : "AVAILABLE",
+  "revision" : 0,
+  "presence" : "ONLINE"
+}, {
+  "id" : "e7a4dfd7-0d5d-48b0-8b9c-d5bac84b2d21",
+  "name" : "fire2 simulated team",
+  "serviceType" : "FIRE_RESCUE",
+  "availability" : "AVAILABLE",
+  "revision" : 0,
+  "presence" : "OFFLINE"
+}, {
+  "id" : "e2525963-750a-43f8-8cce-079a837c46a7",
+  "name" : "police1 simulated team",
+  "serviceType" : "POLICE",
+  "availability" : "AVAILABLE",
+  "revision" : 0,
+  "presence" : "OFFLINE"
+} ]
+
+operator [OPERATOR] — 1 My identity | 2 Ping | 3 List teams | 4 Private test event | 9 Logout | 0 Exit
+> 
+[2026-11-11 16:02:43 IST] TEST_NOTIFICATION: {"message":"Authorized socket event received"}
+{
+  "message" : "Private test event queued"
+}
+
+operator [OPERATOR] — 1 My identity | 2 Ping | 3 List teams | 4 Private test event | 9 Logout | 0 Exit
+> {
+  "message" : "Logged out"
+}
+
+1 Register citizen | 2 Login | 3 Ping | 0 Exit
+> 
