@@ -1,0 +1,889 @@
+You are helping our three-member university group build the complete project described below.
+
+Read the whole prompt to understand the final application. Implement work according to our sequential contribution plan:
+
+- Member 1: first 40% — foundation, networking, database, and authentication.
+- Member 2: next 30% — emergency reporting and multi-service assignment.
+- Member 3: final 30% — responder progress, recovery, final testing, and delivery.
+
+These percentages describe approximate implementation effort, not exact file counts or marks.
+
+The workflow is sequential:
+
+Member 1 completes and hands over a working foundation.
+Member 2 continues from Member 1’s merged code.
+Member 3 continues from Member 2’s merged code and completes the application.
+
+Do not confuse this with implementing only 40% of the project. This prompt describes 100% of the project.
+
+## 1. Project identity
+
+Title:
+Emergency Help Network for Police, Ambulance and Fire & Rescue Services
+
+University:
+University of Ruhuna, Faculty of Engineering
+
+Module:
+EC5205 — Operating Systems & Network Programming
+
+Group:
+Three students
+
+Marks:
+15
+
+Deadline stated in the assignment:
+14 November 2026
+
+## 2. Confirmed assignment requirements
+
+The assignment requires a network programming application that enables communication and real-time data exchange over networks.
+
+The lecturer separately announced that Java is the only permitted programming language.
+
+The lecturer demonstrated Java programs exchanging requests and responses through consoles in Eclipse.
+
+Our chosen implementation is therefore:
+
+- Java server.
+- Java console clients.
+- Actual TCP socket communication.
+- Multiple simultaneous client processes.
+- Persistent records.
+- Live notifications.
+
+Do not create a graphical UI, website, mobile application, or browser frontend.
+
+Console menus are the user interface.
+
+If the original brief or lecture materials are available, inspect them and identify material conflicts before implementing the affected functionality.
+
+Distinguish confirmed assignment requirements from our implementation choices.
+
+## 3. Project explanation
+
+A citizen uses a Java console client to report an emergency.
+
+A central server validates and stores the report, then immediately notifies connected operators.
+
+An operator reviews the report and assigns appropriate Police, Ambulance, and/or Fire & Rescue teams.
+
+Each responder team receives its own assignment and sends progress updates.
+
+The operator and reporting citizen receive updates through their existing TCP connections.
+
+One incident may require several services. Each service progresses independently.
+
+This is an academic prototype with fictional incidents and simulated teams. It does not contact actual agencies or dispatch real assistance.
+
+Display at startup and before reporting:
+
+“Academic demonstration — no real emergency dispatch.”
+
+## 4. Complete example
+
+1. Start the server.
+2. Open separate client consoles for a citizen, an operator, a police team, an ambulance team, and a fire team.
+3. Log in to each client.
+4. The citizen reports a fictional accident near a campus entrance.
+5. The server commits the report and returns a reference.
+6. The operator immediately receives the report notification.
+7. The operator sets priority and assigns three services.
+8. Each team receives only its own assignment.
+9. Teams accept or decline.
+10. If a team declines, the operator can assign another team for that service.
+11. Accepted teams progress through EN_ROUTE, ARRIVED, and COMPLETED.
+12. The citizen sees separate service updates.
+13. The operator closes the incident when closure conditions are satisfied.
+14. Saved records remain after restart.
+15. A disconnected responder reconnects and recovers its active assignment.
+
+Do not display a single misleading status such as “all services arrived” when only one service has arrived.
+
+## 5. Technology and structure
+
+Use:
+
+- Java 21.
+- Maven multi-module build.
+- Maven wrapper.
+- Eclipse-compatible import and launch instructions.
+- java.net.ServerSocket and java.net.Socket.
+- Java threads for concurrent sessions.
+- Jackson for JSON.
+- SQLite through JDBC.
+- JUnit 5.
+
+Use bounded platform-thread session handling by default and document the connection limit. Follow any explicit course threading requirement found in supplied materials.
+
+Suggested structure:
+
+common/
+- Protocol envelopes.
+- DTOs.
+- Enums.
+- Framing codec.
+- Shared validation constants.
+
+server/
+- ServerMain.
+- Connection acceptance.
+- ClientSession.
+- SessionRegistry.
+- Request router.
+- Authentication and authorization.
+- Incident and assignment services.
+- Notifications.
+- Repositories.
+- Migrations.
+- Database executor.
+
+client/
+- ClientMain.
+- Connection manager.
+- Background socket reader.
+- Outbound writer.
+- Request-response correlation.
+- Console menus.
+- Local state and pending requests.
+- Reconnect and synchronization.
+
+docs/
+- Architecture.
+- Database model.
+- Protocol.
+- Tests and results.
+- Demo instructions.
+- Contribution records.
+- Known limitations.
+
+Keep code straightforward and explainable by undergraduate students. Separate networking, console interaction, business rules, and database access.
+
+Do not put everything into one main method.
+
+Pin dependency versions. Verify uncertain API usage using official documentation.
+
+## 6. Architecture rules
+
+- All clients connect to the central server.
+- Clients do not connect directly to each other.
+- Clients do not access SQLite directly.
+- The server owns authoritative state.
+- The server authenticates and authorizes every protected action.
+- Database changes commit before success acknowledgements and notifications.
+- Each user runs an actual client process.
+- All application logic is Java.
+
+Do not replace networking with an in-memory demonstration inside one process.
+
+Do not introduce Spring Boot, REST replacement, Python, cloud accounts, paid APIs, Docker requirements, or AI services.
+
+## 7. Roles
+
+### CITIZEN
+
+Can:
+
+- Register.
+- Log in and log out.
+- Submit an incident.
+- List and inspect their own incidents.
+- View public timelines.
+- Track each assigned service separately.
+- View history.
+
+Cannot:
+
+- Access another citizen’s incidents.
+- Choose operational priority.
+- Assign teams.
+- Update responder progress.
+- Close incidents.
+
+### OPERATOR
+
+Uses a seeded account.
+
+Can:
+
+- View all incidents in the demonstration area.
+- Filter by priority and state.
+- Read incident details and timelines.
+- Set LOW, MEDIUM, or HIGH priority.
+- View team service type, availability, and connection presence.
+- Assign teams.
+- Cancel eligible assignments with a reason.
+- Reassign after the previous assignment becomes terminal.
+- Reject eligible reports.
+- Close eligible incidents.
+- View history.
+
+Cannot update a responder’s progress on its behalf.
+
+### RESPONDER
+
+Uses a seeded team account.
+
+One account represents one team.
+
+Can:
+
+- View its own team details.
+- Set availability when no active assignment exists.
+- Receive and inspect its own offers.
+- Accept or decline with a reason.
+- Send valid progress updates.
+- View its own assignment history.
+
+Cannot inspect unrelated incidents, assign teams, or close incidents.
+
+Never trust a client-supplied role, actor ID, or team identity. Derive them from the authenticated session.
+
+## 8. Console menus
+
+### Startup
+
+- Enter server host and port.
+- Connect.
+- Register as a citizen.
+- Log in.
+- Exit.
+
+### Citizen
+
+- Submit emergency report.
+- List my active incidents.
+- View incident details.
+- View separate service progress and public timeline.
+- View history.
+- Log out.
+
+### Operator
+
+- List incoming and active incidents.
+- Filter by state or priority.
+- View details and timeline.
+- Set priority.
+- List teams.
+- Assign team.
+- Cancel eligible assignment.
+- Reject eligible incident.
+- Close eligible incident.
+- View history.
+- Log out.
+
+### Responder
+
+- View team details.
+- Change availability.
+- View assignment offer/current assignment.
+- Accept offer.
+- Decline offer.
+- Send valid next progress update.
+- View assignment history.
+- Log out.
+
+Only expose menu actions when their real server behavior is implemented.
+
+Coordinate console printing so incoming notifications remain readable during user input. Socket reads must not depend on the user returning to a menu.
+
+## 9. Inputs and validation
+
+Registration:
+
+- Username: unique, 3–40 characters.
+- Display name: 1–80 characters.
+- Password: 8–128 characters.
+- Contact number: optional synthetic data.
+
+Incident:
+
+- Category.
+- Address/landmark: 1–200 characters.
+- Description: 1–1,000 characters.
+- Optional latitude and longitude, supplied together.
+
+Categories:
+
+MEDICAL, ROAD_ACCIDENT, FIRE, CRIME, OTHER.
+
+Services:
+
+POLICE, AMBULANCE, FIRE_RESCUE.
+
+Priority:
+
+LOW, MEDIUM, HIGH.
+
+Reasons/notes:
+
+At most 500 characters; require a nonblank reason where the action demands one.
+
+Validate on the server:
+
+- Required values.
+- Text lengths.
+- Enum values.
+- Coordinate ranges.
+- Unknown privileged fields.
+- Permission.
+- Entity state.
+- Expected revisions.
+
+Accept Unicode. Trim applicable text without altering passwords.
+
+Server generates UUIDs and UTC timestamps. Display times in Asia/Colombo.
+
+Category selection does not automatically dispatch teams.
+
+## 10. TCP framing and envelopes
+
+Use four-byte big-endian length-prefixed UTF-8 JSON.
+
+- Prefix length excludes the prefix itself.
+- Maximum payload is 65,536 bytes.
+- Read the exact prefix and payload.
+- Handle partial reads and multiple consecutive frames.
+- Reject invalid sizes before allocation.
+- Handle malformed JSON and interrupted frames safely.
+
+Envelope fields:
+
+- version.
+- kind: REQUEST, RESPONSE, EVENT.
+- type.
+- requestId for requests/responses.
+- eventId for events.
+- payload.
+- ok for responses.
+- structured error when unsuccessful.
+
+Required request types:
+
+REGISTER_CITIZEN
+LOGIN
+LOGOUT
+GET_SNAPSHOT
+CREATE_INCIDENT
+GET_INCIDENT
+LIST_INCIDENTS
+LIST_TEAMS
+SET_PRIORITY
+ASSIGN_TEAM
+CANCEL_ASSIGNMENT
+RESPOND_ASSIGNMENT
+UPDATE_ASSIGNMENT_STATUS
+CLOSE_INCIDENT
+REJECT_INCIDENT
+SET_TEAM_AVAILABILITY
+PING
+
+Required events:
+
+INCIDENT_CREATED
+INCIDENT_UPDATED
+ASSIGNMENT_OFFERED
+ASSIGNMENT_UPDATED
+TEAM_UPDATED
+
+PING returns PONG.
+
+Before authentication, allow only registration, login, and heartbeat.
+
+Every business request returns a success response or structured error.
+
+Error codes:
+
+VALIDATION_ERROR
+UNAUTHENTICATED
+FORBIDDEN
+NOT_FOUND
+TEAM_UNAVAILABLE
+ACTIVE_ASSIGNMENT_EXISTS
+INVALID_TRANSITION
+VERSION_CONFLICT
+IDEMPOTENCY_CONFLICT
+UNSUPPORTED_VERSION
+INTERNAL_ERROR
+
+Use one writer per connection and an outgoing queue bounded to 100 frames.
+
+A persistently slow client must not block healthy sessions or consume unlimited memory.
+
+## 11. Database
+
+Use versioned migrations, foreign keys, prepared statements, and appropriate indexes.
+
+### users
+
+- id.
+- unique username.
+- display_name.
+- password_hash.
+- password_salt.
+- password_hash_iterations.
+- role.
+- optional contact_number.
+- created_at.
+
+### teams
+
+- id.
+- unique responder_user_id.
+- name.
+- service_type.
+- availability.
+- revision.
+
+Connection presence is session-derived, not an authoritative stored ONLINE flag.
+
+### incidents
+
+- id.
+- citizen_id.
+- category.
+- address.
+- description.
+- optional latitude/longitude together.
+- priority.
+- state.
+- optional public_resolution_reason.
+- created_at.
+- updated_at.
+- optional closed_at.
+- revision.
+
+### assignments
+
+- id.
+- incident_id.
+- team_id.
+- service_type.
+- assigned_by.
+- state.
+- optional reason.
+- created_at.
+- updated_at.
+- revision.
+
+### incident_events
+
+- id.
+- incident_id.
+- optional assignment_id.
+- actor_user_id.
+- event_type.
+- public_message.
+- optional internal_note.
+- created_at.
+
+### processed_requests
+
+- user_id.
+- request_id.
+- canonical request hash.
+- response_json.
+- created_at.
+- composite primary key on user_id/request_id.
+
+Add partial unique indexes preventing:
+
+- Multiple active assignments for one team.
+- Multiple active assignments for one incident/service.
+
+Active assignment states:
+
+OFFERED, ACCEPTED, EN_ROUTE, ARRIVED.
+
+Use a single server-side database executor for serialized database operations. Keep transactions short, enable foreign keys, and configure a busy timeout.
+
+Do not share an unsynchronized connection across session handlers.
+
+## 12. Authentication and security
+
+- Use salted PBKDF2WithHmacSHA256 password hashes.
+- Use random salts of at least 16 bytes.
+- Initially configure 600,000 iterations; measure and document cost.
+- Use constant-time comparison.
+- Return generic invalid-credential errors.
+- Permit one active session per user.
+- A new successful login explicitly replaces and notifies the old session.
+- Never log passwords or full sensitive message dumps.
+- Restrict notification recipients and response fields by role.
+
+Use fictional data on localhost or a trusted LAN.
+
+Plain TCP is unencrypted. Public deployment and TLS provisioning are outside scope.
+
+## 13. State rules
+
+### Incident
+
+REPORTED → ACTIVE when the first assignment is offered.
+
+REPORTED → REJECTED only if it has never had an assignment.
+
+ACTIVE → CLOSED only by an operator when:
+
+- At least one assignment is COMPLETED.
+- Every assignment is terminal.
+
+CLOSED and REJECTED are terminal.
+
+An ACTIVE incident with all offers declined/cancelled remains visible as needing assignment.
+
+### Assignment
+
+OFFERED → ACCEPTED or DECLINED.
+
+ACCEPTED → EN_ROUTE → ARRIVED → COMPLETED.
+
+Operators can cancel OFFERED or ACCEPTED assignments with a reason.
+
+Do not cancel EN_ROUTE or ARRIVED assignments.
+
+DECLINED, CANCELLED, and COMPLETED are terminal.
+
+Reject skipped, backward, stale, and unauthorized transitions.
+
+### Team availability
+
+AVAILABLE, BUSY, UNAVAILABLE.
+
+Offering an assignment immediately reserves the team as BUSY.
+
+A terminal assignment releases the reservation and returns the team to AVAILABLE.
+
+A responder can change AVAILABLE/UNAVAILABLE only without an active assignment.
+
+### Presence
+
+ONLINE or OFFLINE.
+
+Assign only ONLINE and AVAILABLE teams.
+
+A disconnected BUSY team remains reserved. Do not automatically free or reassign it.
+
+On restart, presence starts OFFLINE and active assignments continue to determine BUSY status.
+
+## 14. Concurrency, revisions, and idempotency
+
+Use expectedRevision for mutable entities and check it atomically.
+
+Return VERSION_CONFLICT for stale updates. The client refreshes and asks the user to review before retrying a changed action.
+
+For authenticated business mutations:
+
+- Deduplicate by user ID and request ID.
+- Canonically hash request type and payload.
+- Persist the successful response atomically with the business change.
+- Identical retries return the original result.
+- Different content with the same ID returns IDEMPOTENCY_CONFLICT.
+
+Registration and login/logout require appropriate account/session handling; replaying a stored response must not incorrectly authenticate a new socket.
+
+Acknowledge only after commit.
+
+Notify after commit.
+
+A notification failure does not reverse committed data.
+
+After a 10-second timeout, show confirmation pending. Retain the original request ID for reconciliation/retry.
+
+Do not claim exactly-once network delivery.
+
+## 15. Recovery
+
+- Send heartbeat every 15 seconds.
+- Detect loss after 45 seconds without inbound activity.
+- Reconnect with 1, 2, 4, 8, then up to 15 seconds delay with jitter.
+- Require login again.
+- Fetch a fresh authorized snapshot.
+- Subscribe authenticated sessions to events before snapshot creation.
+- Buffer events while synchronizing.
+- Ignore older revisions.
+- Retain unsent report input.
+- Restore reserved assignments after reconnect.
+- Close sockets, threads, and database resources cleanly.
+
+Persistent offline event delivery is not required.
+
+## 16. Sequential implementation: Member 1 — 40%
+
+Member 1 builds the complete technical foundation.
+
+### Tasks
+
+1. Inspect repository instructions, existing files, and assignment materials.
+2. Create the Maven modules and wrapper.
+3. Add .gitignore, README, and configuration examples.
+4. Define shared protocol envelopes, DTOs, enums, and validation constants.
+5. Implement and test the framing codec.
+6. Implement the configurable TCP server accept loop.
+7. Implement bounded concurrent session handling.
+8. Implement the session registry and connection lifecycle.
+9. Implement per-session bounded queues and serialized writers.
+10. Implement the basic console client.
+11. Implement background client reading and outbound writing.
+12. Implement request-response correlation and structured errors.
+13. Demonstrate PING/PONG and authorized test-event delivery.
+14. Add SQLite, migrations, constraints, and indexes for the complete schema.
+15. Implement the database executor and transaction utilities.
+16. Implement the initial repositories needed for users and teams.
+17. Implement password hashing and verification.
+18. Implement citizen registration.
+19. Implement login, logout, connection-bound identity, and role checks.
+20. Implement replacement of a previous user session.
+21. Seed one operator, two citizens, one police team, one ambulance team, and two fire teams.
+22. Build startup/login menus and basic authenticated role menus.
+23. Establish the reusable revision and processed-request transaction mechanisms for later business services.
+24. Test framing, concurrent connections, authentication, permissions, account persistence, and queue bounds.
+25. Document verified build, seed, server, and client commands, including Eclipse steps.
+
+### Member 1 handoff
+
+The project builds and runs.
+
+Multiple console clients communicate with the server.
+
+Citizens can register; all roles can log in.
+
+Roles are enforced on the server.
+
+Users and teams persist in SQLite.
+
+The application has reusable networking, transaction, and request-handling foundations.
+
+Business features reserved for Member 2 and Member 3 are not exposed as working menu options.
+
+Record test results and handoff instructions.
+
+## 17. Sequential implementation: Member 2 — 30%
+
+Member 2 starts from Member 1’s reviewed and merged code.
+
+Member 2 builds reporting, operator coordination, and assignment offers.
+
+### Tasks
+
+1. Verify Member 1’s build and tests.
+2. Implement incident and timeline repositories/services.
+3. Implement citizen report validation.
+4. Create incidents with server-generated IDs, timestamps, priority, and revisions.
+5. Persist incident creation and its public timeline atomically.
+6. Apply the shared deduplication mechanism to business mutations.
+7. Implement confirmed submission and confirmation-pending behavior.
+8. Implement citizen listing and detail access for owned incidents only.
+9. Implement operator incident listing, filtering, and details.
+10. Push new-report notifications to connected operators.
+11. Implement priority changes with expected revisions.
+12. Build citizen and operator console options for these features.
+13. Implement team listing by service, availability, and session presence.
+14. Implement responder availability changes when unassigned.
+15. Implement transactional assignment and team reservation.
+16. Enforce one active assignment per team.
+17. Enforce one active assignment per incident/service.
+18. Support Police, Ambulance, and Fire & Rescue offers on the same incident.
+19. Change the incident to ACTIVE when its first assignment is offered.
+20. Deliver offers only to the assigned responder.
+21. Add operator assignment controls and responder offer viewing.
+22. Implement eligible assignment cancellation with a reason.
+23. Implement rejection of never-assigned incidents with a public reason.
+24. Keep citizen-visible fields separate from private operational notes.
+25. Test incident ownership, validation, live notifications, deduplication, priority conflicts, simultaneous reservations, multi-service offers, cancellation, and rejection.
+26. Update protocol documentation, schema documentation, run instructions, and handoff notes.
+
+### Member 2 handoff
+
+A citizen submits a persistent report and receives a confirmed reference.
+
+The operator receives the live report, sets priority, and assigns several services.
+
+Each responder sees its own offer.
+
+Teams cannot be double-booked.
+
+Eligible cancellation and rejection work.
+
+Identical mutation retries do not duplicate changes.
+
+The next member can implement acceptance and progress on top of real saved offers.
+
+## 18. Sequential implementation: Member 3 — 30%
+
+Member 3 starts from Member 2’s reviewed and merged code.
+
+Member 3 completes responder operations, recovery, and final delivery.
+
+### Tasks
+
+1. Verify the existing build, tests, and reporting/assignment workflow.
+2. Implement responder acceptance and decline with appropriate reasons.
+3. Implement ordered progress transitions.
+4. Reject skipped, backward, stale, and unauthorized updates.
+5. Release team reservations on terminal assignments.
+6. Support reassignment after decline/cancellation using the existing assignment service.
+7. Keep declined/cancelled incidents visible when more coordination is needed.
+8. Push authorized assignment updates to citizens, operators, and the relevant team.
+9. Display separate service progress in citizen/operator consoles.
+10. Implement incident closure checks and the operator closure action.
+11. Complete citizen, responder, and operator histories and timelines.
+12. Ensure internal decline reasons/private notes are not exposed to citizens.
+13. Implement heartbeat and inactivity detection.
+14. Implement client reconnect backoff and clear connection state.
+15. Preserve BUSY reservations when teams disconnect.
+16. Notify operators of presence changes.
+17. Implement authorized snapshots.
+18. Coordinate snapshot creation, event buffering, and revision application without gaps.
+19. Restore active assignments after reconnect and server restart.
+20. Complete pending-request reconciliation and commit-before-response retry testing.
+21. Complete graceful shutdown and verify slow-client isolation.
+22. Test all state rules, closure conditions, privacy, retries, reconnect, restart, stale revisions, and snapshot/event ordering.
+23. Run the complete multi-client workflow through real sockets.
+24. Verify operation across separate laptops on a permitted LAN.
+25. Run a small 20-session headless test if hardware permits.
+26. Measure committed-change-to-client-receipt latency; separately observe console display behavior. Record method, sample count, median, p95, and machine/network details.
+27. Complete architecture/schema diagrams, feature-to-test traceability, troubleshooting, limitations, and demonstration script.
+28. Verify a clean clone builds, seeds, runs, and passes the required checks.
+29. Prepare final handoff and submission materials according to the lecturer’s actual instructions.
+
+### Member 3 completion condition
+
+The entire project works:
+
+Report → notify operator → assign multiple services → accept/decline → reassign where necessary → progress independently → complete → close.
+
+Permissions, persistence, conflict handling, deduplication, disconnect/reconnect, restart recovery, and history all work.
+
+No required action is a placeholder.
+
+## 19. Git collaboration
+
+Use one shared repository.
+
+Each member:
+
+- Uses their own Git account and author identity.
+- Creates task-specific feature branches.
+- Makes meaningful commits for their actual work.
+- Opens pull requests.
+- Has another member review before merging.
+- Starts the next sequential stage from the latest merged code.
+
+Do not fabricate authorship, backdate commits, or divide one person’s completed implementation into artificial contributions.
+
+The sequential implementation order does not prevent other members from reviewing code or preparing tests/documentation.
+
+Do not commit or push unless explicitly requested. Never overwrite unrelated local changes.
+
+Maintain a task checklist and actual contribution record.
+
+## 20. Required acceptance tests
+
+Verify and record actual results for:
+
+1. Citizen registration, valid login, duplicate username, invalid credentials.
+2. Unauthenticated requests and wrong-role requests.
+3. Citizen ownership restrictions.
+4. Incident validation, persistence, and live operator notification.
+5. Three separate service assignments on one incident.
+6. Concurrent operators competing for the same team.
+7. Concurrent assignments for the same incident/service.
+8. Valid and invalid responder transitions.
+9. Decline/cancel reservation release and reassignment.
+10. Incident closure and rejection rules.
+11. Identical mutation retries and changed-payload conflicts.
+12. Disconnect after commit but before acknowledgement.
+13. Fragmented and combined frames.
+14. Invalid lengths, malformed JSON, and mid-frame EOF.
+15. Busy responder disconnection without reservation loss.
+16. Client reconnect and server restart.
+17. Stale revision conflicts.
+18. Slow-client isolation.
+19. Snapshot/event synchronization.
+20. Notification routing and private-field restrictions.
+21. Console usability while events arrive.
+22. Graceful shutdown.
+23. Localhost and LAN operation.
+
+Use loopback sockets and temporary databases for automated integration tests.
+
+Do not report tests as passed merely because they were written.
+
+Do not claim measured performance without performing the measurement.
+
+## 21. Final deliverables
+
+- Complete Java source.
+- Reproducible Maven build and wrapper.
+- Runnable server and console client.
+- Versioned database migrations.
+- Repeatable demo seeding.
+- Automated tests and actual results.
+- README with exact commands.
+- Eclipse import and separate-console launch instructions.
+- Protocol reference.
+- Architecture and database diagrams.
+- Feature-to-test traceability.
+- Localhost/LAN troubleshooting.
+- Demonstration script.
+- Actual three-member contribution summary.
+- Known limitations.
+
+Document:
+
+- 127.0.0.1 connects on the same machine.
+- Remote LAN clients use the server laptop’s LAN IP.
+- 0.0.0.0 is a server bind address, not a client destination.
+- Device isolation or firewall rules may prevent LAN communication.
+
+## 22. Scope limits
+
+Do not add:
+
+- Graphical UI.
+- Website/mobile app.
+- Real agency integrations.
+- Calls, SMS, chat, images, video.
+- GPS hardware.
+- Automatic nearest-team selection.
+- Maps or route planning.
+- AI triage.
+- Guaranteed arrival times.
+- Paid services.
+- Production hosting.
+
+Focus on Java networking, concurrency, coordination, persistence, and recovery.
+
+## 23. Instructions for the current Codex session
+
+Understand the entire project before editing.
+
+Inspect repository status, AGENTS.md, available assignment materials, and the Java/build environment.
+
+Identify the requested member stage from the student’s message.
+
+- Member 1 session: implement Section 16.
+- Member 2 session: continue with Section 17.
+- Member 3 session: continue with Section 18.
+
+If the repository is empty and no stage is specified, begin Member 1’s 40% foundation.
+
+If the repository already has work and the responsible stage is unclear, ask which member stage to implement.
+
+Do not implement another member’s reserved stage without instruction. Keep later work documented as backlog.
+
+Proceed autonomously with routine reversible choices inside the assigned stage.
+
+Run relevant checks supported by the environment. State exact blockers for anything that cannot run.
+
+At handoff, explain:
+
+- What was implemented.
+- What was actually tested.
+- How to run it.
+- Any material limitations.
+- What the next member must implement.
+
+Keep the implementation readable and help us understand how sockets, threads, request routing, database transactions, race prevention, and recovery work.
