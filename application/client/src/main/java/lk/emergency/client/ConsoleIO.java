@@ -27,18 +27,7 @@ public final class ConsoleIO {
   }
 
   public String password() throws IOException {
-    Console console = System.console();
-    if (console == null) {
-      print("Password input is visible in this console; use fictional credentials.");
-      return ask("Password: ");
-    }
-    char[] chars = console.readPassword("Password: ");
-    if (chars == null) throw new EOFException();
-    try {
-      return new String(chars);
-    } finally {
-      java.util.Arrays.fill(chars, '\0');
-    }
+    return ask("Password: ");
   }
 
   public synchronized void event(Envelope event) {
