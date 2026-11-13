@@ -64,6 +64,7 @@ public final class Types {
   }
 
   public enum RequestType {
+    LIST_ASSIGNMENTS,
     REGISTER_CITIZEN,
     LOGIN,
     LOGOUT,

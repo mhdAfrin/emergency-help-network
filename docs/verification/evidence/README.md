@@ -1,10 +1,5 @@
-# Verification evidence
+# Evidence index
 
-| Location | Meaning |
-|---|---|
-| maven-java21-verify.txt | Original Member 1 clean verification output |
-| suite-summary.txt | Original 21-test suite summary |
-| process-smoke-result.txt and process-smoke/ | Original process smoke check; subsequent runs refresh the process logs |
-| reorganization/ | Build, smoke, database and link checks after file organization |
+[Current test report](../TEST-RESULTS.md) and [current suite summary](member2-fixed/suite-summary.txt) describe Member 2's completed correction stage.
 
-See ../TEST-RESULTS.md for scope and limitations. Archived diagnostic logs and downloaded binaries live only in the ignored .local directory. Evidence timestamps and absolute paths reflect the machine/run that produced them.
+member2-fixed/ contains the original snapshot baseline build, final clean build, actual process-smoke result and separate JVM logs. Earlier top-level evidence, reorganization/ and simplified-root/ are retained historical Member 1 records; their paths/timestamps and passing totals apply to those earlier runs.

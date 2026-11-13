@@ -1,6 +1,7 @@
 param(
     [ValidateSet('build', 'seed', 'server', 'client', 'smoke')]
-    [string]$Action = 'build'
+    [string]$Action = 'build',
+    [switch]$Offline
 )
 
 $ErrorActionPreference = 'Stop'
@@ -30,6 +31,7 @@ Push-Location -LiteralPath $projectRoot
 try {
     if ($Action -eq 'build') {
         $mavenArguments = @('-B', 'clean', 'verify')
+        if ($Offline) { $mavenArguments += '--offline' }
         $repository = Join-Path $localTools 'm2'
         if (Test-Path -LiteralPath $repository) { $mavenArguments += "-Dmaven.repo.local=$repository" }
         & (Join-Path $projectRoot 'mvnw.cmd') @mavenArguments

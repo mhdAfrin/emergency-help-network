@@ -67,7 +67,8 @@ public final class MutationSupport {
               MessageDigest.getInstance("SHA-256")
                   .digest(
                       Json.MAPPER.writeValueAsBytes(
-                          Json.tree(Map.of("type", type, "payload", canonical(payload))))));
+                          canonical(
+                              Json.tree(Map.of("type", type, "payload", canonical(payload)))))));
     } catch (Exception e) {
       throw new IllegalStateException(e);
     }

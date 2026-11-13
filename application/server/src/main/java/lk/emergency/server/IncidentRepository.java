@@ -1,4 +1,3 @@
-
 package lk.emergency.server;
 
 import java.sql.Connection;
@@ -11,37 +10,35 @@ import java.util.List;
 public final class IncidentRepository {
 
   public record Incident(
-    String id,
-    String citizenId,
-    String category,
-    String address,
-    String description,
-    Double latitude,
-    Double longitude,
-    String priority,
-    String state,
-    String publicResolutionReason,
-    String createdAt,
-    String updatedAt,
-    String closedAt,
-    long revision
-  ) {}
+      String id,
+      String citizenId,
+      String category,
+      String address,
+      String description,
+      Double latitude,
+      Double longitude,
+      String priority,
+      String state,
+      String publicResolutionReason,
+      String createdAt,
+      String updatedAt,
+      String closedAt,
+      long revision) {}
 
   // Save a newly reported incident.
-  public void create(Connection connection, Incident incident)
-    throws SQLException {
+  public void create(Connection connection, Incident incident) throws SQLException {
 
-    String sql = """
-                INSERT INTO incidents (
-                    id, citizen_id, category, address, description,
-                    latitude, longitude, priority, state,
-                    public_resolution_reason, created_at, updated_at,
-                    closed_at, revision
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                """;
+    String sql =
+        """
+        INSERT INTO incidents (
+            id, citizen_id, category, address, description,
+            latitude, longitude, priority, state,
+            public_resolution_reason, created_at, updated_at,
+            closed_at, revision
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """;
 
-    try (PreparedStatement statement =
-           connection.prepareStatement(sql)) {
+    try (PreparedStatement statement = connection.prepareStatement(sql)) {
 
       statement.setString(1, incident.id());
       statement.setString(2, incident.citizenId());
@@ -63,15 +60,11 @@ public final class IncidentRepository {
   }
 
   // Find one incident using its ID.
-  public Incident findById(
-    Connection connection,
-    String incidentId
-  ) throws SQLException {
+  public Incident findById(Connection connection, String incidentId) throws SQLException {
 
     String sql = "SELECT * FROM incidents WHERE id = ?";
 
-    try (PreparedStatement statement =
-           connection.prepareStatement(sql)) {
+    try (PreparedStatement statement = connection.prepareStatement(sql)) {
 
       statement.setString(1, incidentId);
 
@@ -82,21 +75,18 @@ public final class IncidentRepository {
   }
 
   // Return incidents reported by one citizen.
-  public List<Incident> findByCitizen(
-    Connection connection,
-    String citizenId
-  ) throws SQLException {
+  public List<Incident> findByCitizen(Connection connection, String citizenId) throws SQLException {
 
-    String sql = """
-                SELECT * FROM incidents
-                WHERE citizen_id = ?
-                ORDER BY created_at DESC, id DESC
-                """;
+    String sql =
+        """
+        SELECT * FROM incidents
+        WHERE citizen_id = ?
+        ORDER BY created_at DESC, id DESC
+        """;
 
     List<Incident> incidents = new ArrayList<>();
 
-    try (PreparedStatement statement =
-           connection.prepareStatement(sql)) {
+    try (PreparedStatement statement = connection.prepareStatement(sql)) {
 
       statement.setString(1, citizenId);
 
@@ -111,20 +101,18 @@ public final class IncidentRepository {
   }
 
   // Return all incidents for the operator.
-  public List<Incident> findAll(
-    Connection connection
-  ) throws SQLException {
+  public List<Incident> findAll(Connection connection) throws SQLException {
 
-    String sql = """
-                SELECT * FROM incidents
-                ORDER BY created_at DESC, id DESC
-                """;
+    String sql =
+        """
+        SELECT * FROM incidents
+        ORDER BY created_at DESC, id DESC
+        """;
 
     List<Incident> incidents = new ArrayList<>();
 
-    try (PreparedStatement statement =
-           connection.prepareStatement(sql);
-         ResultSet result = statement.executeQuery()) {
+    try (PreparedStatement statement = connection.prepareStatement(sql);
+        ResultSet result = statement.executeQuery()) {
 
       while (result.next()) {
         incidents.add(readIncident(result));
@@ -137,25 +125,25 @@ public final class IncidentRepository {
   // Update priority only when the expected revision matches.
   // Closed or rejected incidents cannot be updated.
   public boolean updatePriority(
-    Connection connection,
-    String incidentId,
-    String priority,
-    String updatedAt,
-    long expectedRevision
-  ) throws SQLException {
+      Connection connection,
+      String incidentId,
+      String priority,
+      String updatedAt,
+      long expectedRevision)
+      throws SQLException {
 
-    String sql = """
-                UPDATE incidents
-                SET priority = ?,
-                    updated_at = ?,
-                    revision = revision + 1
-                WHERE id = ?
-                  AND revision = ?
-                  AND state IN ('REPORTED', 'ACTIVE')
-                """;
+    String sql =
+        """
+        UPDATE incidents
+        SET priority = ?,
+            updated_at = ?,
+            revision = revision + 1
+        WHERE id = ?
+          AND revision = ?
+          AND state IN ('REPORTED', 'ACTIVE')
+        """;
 
-    try (PreparedStatement statement =
-           connection.prepareStatement(sql)) {
+    try (PreparedStatement statement = connection.prepareStatement(sql)) {
 
       statement.setString(1, priority);
       statement.setString(2, updatedAt);
@@ -169,27 +157,27 @@ public final class IncidentRepository {
   // Reject a reported incident with a public explanation.
   // An active, closed, or already rejected incident cannot be rejected.
   public boolean rejectIncident(
-    Connection connection,
-    String incidentId,
-    String reason,
-    String updatedAt,
-    long expectedRevision
-  ) throws SQLException {
+      Connection connection,
+      String incidentId,
+      String reason,
+      String updatedAt,
+      long expectedRevision)
+      throws SQLException {
 
-    String sql = """
-                UPDATE incidents
-                SET state = 'REJECTED',
-                    public_resolution_reason = ?,
-                    updated_at = ?,
-                    closed_at = ?,
-                    revision = revision + 1
-                WHERE id = ?
-                  AND revision = ?
-                  AND state = 'REPORTED'
-                """;
+    String sql =
+        """
+        UPDATE incidents
+        SET state = 'REJECTED',
+            public_resolution_reason = ?,
+            updated_at = ?,
+            closed_at = ?,
+            revision = revision + 1
+        WHERE id = ?
+          AND revision = ?
+          AND state = 'REPORTED'
+        """;
 
-    try (PreparedStatement statement =
-           connection.prepareStatement(sql)) {
+    try (PreparedStatement statement = connection.prepareStatement(sql)) {
 
       statement.setString(1, reason);
       statement.setString(2, updatedAt);
@@ -201,69 +189,63 @@ public final class IncidentRepository {
     }
   }
 
-  // Close a reported or active incident after resolution.
-  // The expected revision prevents overwriting newer changes.
-  // Closed and rejected incidents cannot be closed again.
-  public boolean closeIncident(
-    Connection connection,
-    String incidentId,
-    String resolutionReason,
-    String updatedAt,
-    long expectedRevision
-  ) throws SQLException {
-
-    String sql = """
-                UPDATE incidents
-                SET state = 'CLOSED',
-                    public_resolution_reason = ?,
-                    updated_at = ?,
-                    closed_at = ?,
-                    revision = revision + 1
-                WHERE id = ?
-                  AND revision = ?
-                  AND state IN ('REPORTED', 'ACTIVE')
-                """;
-
-    try (PreparedStatement statement =
-           connection.prepareStatement(sql)) {
-
-      statement.setString(1, resolutionReason);
-      statement.setString(2, updatedAt);
-      statement.setString(3, updatedAt);
-      statement.setString(4, incidentId);
-      statement.setLong(5, expectedRevision);
-
-      return statement.executeUpdate() == 1;
-    }
-  }
-
-  // Convert a database row into an Incident record.
-  private Incident readIncident(
-    ResultSet result
-  ) throws SQLException {
+  // Convert one stored incident to its repository record.
+  private Incident readIncident(ResultSet result) throws SQLException {
 
     Object latitude = result.getObject("latitude");
     Object longitude = result.getObject("longitude");
 
     return new Incident(
-      result.getString("id"),
-      result.getString("citizen_id"),
-      result.getString("category"),
-      result.getString("address"),
-      result.getString("description"),
-      latitude == null
-        ? null
-        : ((Number) latitude).doubleValue(),
-      longitude == null
-        ? null
-        : ((Number) longitude).doubleValue(),
-      result.getString("priority"),
-      result.getString("state"),
-      result.getString("public_resolution_reason"),
-      result.getString("created_at"),
-      result.getString("updated_at"),
-      result.getString("closed_at"),
-      result.getLong("revision")
-    );
+        result.getString("id"),
+        result.getString("citizen_id"),
+        result.getString("category"),
+        result.getString("address"),
+        result.getString("description"),
+        latitude == null ? null : ((Number) latitude).doubleValue(),
+        longitude == null ? null : ((Number) longitude).doubleValue(),
+        result.getString("priority"),
+        result.getString("state"),
+        result.getString("public_resolution_reason"),
+        result.getString("created_at"),
+        result.getString("updated_at"),
+        result.getString("closed_at"),
+        result.getLong("revision"));
+  }
+
+  public List<Incident> page(
+      Connection c, String owner, lk.emergency.common.Dtos.IncidentFilter filter)
+      throws SQLException {
+    List<Incident> result = new ArrayList<>();
+    String sql =
+        "SELECT * FROM incidents WHERE (? IS NULL OR citizen_id=?) AND (? IS NULL OR state=?) AND"
+            + " (? IS NULL OR priority=?) ORDER BY created_at DESC,id DESC LIMIT ? OFFSET ?";
+    try (var p = c.prepareStatement(sql)) {
+      p.setString(1, owner);
+      p.setString(2, owner);
+      String state = filter.state() == null ? null : filter.state().name(),
+          priority = filter.priority() == null ? null : filter.priority().name();
+      p.setString(3, state);
+      p.setString(4, state);
+      p.setString(5, priority);
+      p.setString(6, priority);
+      p.setInt(7, lk.emergency.common.Validation.limit(filter.limit()));
+      p.setInt(8, lk.emergency.common.Validation.offset(filter.offset()));
+      try (var rows = p.executeQuery()) {
+        while (rows.next()) result.add(readIncident(rows));
+      }
+    }
+    return result;
+  }
+
+  public void activateOrTouch(Connection c, Incident incident, String now) throws SQLException {
+    try (var p =
+        c.prepareStatement(
+            "UPDATE incidents SET state='ACTIVE',updated_at=?,revision=revision+1 WHERE id=? AND"
+                + " revision=? AND state IN ('REPORTED','ACTIVE')")) {
+      p.setString(1, now);
+      p.setString(2, incident.id());
+      p.setLong(3, incident.revision());
+      MutationSupport.requireUpdated(p.executeUpdate());
+    }
   }
 }

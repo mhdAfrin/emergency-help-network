@@ -1,584 +1,250 @@
-
 package lk.emergency.server;
 
 import static lk.emergency.common.Types.*;
+import static lk.emergency.common.Types.ErrorCode.*;
 
-import java.sql.Connection;
+import java.sql.*;
 import java.time.Instant;
-import java.util.List;
-import java.util.UUID;
-
-import lk.emergency.common.DomainException;
-import lk.emergency.common.Dtos.IncidentClosureInput;
-import lk.emergency.common.Dtos.IncidentInput;
-import lk.emergency.common.Dtos.IncidentRejectionInput;
-import lk.emergency.common.Dtos.IncidentView;
-import lk.emergency.common.Dtos.PriorityUpdateInput;
-import lk.emergency.common.Validation;
+import java.util.*;
+import lk.emergency.common.*;
+import lk.emergency.common.Dtos.*;
 
 public final class IncidentService {
+  private final Database db;
+  private final IncidentRepository incidents = new IncidentRepository();
+  private final AssignmentRepository assignments = new AssignmentRepository();
+  private final IncidentTimelineRepository timeline = new IncidentTimelineRepository();
 
-  private final Database database;
-  private final IncidentRepository incidentRepository =
-    new IncidentRepository();
-  private final IncidentTimelineRepository timelineRepository =
-    new IncidentTimelineRepository();
-
-  public IncidentService(Database database) {
-    this.database = database;
+  public IncidentService(Database db) {
+    this.db = db;
   }
 
-  // Normal incident creation.
-  public IncidentView createIncident(
-    String citizenId,
-    IncidentInput input) {
-
-    return database.transaction(
-      connection -> createIncident(connection, citizenId, input)
-    );
+  public IncidentView createIncident(String citizenId, IncidentInput input) {
+    return db.transaction(c -> createIncident(c, citizenId, input));
   }
 
-  // Uses the transaction provided by IdempotencyService.
-  IncidentView createIncident(
-    Connection connection,
-    String citizenId,
-    IncidentInput input) throws Exception {
-
-    if (citizenId == null || citizenId.isBlank()) {
+  IncidentView createIncident(Connection c, String citizenId, IncidentInput input)
+      throws Exception {
+    if (citizenId == null || citizenId.isBlank() || input == null || input.category() == null)
+      throw new DomainException(VALIDATION_ERROR, "Citizen and category are required");
+    String address = Validation.text(input.address(), 1, Validation.ADDRESS_MAX, "Address"),
+        description =
+            Validation.text(input.description(), 1, Validation.DESCRIPTION_MAX, "Description");
+    Double lat = input.latitude(), lon = input.longitude();
+    if ((lat == null) != (lon == null)
+        || (lat != null
+            && (!Double.isFinite(lat)
+                || !Double.isFinite(lon)
+                || lat < -90
+                || lat > 90
+                || lon < -180
+                || lon > 180)))
       throw new DomainException(
-        ErrorCode.VALIDATION_ERROR,
-        "Citizen ID is required"
-      );
-    }
+          VALIDATION_ERROR, "Supply both coordinates within their valid ranges");
+    String id = UUID.randomUUID().toString(), now = Instant.now().toString();
+    var incident =
+        new IncidentRepository.Incident(
+            id,
+            citizenId,
+            input.category().name(),
+            address,
+            description,
+            lat,
+            lon,
+            "MEDIUM",
+            "REPORTED",
+            null,
+            now,
+            now,
+            null,
+            0);
+    incidents.create(c, incident);
+    event(c, id, null, citizenId, "INCIDENT_REPORTED", "Incident reported by citizen", null, now);
+    return view(incident);
+  }
 
-    if (input == null || input.category() == null) {
-      throw new DomainException(
-        ErrorCode.VALIDATION_ERROR,
-        "Incident category is required"
-      );
-    }
+  public IncidentView getIncident(String userId, Role role, String id) {
+    return db.call(c -> view(authorized(c, userId, role, id)));
+  }
 
-    String address = Validation.text(
-      input.address(),
-      1,
-      Validation.ADDRESS_MAX,
-      "Address"
-    );
+  public List<IncidentView> listIncidents(String userId, Role role) {
+    return list(userId, role, new IncidentFilter(null, null, 0, 5));
+  }
 
-    String description = Validation.text(
-      input.description(),
-      1,
-      Validation.DESCRIPTION_MAX,
-      "Description"
-    );
+  public List<IncidentView> list(String userId, Role role, IncidentFilter filter) {
+    requireReader(role);
+    Validation.offset(filter.offset());
+    Validation.limit(filter.limit());
+    return db.call(
+        c ->
+            incidents.page(c, role == Role.CITIZEN ? userId : null, filter).stream()
+                .map(IncidentService::view)
+                .toList());
+  }
 
-    Double latitude = input.latitude();
-    Double longitude = input.longitude();
+  public IncidentDetails details(String userId, Role role, IncidentQuery query) {
+    int a = Validation.offset(query.assignmentOffset()),
+        t = Validation.offset(query.timelineOffset());
+    return db.call(
+        c -> {
+          var incident = authorized(c, userId, role, query.id());
+          List<AssignmentView> servicePage = assignments.incidentPage(c, incident.id(), a, 11);
+          List<PublicTimelineEvent> publicPage = new ArrayList<>();
+          try (var p =
+              c.prepareStatement(
+                  "SELECT id,incident_id,assignment_id,event_type,public_message,created_at FROM"
+                      + " incident_events WHERE incident_id=? ORDER BY created_at,id LIMIT 11"
+                      + " OFFSET ?")) {
+            p.setString(1, incident.id());
+            p.setInt(2, t);
+            try (var rows = p.executeQuery()) {
+              while (rows.next())
+                publicPage.add(
+                    new PublicTimelineEvent(
+                        rows.getString(1),
+                        rows.getString(2),
+                        rows.getString(3),
+                        rows.getString(4),
+                        rows.getString(5),
+                        rows.getString(6)));
+            }
+          }
+          return new IncidentDetails(
+              view(incident),
+              List.copyOf(servicePage.subList(0, Math.min(10, servicePage.size()))),
+              List.copyOf(publicPage.subList(0, Math.min(10, publicPage.size()))),
+              a,
+              t,
+              servicePage.size() > 10,
+              publicPage.size() > 10);
+        });
+  }
 
-    if ((latitude == null) != (longitude == null)) {
-      throw new DomainException(
-        ErrorCode.VALIDATION_ERROR,
-        "Latitude and longitude must be provided together"
-      );
-    }
+  public IncidentView updatePriority(String operatorId, Role role, PriorityUpdateInput input) {
+    return db.transaction(c -> updatePriority(c, operatorId, role, input));
+  }
 
-    if (latitude != null) {
-      if (!Double.isFinite(latitude)
-        || !Double.isFinite(longitude)
-        || latitude < -90
-        || latitude > 90
-        || longitude < -180
-        || longitude > 180) {
-
-        throw new DomainException(
-          ErrorCode.VALIDATION_ERROR,
-          "Invalid geographical coordinates"
-        );
-      }
-    }
-
-    String incidentId = UUID.randomUUID().toString();
-    String eventId = UUID.randomUUID().toString();
+  IncidentView updatePriority(Connection c, String operatorId, Role role, PriorityUpdateInput input)
+      throws Exception {
+    requireOperator(role);
+    long expected = Validation.revision(input.expectedRevision());
+    if (input.priority() == null)
+      throw new DomainException(VALIDATION_ERROR, "Priority is required");
+    var current = mutable(c, input.id(), expected);
     String now = Instant.now().toString();
-
-    IncidentRepository.Incident incident =
-      new IncidentRepository.Incident(
-        incidentId,
-        citizenId,
-        input.category().name(),
-        address,
-        description,
-        latitude,
-        longitude,
-        Priority.MEDIUM.name(),
-        IncidentState.REPORTED.name(),
-        null,
-        now,
-        now,
-        null,
-        0L
-      );
-
-    IncidentTimelineRepository.IncidentEvent event =
-      new IncidentTimelineRepository.IncidentEvent(
-        eventId,
-        incidentId,
-        null,
-        citizenId,
-        "INCIDENT_REPORTED",
-        "Incident reported by citizen",
-        null,
-        now
-      );
-
-    incidentRepository.create(connection, incident);
-    timelineRepository.create(connection, event);
-
-    return toView(incident);
-  }
-
-  // Citizens can view their own incidents.
-  // Operators can view any incident.
-  public IncidentView getIncident(
-    String userId,
-    Role role,
-    String incidentId) {
-
-    if (incidentId == null || incidentId.isBlank()) {
-      throw new DomainException(
-        ErrorCode.VALIDATION_ERROR,
-        "Incident ID is required"
-      );
-    }
-
-    IncidentRepository.Incident incident = database.call(
-      connection -> incidentRepository.findById(
-        connection,
-        incidentId
-      )
-    );
-
-    if (incident == null) {
-      throw new DomainException(
-        ErrorCode.NOT_FOUND,
-        "Incident not found"
-      );
-    }
-
-    if (role == Role.CITIZEN
-      && !incident.citizenId().equals(userId)) {
-
-      throw new DomainException(
-        ErrorCode.NOT_FOUND,
-        "Incident not found"
-      );
-    }
-
-    if (role != Role.CITIZEN && role != Role.OPERATOR) {
-      throw new DomainException(
-        ErrorCode.FORBIDDEN,
-        "You cannot view this incident"
-      );
-    }
-
-    return toView(incident);
-  }
-
-  // Citizens see their reports; operators see all reports.
-  public List<IncidentView> listIncidents(
-    String userId,
-    Role role) {
-
-    List<IncidentRepository.Incident> incidents;
-
-    if (role == Role.CITIZEN) {
-      incidents = database.call(
-        connection -> incidentRepository.findByCitizen(
-          connection,
-          userId
-        )
-      );
-    } else if (role == Role.OPERATOR) {
-      incidents = database.call(
-        incidentRepository::findAll
-      );
-    } else {
-      throw new DomainException(
-        ErrorCode.FORBIDDEN,
-        "You cannot list incidents"
-      );
-    }
-
-    return incidents.stream()
-      .map(this::toView)
-      .toList();
-  }
-
-  // Public method remains available for existing callers.
-  public IncidentView updatePriority(
-    String operatorId,
-    Role role,
-    PriorityUpdateInput input) {
-
-    return database.transaction(
-      connection -> updatePriority(
-        connection,
-        operatorId,
-        role,
-        input
-      )
-    );
-  }
-
-  // Runs inside an existing transaction for idempotent requests.
-  IncidentView updatePriority(
-    Connection connection,
-    String operatorId,
-    Role role,
-    PriorityUpdateInput input) throws Exception {
-
-    if (role != Role.OPERATOR) {
-      throw new DomainException(
-        ErrorCode.FORBIDDEN,
-        "Only operators can change incident priority"
-      );
-    }
-
-    if (operatorId == null || operatorId.isBlank()
-      || input == null
-      || input.id() == null
-      || input.id().isBlank()
-      || input.priority() == null
-      || input.expectedRevision() < 0) {
-
-      throw new DomainException(
-        ErrorCode.VALIDATION_ERROR,
-        "Valid incident ID, priority and revision are required"
-      );
-    }
-
-    IncidentRepository.Incident current =
-      incidentRepository.findById(
-        connection,
-        input.id()
-      );
-
-    if (current == null) {
-      throw new DomainException(
-        ErrorCode.NOT_FOUND,
-        "Incident not found"
-      );
-    }
-
-    if (!current.state().equals(IncidentState.REPORTED.name())
-      && !current.state().equals(IncidentState.ACTIVE.name())) {
-
-      throw new DomainException(
-        ErrorCode.VALIDATION_ERROR,
-        "Cannot change priority of a closed or rejected incident"
-      );
-    }
-
-    if (current.revision() != input.expectedRevision()) {
-      throw new DomainException(
-        ErrorCode.VERSION_CONFLICT,
-        "Incident was modified. Refresh and try again"
-      );
-    }
-
-    String now = Instant.now().toString();
-
-    boolean updated = incidentRepository.updatePriority(
-      connection,
-      input.id(),
-      input.priority().name(),
-      now,
-      input.expectedRevision()
-    );
-
-    if (!updated) {
-      throw new DomainException(
-        ErrorCode.VERSION_CONFLICT,
-        "Priority update failed. Refresh and try again"
-      );
-    }
-
-    IncidentTimelineRepository.IncidentEvent event =
-      new IncidentTimelineRepository.IncidentEvent(
-        UUID.randomUUID().toString(),
-        input.id(),
+    MutationSupport.requireUpdated(
+        incidents.updatePriority(c, current.id(), input.priority().name(), now, expected) ? 1 : 0);
+    event(
+        c,
+        current.id(),
         null,
         operatorId,
-        "PRIORITY_CHANGED",
-        "Incident priority changed from "
-          + current.priority()
-          + " to "
-          + input.priority().name(),
+        "PRIORITY_UPDATED",
+        "Priority changed to " + input.priority(),
         null,
-        now
-      );
-
-    timelineRepository.create(connection, event);
-
-    IncidentRepository.Incident updatedIncident =
-      incidentRepository.findById(
-        connection,
-        input.id()
-      );
-
-    return toView(updatedIncident);
+        now);
+    return view(incidents.findById(c, current.id()));
   }
 
-  // Reject an invalid or duplicate incident.
-  public IncidentView rejectIncident(
-      String operatorId, Role role, IncidentRejectionInput input) {
-    return database.transaction(
-        connection -> rejectIncident(connection, operatorId, role, input));
+  public IncidentView rejectIncident(String operatorId, Role role, IncidentRejectionInput input) {
+    return db.transaction(c -> rejectIncident(c, operatorId, role, input));
   }
 
   IncidentView rejectIncident(
-      java.sql.Connection connection,
-      String operatorId, Role role, IncidentRejectionInput input) throws Exception {
-
-    if (role != Role.OPERATOR) {
+      Connection c, String operatorId, Role role, IncidentRejectionInput input) throws Exception {
+    requireOperator(role);
+    long expected = Validation.revision(input.expectedRevision());
+    String reason = Validation.text(input.reason(), 1, 500, "Public rejection reason");
+    var current = mutable(c, input.incidentId(), expected);
+    if (!current.state().equals("REPORTED") || assignments.everAssigned(c, current.id()))
       throw new DomainException(
-        ErrorCode.FORBIDDEN,
-        "Only operators can reject incidents"
-      );
-    }
+          INVALID_TRANSITION, "Only reports that have never had an assignment can be rejected");
+    String now = Instant.now().toString();
+    MutationSupport.requireUpdated(
+        incidents.rejectIncident(c, current.id(), reason, now, expected) ? 1 : 0);
+    event(
+        c,
+        current.id(),
+        null,
+        operatorId,
+        "INCIDENT_REJECTED",
+        "Incident rejected: " + reason,
+        null,
+        now);
+    return view(incidents.findById(c, current.id()));
+  }
 
-    if (operatorId == null || operatorId.isBlank()
-      || input == null
-      || input.incidentId() == null
-      || input.incidentId().isBlank()
-      || input.expectedRevision() < 0) {
-
+  IncidentRepository.Incident mutable(Connection c, String id, long expected) throws SQLException {
+    var incident = incidents.findById(c, requiredId(id));
+    if (incident == null) throw new DomainException(NOT_FOUND, "Incident not found");
+    if (incident.revision() != expected)
       throw new DomainException(
-        ErrorCode.VALIDATION_ERROR,
-        "Valid incident ID and revision are required"
-      );
-    }
+          VERSION_CONFLICT, "Incident changed; refresh and review before retrying");
+    if (!incident.state().equals("REPORTED") && !incident.state().equals("ACTIVE"))
+      throw new DomainException(INVALID_TRANSITION, "Incident is terminal");
+    return incident;
+  }
 
-    String reason = input.reason() == null
-      ? ""
-      : input.reason().strip();
+  private IncidentRepository.Incident authorized(Connection c, String userId, Role role, String id)
+      throws SQLException {
+    requireReader(role);
+    var incident = incidents.findById(c, requiredId(id));
+    if (incident == null || (role == Role.CITIZEN && !incident.citizenId().equals(userId)))
+      throw new DomainException(NOT_FOUND, "Incident not found");
+    return incident;
+  }
 
-    if (reason.isEmpty() || reason.length() > 500) {
-      throw new DomainException(
-        ErrorCode.VALIDATION_ERROR,
-        "Rejection reason must contain 1-500 characters"
-      );
-    }
+  static String requiredId(String id) {
+    return Validation.text(id, 1, 80, "ID");
+  }
 
-    
-    {
+  static void requireOperator(Role role) {
+    if (role != Role.OPERATOR) throw new DomainException(FORBIDDEN, "Operator access required");
+  }
 
+  private void requireReader(Role role) {
+    if (role != Role.OPERATOR && role != Role.CITIZEN)
+      throw new DomainException(FORBIDDEN, "Action not permitted for this role");
+  }
 
-      IncidentRepository.Incident current =
-        incidentRepository.findById(
-          connection,
-          input.incidentId()
-        );
-
-      if (current == null) {
-        throw new DomainException(
-          ErrorCode.NOT_FOUND,
-          "Incident not found"
-        );
-      }
-
-      if (current.revision() != input.expectedRevision()) {
-        throw new DomainException(
-          ErrorCode.VERSION_CONFLICT,
-          "Incident was modified. Refresh and try again"
-        );
-      }
-
-      if (!current.state().equals(IncidentState.REPORTED.name())) {
-        throw new DomainException(
-          ErrorCode.INVALID_TRANSITION,
-          "Only reported incidents can be rejected"
-        );
-      }
-
-      String now = Instant.now().toString();
-
-      boolean rejected = incidentRepository.rejectIncident(
-        connection,
-        input.incidentId(),
-        reason,
-        now,
-        input.expectedRevision()
-      );
-
-      if (!rejected) {
-        throw new DomainException(
-          ErrorCode.VERSION_CONFLICT,
-          "Incident rejection failed. Refresh and try again"
-        );
-      }
-
-      IncidentTimelineRepository.IncidentEvent event =
+  void event(
+      Connection c,
+      String incidentId,
+      String assignmentId,
+      String actor,
+      String type,
+      String message,
+      String note,
+      String now)
+      throws SQLException {
+    timeline.create(
+        c,
         new IncidentTimelineRepository.IncidentEvent(
-          UUID.randomUUID().toString(),
-          input.incidentId(),
-          null,
-          operatorId,
-          "INCIDENT_REJECTED",
-          "Incident rejected: " + reason,
-          null,
-          now
-        );
-
-      timelineRepository.create(connection, event);
-
-      IncidentRepository.Incident updatedIncident =
-        incidentRepository.findById(
-          connection,
-          input.incidentId()
-        );
-
-      return toView(updatedIncident);
-    
-    }
+            UUID.randomUUID().toString(),
+            incidentId,
+            assignmentId,
+            actor,
+            type,
+            message,
+            note,
+            now));
   }
 
-  // Close a resolved incident.
-  public IncidentView closeIncident(
-      String operatorId, Role role, IncidentClosureInput input) {
-    return database.transaction(
-        connection -> closeIncident(connection, operatorId, role, input));
-  }
-
-  IncidentView closeIncident(
-      java.sql.Connection connection,
-      String operatorId, Role role, IncidentClosureInput input) throws Exception {
-
-    if (role != Role.OPERATOR) {
-      throw new DomainException(
-        ErrorCode.FORBIDDEN,
-        "Only operators can close incidents"
-      );
-    }
-
-    if (operatorId == null || operatorId.isBlank()
-      || input == null
-      || input.incidentId() == null
-      || input.incidentId().isBlank()
-      || input.expectedRevision() < 0) {
-
-      throw new DomainException(
-        ErrorCode.VALIDATION_ERROR,
-        "Valid incident ID and revision are required"
-      );
-    }
-
-    String reason = input.resolutionReason() == null
-      ? ""
-      : input.resolutionReason().strip();
-
-    if (reason.isEmpty() || reason.length() > 500) {
-      throw new DomainException(
-        ErrorCode.VALIDATION_ERROR,
-        "Resolution reason must contain 1-500 characters"
-      );
-    }
-
-    
-    {
-
-
-      IncidentRepository.Incident current =
-        incidentRepository.findById(
-          connection,
-          input.incidentId()
-        );
-
-      if (current == null) {
-        throw new DomainException(
-          ErrorCode.NOT_FOUND,
-          "Incident not found"
-        );
-      }
-
-      if (current.revision() != input.expectedRevision()) {
-        throw new DomainException(
-          ErrorCode.VERSION_CONFLICT,
-          "Incident was modified. Refresh and try again"
-        );
-      }
-
-      if (!current.state().equals(IncidentState.REPORTED.name())
-        && !current.state().equals(IncidentState.ACTIVE.name())) {
-
-        throw new DomainException(
-          ErrorCode.INVALID_TRANSITION,
-          "Only reported or active incidents can be closed"
-        );
-      }
-
-      String now = Instant.now().toString();
-
-      boolean closed = incidentRepository.closeIncident(
-        connection,
-        input.incidentId(),
-        reason,
-        now,
-        input.expectedRevision()
-      );
-
-      if (!closed) {
-        throw new DomainException(
-          ErrorCode.VERSION_CONFLICT,
-          "Incident closure failed. Refresh and try again"
-        );
-      }
-
-      IncidentTimelineRepository.IncidentEvent event =
-        new IncidentTimelineRepository.IncidentEvent(
-          UUID.randomUUID().toString(),
-          input.incidentId(),
-          null,
-          operatorId,
-          "INCIDENT_CLOSED",
-          "Incident closed: " + reason,
-          null,
-          now
-        );
-
-      timelineRepository.create(connection, event);
-
-      IncidentRepository.Incident updatedIncident =
-        incidentRepository.findById(
-          connection,
-          input.incidentId()
-        );
-
-      return toView(updatedIncident);
-    
-    }
-  }
-
-  // Convert the database record into a response DTO.
-  private IncidentView toView(
-    IncidentRepository.Incident incident) {
-
+  static IncidentView view(IncidentRepository.Incident x) {
     return new IncidentView(
-      incident.id(),
-      incident.citizenId(),
-      Category.valueOf(incident.category()),
-      incident.address(),
-      incident.description(),
-      incident.latitude(),
-      incident.longitude(),
-      Priority.valueOf(incident.priority()),
-      IncidentState.valueOf(incident.state()),
-      incident.publicResolutionReason(),
-      incident.createdAt(),
-      incident.updatedAt(),
-      incident.closedAt(),
-      incident.revision()
-    );
+        x.id(),
+        x.citizenId(),
+        Category.valueOf(x.category()),
+        x.address(),
+        x.description(),
+        x.latitude(),
+        x.longitude(),
+        Priority.valueOf(x.priority()),
+        IncidentState.valueOf(x.state()),
+        x.publicResolutionReason(),
+        x.createdAt(),
+        x.updatedAt(),
+        x.closedAt(),
+        x.revision());
   }
 }
-

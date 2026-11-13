@@ -1,0 +1,41 @@
+[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] emergency-help-network                                             [pom]
+[INFO] common                                                             [jar]
+[INFO] server                                                             [jar]
+[INFO] client                                                             [jar]
+[INFO] 
+[INFO] ----------------< lk.ac.ruh.eng:emergency-help-network >----------------
+[INFO] Building emergency-help-network 1.0.0-SNAPSHOT                     [1/4]
+[INFO]   from pom.xml
+[INFO] --------------------------------[ pom ]---------------------------------
+[INFO] 
+[INFO] ------------------------< lk.ac.ruh.eng:common >------------------------
+[INFO] Building common 1.0.0-SNAPSHOT                                     [2/4]
+[INFO]   from common\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] ------------------------< lk.ac.ruh.eng:server >------------------------
+[INFO] Building server 1.0.0-SNAPSHOT                                     [3/4]
+[INFO]   from server\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] ------------------------< lk.ac.ruh.eng:client >------------------------
+[INFO] Building client 1.0.0-SNAPSHOT                                     [4/4]
+[INFO]   from client\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary for emergency-help-network 1.0.0-SNAPSHOT:
+[INFO] 
+[INFO] emergency-help-network ............................. SUCCESS [  0.002 s]
+[INFO] common ............................................. SUCCESS [  0.001 s]
+[INFO] server ............................................. SUCCESS [  0.000 s]
+[INFO] client ............................................. SUCCESS [  0.001 s]
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  0.146 s
+[INFO] Finished at: 2026-11-13T15:38:24+05:30
+[INFO] ------------------------------------------------------------------------

@@ -26,6 +26,18 @@ erDiagram
 
 Partial unique indexes cover assignments in OFFERED, ACCEPTED, EN_ROUTE and ARRIVED: one active assignment per team and one per incident/service. Indexes support citizen history, incident state/priority, team service/availability, assignment history and timelines. State transitions, actor role consistency and cross-table service equality still need business validation in Members 2/3; database enum checks alone do not enforce those workflows.
 
-Only users/teams repositories are implemented at this stage. Schema for the entire application is ready, but no incident or assignment service is exposed. Startup presence is OFFLINE until login. Future startup reconciliation must derive BUSY from active assignments without releasing disconnected reservations (Member 3).
+Users, teams, incidents, assignments, timeline and processed-request access are implemented for Member 2. Incident/report/offer/cancellation/rejection services are exposed with public DTOs. Acceptance/progress/closure remain Member 3 work. Startup presence is OFFLINE until login. Future startup reconciliation must derive BUSY from active assignments without releasing disconnected reservations (Member 3).
 
 Seed creates operator, citizen1, citizen2, police1, ambulance1, fire1, fire2 and four corresponding teams. Every default password: DemoPass123! (fictional local/LAN demo only). Re-running seed adds missing accounts/teams, never overwrites existing hashes or availability. It does not create incidents.
+
+## Member 2 transaction usage
+
+No columns/tables changed, so V001 remains unchanged and no artificial V002 migration was introduced. New mutations use the existing full schema.
+
+- CREATE_INCIDENT writes incidents + incident_events + processed_requests in one transaction.
+- ASSIGN_TEAM writes OFFERED, increments team revision and sets BUSY, sets/touches incident ACTIVE and increments its revision, and writes the public event + processed response atomically.
+- CANCEL_ASSIGNMENT checks assignment/incident/team revisions, updates only OFFERED/ACCEPTED to CANCELLED, releases AVAILABLE and increments team/incident revisions, stores the private reason in internal_note, and saves the processed response atomically.
+- SET_TEAM_AVAILABILITY permits AVAILABLE/UNAVAILABLE only without active assignments. REJECT_INCIDENT checks REPORTED and no assignment history. SET_PRIORITY rejects terminal incidents.
+- Presence is session-derived. A disconnected team with an offer stays BUSY. Public DTOs do not serialize internal_note/reason columns.
+
+Fresh demo databases are used in this checkout. The original snapshot's noncanonical processed-request fingerprints are not migrated; do not silently import an old snapshot database and assume replay compatibility. Keep the original database backed up and reconcile any real pending test requests before changing implementations.

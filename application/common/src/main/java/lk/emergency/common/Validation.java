@@ -49,4 +49,23 @@ public final class Validation {
     if (node == null || !node.isObject() || !node.isEmpty())
       throw new DomainException(VALIDATION_ERROR, "Expected empty payload");
   }
+
+  public static long revision(Long revision) {
+    if (revision == null || revision < 0)
+      throw new DomainException(
+          VALIDATION_ERROR, "An explicit nonnegative expected revision is required");
+    return revision;
+  }
+
+  public static int offset(Integer value) {
+    if (value != null && value < 0)
+      throw new DomainException(VALIDATION_ERROR, "Offset cannot be negative");
+    return value == null ? 0 : value;
+  }
+
+  public static int limit(Integer value) {
+    if (value != null && (value < 1 || value > 5))
+      throw new DomainException(VALIDATION_ERROR, "Limit must be 1–5");
+    return value == null ? 5 : value;
+  }
 }

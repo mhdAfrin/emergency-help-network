@@ -3,7 +3,7 @@
 University of Ruhuna · Faculty of Engineering · EC5205 Operating Systems & Network Programming.
 Academic demonstration — no real emergency dispatch.
 
-Member 1 implements networking, SQLite, authentication and reusable transaction foundations. Incident reporting/assignment/progress are deliberately reserved for the next sequential members. See docs/handoff/MEMBER1-CHECKLIST.md and docs/handoff/HANDOFF.md.
+Member 1 foundations and Member 2 reporting/assignment are implemented. Responder progress, closure and recovery remain Member 3 work. See docs/handoff/MEMBER1-CHECKLIST.md and docs/handoff/HANDOFF.md.
 
 ## Build and run (PowerShell)
 
@@ -30,7 +30,7 @@ The optional .local/tools/ folder on this machine contains a checksum-verified J
 
 ## What to try
 
-Log in to several separate clients. Citizen: identity, PING, logout, citizen registration from startup. Operator: list teams including connection presence; private test event while the socket reader runs independently. Responder: own team only. Logging the same user into another client notifies and closes the previous session. Use Ping within 60 seconds during this foundation demo; automated heartbeat/reconnect is Member 3 work.
+Log in to several separate clients. Citizen: report/list/filter/detail/public timeline. Operator: filter/review/priority/team offers/cancel/reject. Responder: own team/availability/current offers. All roles retain identity, PING and logout. Logging the same user into another client notifies and closes the previous session. No heartbeat/inactivity policy or automatic reconnect is implemented yet; these remain Member 3 work.
 
 Default connection limit 32; per-session outgoing limit 100 frames; max payload 65,536 bytes. config/server.properties can change host, port, maxConnections (1–200), and database path. All application logic is Java; no browser or GUI.
 
@@ -63,4 +63,4 @@ If bind fails, another server may own the port. If login fails, run --seed using
 
 For source handoff/submission, exclude .local/, target/ and local configuration; .local/tools/ contains large local JDK/build caches. Keep the Maven wrapper, source, POMs and docs. The wrapper is Apache-generated with one Windows quoting fix for cache paths containing spaces; its distribution checksum is pinned.
 
-No commits, pushes, PRs or fictitious member identities were created. Initialize the shared repository under the group's real accounts, review Member 1 work, then start Member 2 from the merged result.
+This correction checkout already tracks Member 2's existing member2-submission-snapshot branch. No new commit/push was created by the repair session. Review the Member 2 checklist and PUSH-MEMBER2.md before publishing; Member 3 continues only after review/merge.

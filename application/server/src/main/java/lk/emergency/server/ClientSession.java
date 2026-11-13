@@ -86,8 +86,7 @@ public final class ClientSession implements AutoCloseable {
         send(router.route(this, request));
       }
     } catch (IOException e) {
-      System.err.println("Client connection error: " + e.getMessage());
-      e.printStackTrace();
+      // Invalid frames and ordinary disconnects terminate only this session.
     } finally {
       if (finishing && writer != null)
         try {

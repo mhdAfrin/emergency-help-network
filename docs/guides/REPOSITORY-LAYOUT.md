@@ -42,3 +42,7 @@ The previously crowded root's application files were moved together into applica
 Configuration defaults are still relative to the Maven working directory: config/server.properties (with legacy server.properties fallback) and .local/data/emergency.db. The smoke harness now writes its evidence to the top-level docs/verification/evidence/ folder. Use the updated README commands; the previous root-level wrapper and scripts paths have moved.
 
 No Git initialization, commit, push or PR was performed.
+
+## Current correction checkout
+
+member2-fixed/ is a separate repository beside member1-foundation/ and member2-review/. Its root still contains application/, docs/, .gitignore and README.md. Current smoke evidence is in docs/verification/evidence/member2-fixed/process-smoke. Historical relocation/checksum statements above describe the original Member 1 organization; fresh Member 2 demo databases are isolated rather than copied over existing user records.
