@@ -247,4 +247,82 @@ public final class IncidentService {
         x.closedAt(),
         x.revision());
   }
+
+  IncidentView closeIncident(Connection c, String actor, IncidentClosureInput input)
+      throws Exception {
+    long revision = Validation.revision(input.expectedRevision());
+    String reason = Validation.text(input.resolutionReason(), 1, 500, "Public resolution");
+    var incident = mutable(c, input.incidentId(), revision);
+    if (!incident.state().equals("ACTIVE"))
+      throw new DomainException(INVALID_TRANSITION, "Only ACTIVE incidents can be closed");
+    try (var p =
+        c.prepareStatement(
+            "SELECT SUM(CASE WHEN state='COMPLETED' THEN 1 ELSE 0 END),SUM(CASE WHEN state IN"
+                + " ('OFFERED','ACCEPTED','EN_ROUTE','ARRIVED') THEN 1 ELSE 0 END) FROM assignments"
+                + " WHERE incident_id=?")) {
+      p.setString(1, incident.id());
+      try (var rows = p.executeQuery()) {
+        rows.next();
+        if (rows.getInt(1) < 1 || rows.getInt(2) > 0)
+          throw new DomainException(
+              INVALID_TRANSITION,
+              "Closure requires completed assistance and every assignment terminal");
+      }
+    }
+    String now = Instant.now().toString();
+    try (var p =
+        c.prepareStatement(
+            "UPDATE incidents SET"
+                + " state='CLOSED',public_resolution_reason=?,closed_at=?,updated_at=?,revision=revision+1"
+                + " WHERE id=? AND revision=? AND state='ACTIVE'")) {
+      p.setString(1, reason);
+      p.setString(2, now);
+      p.setString(3, now);
+      p.setString(4, incident.id());
+      p.setLong(5, revision);
+      MutationSupport.requireUpdated(p.executeUpdate());
+    }
+    event(
+        c, incident.id(), null, actor, "INCIDENT_CLOSED", "Incident closed: " + reason, null, now);
+    return view(incidents.findById(c, incident.id()));
+  }
+
+  public com.fasterxml.jackson.databind.JsonNode detailPayload(
+      String user, Role role, IncidentQuery query) {
+    var payload =
+        (com.fasterxml.jackson.databind.node.ObjectNode) Json.tree(details(user, role, query));
+    if (role == Role.OPERATOR) {
+      var notes =
+          db.call(
+              c -> {
+                List<Map<String, Object>> result = new ArrayList<>();
+                try (var p =
+                    c.prepareStatement(
+                        "SELECT id,event_type,internal_note,created_at FROM incident_events WHERE"
+                            + " incident_id=? ORDER BY created_at,id LIMIT 10 OFFSET ?")) {
+                  p.setString(1, query.id());
+                  p.setInt(2, Validation.offset(query.timelineOffset()));
+                  try (var rows = p.executeQuery()) {
+                    while (rows.next()) {
+                      String note = rows.getString(3);
+                      if (note != null)
+                        result.add(
+                            Map.of(
+                                "id",
+                                rows.getString(1),
+                                "eventType",
+                                rows.getString(2),
+                                "internalNote",
+                                note,
+                                "createdAt",
+                                rows.getString(4)));
+                    }
+                  }
+                }
+                return result;
+              });
+      payload.set("operationalNotes", Json.tree(notes));
+    }
+    return payload;
+  }
 }

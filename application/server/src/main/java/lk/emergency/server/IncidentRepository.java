@@ -218,7 +218,11 @@ public final class IncidentRepository {
     List<Incident> result = new ArrayList<>();
     String sql =
         "SELECT * FROM incidents WHERE (? IS NULL OR citizen_id=?) AND (? IS NULL OR state=?) AND"
-            + " (? IS NULL OR priority=?) ORDER BY created_at DESC,id DESC LIMIT ? OFFSET ?";
+            + " (? IS NULL OR priority=?)"
+            + (Boolean.TRUE.equals(filter.history())
+                ? " AND state IN ('CLOSED','REJECTED')"
+                : filter.state() == null ? " AND state IN ('REPORTED','ACTIVE')" : "")
+            + " ORDER BY created_at DESC,id DESC LIMIT ? OFFSET ?";
     try (var p = c.prepareStatement(sql)) {
       p.setString(1, owner);
       p.setString(2, owner);

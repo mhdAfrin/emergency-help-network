@@ -19,6 +19,21 @@ public final class ClientSession implements AutoCloseable {
   private volatile long writingSince;
   private volatile boolean finishing;
   private Thread writer;
+  private final long inactivityMillis;
+  private volatile long lastInbound = System.nanoTime();
+  private volatile SnapshotService.Frozen snapshot;
+
+  public SnapshotService.Frozen snapshot() {
+    return snapshot;
+  }
+
+  public void snapshot(SnapshotService.Frozen value) {
+    snapshot = value;
+  }
+
+  public void clearSnapshot() {
+    snapshot = null;
+  }
 
   public ClientSession(
       Socket socket,
@@ -26,6 +41,17 @@ public final class ClientSession implements AutoCloseable {
       SessionRegistry registry,
       ScheduledExecutorService watchdog,
       long writeTimeoutMillis) {
+    this(socket, router, registry, watchdog, writeTimeoutMillis, 45000);
+  }
+
+  public ClientSession(
+      Socket socket,
+      RequestRouter router,
+      SessionRegistry registry,
+      ScheduledExecutorService watchdog,
+      long writeTimeoutMillis,
+      long inactivityMillis) {
+    this.inactivityMillis = inactivityMillis;
     this.socket = socket;
     this.router = router;
     this.registry = registry;
@@ -72,6 +98,13 @@ public final class ClientSession implements AutoCloseable {
       deadline =
           watchdog.scheduleAtFixedRate(
               () -> {
+                SnapshotService.Frozen lease = snapshot;
+                if (lease != null && lease.expiresAt() < System.nanoTime()) clearSnapshot();
+                if (System.nanoTime() - lastInbound
+                    > TimeUnit.MILLISECONDS.toNanos(inactivityMillis)) {
+                  close();
+                  return;
+                }
                 long since = writingSince;
                 if (since != 0
                     && System.nanoTime() - since
@@ -83,6 +116,7 @@ public final class ClientSession implements AutoCloseable {
       while (!closed.get() && !finishing) {
         Envelope request = FrameCodec.read(socket.getInputStream());
         if (request == null) break;
+        lastInbound = System.nanoTime();
         send(router.route(this, request));
       }
     } catch (IOException e) {

@@ -12,8 +12,22 @@ public record Envelope(
     String eventId,
     JsonNode payload,
     Boolean ok,
-    ProtocolError error) {
+    ProtocolError error,
+    String epoch,
+    Long sequence) {
   public record ProtocolError(ErrorCode code, String message) {}
+
+  public Envelope(
+      int version,
+      Kind kind,
+      String type,
+      String requestId,
+      String eventId,
+      JsonNode payload,
+      Boolean ok,
+      ProtocolError error) {
+    this(version, kind, type, requestId, eventId, payload, ok, error, null, null);
+  }
 
   public static Envelope request(String type, String id, Object data) {
     return new Envelope(1, Kind.REQUEST, type, id, null, Json.tree(data), null, null);
