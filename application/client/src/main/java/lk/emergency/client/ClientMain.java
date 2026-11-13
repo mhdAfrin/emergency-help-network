@@ -13,14 +13,19 @@ import lk.emergency.common.Dtos.*;
 /** Menu/input stays on main; ConnectionManager owns the independent reader/writer. */
 public final class ClientMain {
   private final ConsoleIO io;
-  private final ConnectionManager connection;
+  private final ReconnectingClient connection;
+  private final LiveState live;
+  private final LocalJournal journal;
   private final PendingActions pending;
   private UserView user;
 
-  private ClientMain(ConsoleIO io, ConnectionManager connection) {
+  private ClientMain(
+      ConsoleIO io, ReconnectingClient connection, LiveState live, LocalJournal journal) {
     this.io = io;
     this.connection = connection;
-    pending = new PendingActions(connection);
+    this.live = live;
+    this.journal = journal;
+    pending = new PendingActions(connection, journal);
   }
 
   public static void main(String[] args) {
@@ -33,8 +38,18 @@ public final class ClientMain {
       if (host.isEmpty()) host = "127.0.0.1";
       String raw = io.ask("Server port [5050]: ").strip();
       int port = raw.isEmpty() ? 5050 : Integer.parseInt(raw);
-      try (ConnectionManager connection = new ConnectionManager(host, port, io::event)) {
-        new ClientMain(io, connection).run();
+      LiveState live = new LiveState();
+      LocalJournal journal =
+          new LocalJournal(java.nio.file.Path.of(".local/client"), host + ":" + port);
+      try (ReconnectingClient connection =
+          new ReconnectingClient(
+              host,
+              port,
+              event -> {
+                if (live.accept(event)) io.event(event);
+              },
+              io::print)) {
+        new ClientMain(io, connection, live, journal).run();
       }
     } catch (EOFException e) {
       /* Normal console EOF. */
@@ -44,11 +59,18 @@ public final class ClientMain {
   }
 
   private void run() throws IOException {
-    while (!connection.isClosed()) {
+    while (true) {
+      if (user != null && !connection.authenticated()) {
+        user = null;
+        io.print(
+            "Login again when the server connection returns. Saved drafts/pending IDs are"
+                + " retained.");
+      }
       menu();
       String action = io.ask("> ").strip();
       if (action.equals("0")) break;
       try {
+        if (user != null && !connection.authenticated()) user = null;
         if (user == null) startup(action);
         else authenticated(action);
       } catch (TimeoutException e) {
@@ -56,14 +78,15 @@ public final class ClientMain {
       } catch (RemoteFailure e) {
         io.print(e.code + ": " + e.getMessage());
         if (e.code == ErrorCode.UNAUTHENTICATED) user = null;
+      } catch (EOFException e) {
+        throw e;
+      } catch (IOException e) {
+        io.print(e.getMessage());
+        if (!connection.authenticated()) user = null;
       } catch (IllegalArgumentException e) {
         io.print("Invalid choice or numeric value; review the displayed options.");
       }
     }
-    if (connection.isClosed())
-      io.print(
-          "Disconnected. Automatic reconnect is reserved for Member 3. Unconfirmed outcomes must be"
-              + " reconciled, not reported as failed.");
   }
 
   private void menu() {
@@ -75,11 +98,15 @@ public final class ClientMain {
     String actions =
         switch (user.role()) {
           case CITIZEN ->
-              " | 3 Report incident | 4 My incidents/filter | 5 Details/services/timeline";
+              " | 3 Report incident | 4 My active incidents/filter | 5 Details/services/timeline |"
+                  + " 6 History";
           case OPERATOR ->
               " | 3 Teams/filter | 4 Private test event | 5 Incidents/filter | 6 Details/timeline |"
-                  + " 7 Set priority | 8 Assign team | 10 Cancel assignment | 11 Reject report";
-          case RESPONDER -> " | 3 My team | 4 Set availability | 5 My offers/current assignment";
+                  + " 7 Set priority | 8 Assign team | 10 Cancel assignment | 11 Reject report | 12"
+                  + " Close incident | 13 History";
+          case RESPONDER ->
+              " | 3 My team | 4 Set availability | 5 My offers/current assignment | 6 Accept | 7"
+                  + " Decline | 8 Next progress | 10 History | 11 Assignment timeline";
         };
     io.print(common + actions + " | 90 Pending actions | 9 Logout | 0 Exit");
   }
@@ -96,9 +123,42 @@ public final class ClientMain {
                       io.password(),
                       io.ask("Synthetic contact (optional): "))));
       case "2" -> {
+        live.begin();
         JsonNode response = read("LOGIN", new Login(io.ask("Username: "), io.password()));
-        user = Json.MAPPER.treeToValue(response, UserView.class);
+        UserView logged = Json.MAPPER.treeToValue(response, UserView.class);
+        try {
+          boolean synchronizedState = false;
+          for (int attempt = 0; attempt < 3; attempt++) {
+            try {
+              live.synchronize(connection, logged);
+              synchronizedState = true;
+              break;
+            } catch (IOException e) {
+              if (attempt == 2) throw e;
+            }
+          }
+          if (!synchronizedState) throw new IOException("Please log in and synchronize again");
+        } catch (IOException | TimeoutException failure) {
+          try {
+            connection.call("LOGOUT", Map.of());
+          } catch (Exception ignored) {
+          }
+          throw failure;
+        }
+        user = logged;
         io.result(response);
+        io.print("Authorized snapshot synchronized. Recovered service states:");
+        for (JsonNode assignment : live.assignments())
+          io.print(
+              assignment.path("serviceType").asText()
+                  + ": "
+                  + assignment.path("state").asText()
+                  + " | "
+                  + assignment.path("id").asText());
+        int saved = pending.list(user.id()).size();
+        if (saved > 0)
+          io.print(
+              saved + " saved uncertain action(s). Use menu 90 to reconcile the original IDs.");
       }
       case "3" -> io.result(read("PING", Map.of()));
       default -> io.print("Choose a displayed action.");
@@ -129,6 +189,7 @@ public final class ClientMain {
           case "3" -> report();
           case "4" -> listIncidents();
           case "5" -> details();
+          case "6" -> history();
           default -> io.print("Choose a displayed action.");
         }
       }
@@ -142,6 +203,8 @@ public final class ClientMain {
           case "8" -> assign();
           case "10" -> cancel();
           case "11" -> reject();
+          case "12" -> closeIncident();
+          case "13" -> history();
           default -> io.print("Choose a displayed action.");
         }
       }
@@ -150,6 +213,11 @@ public final class ClientMain {
           case "3" -> io.result(read("LIST_TEAMS", Map.of()));
           case "4" -> availability();
           case "5" -> io.result(read("LIST_ASSIGNMENTS", new AssignmentFilter(0, 5)));
+          case "6" -> respond(true);
+          case "7" -> respond(false);
+          case "8" -> progress();
+          case "10" -> history();
+          case "11" -> assignmentTimeline();
           default -> io.print("Choose a displayed action.");
         }
       }
@@ -163,6 +231,7 @@ public final class ClientMain {
   private Envelope checked(Envelope response) {
     if (!Boolean.TRUE.equals(response.ok()))
       throw new RemoteFailure(response.error().code(), response.error().message());
+    live.response(response);
     return response;
   }
 
@@ -178,20 +247,50 @@ public final class ClientMain {
   }
 
   private void report() throws IOException, TimeoutException {
+    if (pending.list(user.id()).stream().anyMatch(t -> t.request().type().equals("CREATE_INCIDENT"))
+        && !io.ask(
+                "A report is unconfirmed; use menu 90 to reconcile it. Start a different report?"
+                    + " y/N: ")
+            .equalsIgnoreCase("y")) return;
     io.print(Validation.DISCLAIMER);
-    io.print("Categories: MEDICAL, ROAD_ACCIDENT, FIRE, CRIME, OTHER");
-    Category category = Category.valueOf(io.ask("Category: ").strip().toUpperCase(Locale.ROOT));
-    String address = io.ask("Address/landmark: "), description = io.ask("Description: ");
-    String lat = io.ask("Latitude (optional; Enter to omit): ").strip(),
-        lon = io.ask("Longitude (optional; Enter to omit): ").strip();
+    LocalJournal.Draft saved = journal.draft(user.id());
+    if (saved != null && !io.ask("Resume your saved unsent report? y/N: ").equalsIgnoreCase("y"))
+      saved = null;
+    LocalJournal.Draft draft = saved == null ? new LocalJournal.Draft("", "", "", "", "") : saved;
+    String category =
+        draftValue("Category MEDICAL/ROAD_ACCIDENT/FIRE/CRIME/OTHER", draft.category());
+    draft =
+        new LocalJournal.Draft(
+            category, draft.address(), draft.description(), draft.latitude(), draft.longitude());
+    journal.draft(user.id(), draft);
+    String address = draftValue("Address/landmark", draft.address());
+    draft =
+        new LocalJournal.Draft(
+            category, address, draft.description(), draft.latitude(), draft.longitude());
+    journal.draft(user.id(), draft);
+    String description = draftValue("Description", draft.description());
+    draft =
+        new LocalJournal.Draft(category, address, description, draft.latitude(), draft.longitude());
+    journal.draft(user.id(), draft);
+    String latitude = draftValue("Latitude (optional)", draft.latitude());
+    draft = new LocalJournal.Draft(category, address, description, latitude, draft.longitude());
+    journal.draft(user.id(), draft);
+    String longitude = draftValue("Longitude (optional)", draft.longitude());
+    draft = new LocalJournal.Draft(category, address, description, latitude, longitude);
+    journal.draft(user.id(), draft);
     mutate(
         "CREATE_INCIDENT",
         new IncidentInput(
-            category,
+            Category.valueOf(category.toUpperCase(Locale.ROOT)),
             address,
             description,
-            lat.isEmpty() ? null : Double.valueOf(lat),
-            lon.isEmpty() ? null : Double.valueOf(lon)));
+            latitude.isBlank() ? null : Double.valueOf(latitude),
+            longitude.isBlank() ? null : Double.valueOf(longitude)));
+  }
+
+  private String draftValue(String name, String saved) throws IOException {
+    String value = io.ask(name + (saved.isEmpty() ? ": " : " [Enter keeps saved; - clears]: "));
+    return value.equals("-") ? "" : value.isEmpty() ? saved : value;
   }
 
   private void listIncidents() throws IOException, TimeoutException {
@@ -354,7 +453,9 @@ public final class ClientMain {
               + " | "
               + ticket.request().type()
               + " | "
-              + (ticket.response().isDone() ? "Outcome available" : "Confirmation pending"));
+              + (ticket.response().isCompletedExceptionally()
+                  ? "Unconfirmed; retry after login"
+                  : ticket.response().isDone() ? "Outcome available" : "Confirmation pending"));
     String id = io.ask("Request ID (Enter to return): ").strip();
     if (id.isEmpty()) return;
     var ticket = tickets.stream().filter(x -> x.request().requestId().equals(id)).findFirst();
@@ -365,9 +466,106 @@ public final class ClientMain {
     io.print("Retained input:");
     io.result(ticket.get().request().payload());
     boolean retry = false;
-    if (!ticket.get().response().isDone())
+    if (!ticket.get().response().isDone() || ticket.get().response().isCompletedExceptionally())
       retry = io.ask("Retry unchanged request with SAME ID? y/N: ").equalsIgnoreCase("y");
     showMutation(checked(pending.resolve(user.id(), id, retry, Duration.ofSeconds(10))));
+  }
+
+  private JsonNode currentOffer() throws IOException, TimeoutException {
+    JsonNode offers = read("LIST_ASSIGNMENTS", new AssignmentFilter(0, 5));
+    if (offers.isEmpty()) {
+      io.print("No active assignment.");
+      return null;
+    }
+    JsonNode offer = offers.get(0);
+    io.result(offer);
+    return offer;
+  }
+
+  private void respond(boolean accept) throws IOException, TimeoutException {
+    JsonNode offer = currentOffer();
+    if (offer == null) return;
+    JsonNode a = offer.get("assignment"), incident = offer.get("incident");
+    if (!a.get("state").asText().equals("OFFERED")) {
+      io.print("Only an OFFERED assignment can be accepted or declined.");
+      return;
+    }
+    JsonNode own = read("LIST_TEAMS", Map.of()).get(0);
+    String reason =
+        io.ask(accept ? "Private note (optional): " : "Private decline reason (required): ");
+    if (confirm())
+      mutate(
+          "RESPOND_ASSIGNMENT",
+          new AssignmentResponseInput(
+              a.get("id").asText(),
+              accept ? AssignmentDecision.ACCEPT : AssignmentDecision.DECLINE,
+              reason,
+              a.get("revision").asLong(),
+              incident.get("revision").asLong(),
+              own.get("revision").asLong()));
+  }
+
+  private void progress() throws IOException, TimeoutException {
+    JsonNode offer = currentOffer();
+    if (offer == null) return;
+    JsonNode a = offer.get("assignment"), incident = offer.get("incident");
+    AssignmentState next =
+        switch (AssignmentState.valueOf(a.get("state").asText())) {
+          case ACCEPTED -> AssignmentState.EN_ROUTE;
+          case EN_ROUTE -> AssignmentState.ARRIVED;
+          case ARRIVED -> AssignmentState.COMPLETED;
+          default -> null;
+        };
+    if (next == null) {
+      io.print("Accept the offer before sending ordered progress.");
+      return;
+    }
+    io.print("Next valid progress: " + next);
+    String note = io.ask("Private progress note (optional): ");
+    JsonNode own = read("LIST_TEAMS", Map.of()).get(0);
+    if (confirm())
+      mutate(
+          "UPDATE_ASSIGNMENT_STATUS",
+          new AssignmentStatusInput(
+              a.get("id").asText(),
+              next,
+              note,
+              a.get("revision").asLong(),
+              incident.get("revision").asLong(),
+              own.get("revision").asLong()));
+  }
+
+  private void closeIncident() throws IOException, TimeoutException {
+    String id = io.ask("Incident ID: ").strip();
+    JsonNode details = read("GET_INCIDENT", new IncidentQuery(id, null, 0, 0));
+    io.result(details);
+    String reason = io.ask("Public resolution reason (required): ");
+    if (confirm())
+      mutate(
+          "CLOSE_INCIDENT",
+          new IncidentClosureInput(id, reason, details.get("incident").get("revision").asLong()));
+  }
+
+  private void history() throws IOException, TimeoutException {
+    for (int offset = 0; ; offset += 5) {
+      JsonNode page =
+          user.role() == Role.RESPONDER
+              ? read("LIST_ASSIGNMENTS", new AssignmentFilter(offset, 5, true))
+              : read("LIST_INCIDENTS", new IncidentFilter(null, null, offset, 5, true));
+      io.result(page);
+      if (page.size() < 5
+          || !io.ask("N next history page, Enter to return: ").equalsIgnoreCase("n")) break;
+    }
+  }
+
+  private void assignmentTimeline() throws IOException, TimeoutException {
+    String id = io.ask("Own assignment ID: ").strip();
+    for (int offset = 0; ; offset += 10) {
+      JsonNode page = read("GET_ASSIGNMENT", new AssignmentQuery(id, offset));
+      io.result(page);
+      if (!page.get("more").asBoolean()
+          || !io.ask("N next timeline page, Enter to return: ").equalsIgnoreCase("n")) break;
+    }
   }
 
   private boolean confirm() throws IOException {

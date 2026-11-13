@@ -46,3 +46,7 @@ No Git initialization, commit, push or PR was performed.
 ## Current correction checkout
 
 member2-fixed/ is a separate repository beside member1-foundation/ and member2-review/. Its root still contains application/, docs/, .gitignore and README.md. Current smoke evidence is in docs/verification/evidence/member2-fixed/process-smoke. Historical relocation/checksum statements above describe the original Member 1 organization; fresh Member 2 demo databases are isolated rather than copied over existing user records.
+
+## Finalized checkout
+
+member3-finalized/ is a separate repository beside the preserved earlier member folders. Its root contains application/, docs/, .gitignore and README.md plus hidden Git metadata. Current tests/smoke/load evidence is in docs/verification/evidence/member3-finalized/. Local client journals, tools, test datasets, clean-export checks and source/runtime packages are ignored under application/.local/.

@@ -24,9 +24,9 @@ erDiagram
 | incident_events | Incident, optional assignment, actor FKs; event type; public message; separate private internal note; timestamp |
 | processed_requests | User/request ID composite PK; canonical request hash; original success envelope JSON; timestamp |
 
-Partial unique indexes cover assignments in OFFERED, ACCEPTED, EN_ROUTE and ARRIVED: one active assignment per team and one per incident/service. Indexes support citizen history, incident state/priority, team service/availability, assignment history and timelines. State transitions, actor role consistency and cross-table service equality still need business validation in Members 2/3; database enum checks alone do not enforce those workflows.
+Partial unique indexes cover assignments in OFFERED, ACCEPTED, EN_ROUTE and ARRIVED: one active assignment per team and one per incident/service. Indexes support citizen history, incident state/priority, team service/availability, assignment history and timelines. State transitions, actor role consistency and cross-table service equality are enforced by the Member 2/3 business services; database enum checks alone do not enforce those workflows.
 
-Users, teams, incidents, assignments, timeline and processed-request access are implemented for Member 2. Incident/report/offer/cancellation/rejection services are exposed with public DTOs. Acceptance/progress/closure remain Member 3 work. Startup presence is OFFLINE until login. Future startup reconciliation must derive BUSY from active assignments without releasing disconnected reservations (Member 3).
+Users, teams, incidents, assignments, timeline and processed-request access are implemented for Member 2. Incident/report/offer/cancellation/rejection services are exposed with public DTOs. Acceptance/progress/closure are implemented in Member 3. Startup presence is OFFLINE until login. Startup reconciliation now derives BUSY from active assignments without releasing disconnected reservations.
 
 Seed creates operator, citizen1, citizen2, police1, ambulance1, fire1, fire2 and four corresponding teams. Every default password: DemoPass123! (fictional local/LAN demo only). Re-running seed adds missing accounts/teams, never overwrites existing hashes or availability. It does not create incidents.
 
@@ -41,3 +41,11 @@ No columns/tables changed, so V001 remains unchanged and no artificial V002 migr
 - Presence is session-derived. A disconnected team with an offer stays BUSY. Public DTOs do not serialize internal_note/reason columns.
 
 Fresh demo databases are used in this checkout. The original snapshot's noncanonical processed-request fingerprints are not migrated; do not silently import an old snapshot database and assume replay compatibility. Keep the original database backed up and reconcile any real pending test requests before changing implementations.
+
+## Member 3 completion
+
+The full V001 schema already supports final states/history/recovery; no schema edits or artificial migration were needed. Responder transitions, reservation release, incident revision/timeline and processed response commit in one transaction. Closure checks all assignment states and at least one COMPLETED before setting CLOSED/public resolution/closed_at.
+
+Startup reconciles teams to BUSY wherever an active assignment exists and releases only orphaned BUSY rows with no active assignments. Presence remains entirely session-derived. Progress/decline notes stay in assignments.reason and incident_events.internal_note, with public messages separate. Own timelines return only notes written by that responder; operator detail notes remain operator-only. Snapshots contain public active projections, never private notes.
+
+Local client JSON journals are separate from the authoritative SQLite DB. They contain only fictional draft/business request input, keyed by server endpoint/user UUID, with atomic writes and short file locks. They never replace server authorization or store passwords. The source/runnable packages exclude local journals/databases.
