@@ -1,0 +1,143 @@
+
+==============================================================
+EMERGENCY HELP NETWORK
+--------------------------------------------------------------
+Academic demonstration - no real emergency dispatch.
+Server host [127.0.0.1]: Server port [5050]: Connected to server. Login required.
+
+==============================================================
+EMERGENCY HELP NETWORK | SIGN IN
+--------------------------------------------------------------
+  1  Create citizen account
+  2  Login
+  0  Exit
+Choose: Username: Password (visible in this terminal): Welcome, citizen1. Your account reference is 10001.
+Login successful. Your current assignments:
+
+==============================================================
+citizen1 [CITIZEN]
+--------------------------------------------------------------
+  1  Report an incident
+  2  My open reports
+  3  View a report and its progress
+  4  My history
+  5  Account and saved actions
+  6  Logout
+  0  Exit
+Choose: Incident ID:   +-- INCIDENT #10011 --
+  | Category         : Road accident
+  | Location         : Fictional campus gate
+  | Description      : Academic accident example
+  | Priority         : High
+  | Status           : Closed
+  | Resolution       : Public academic resolution
+  | Created          : 14 Nov 2026 10:45:37
+  | Updated          : 14 Nov 2026 10:45:44
+  | Closed           : 14 Nov 2026 10:45:44
+  +------------------------------------------------------------
+Service progress:
+  +-- ASSIGNMENT #10014 --
+  | Incident         : 10011
+  | Team reference   : 10004
+  | Service          : Police
+  | Status           : Completed
+  | Created          : 14 Nov 2026 10:45:38
+  | Updated          : 14 Nov 2026 10:45:43
+  +------------------------------------------------------------
+  +-- ASSIGNMENT #10016 --
+  | Incident         : 10011
+  | Team reference   : 10006
+  | Service          : Ambulance
+  | Status           : Completed
+  | Created          : 14 Nov 2026 10:45:38
+  | Updated          : 14 Nov 2026 10:45:44
+  +------------------------------------------------------------
+  +-- ASSIGNMENT #10018 --
+  | Incident         : 10011
+  | Team reference   : 10008
+  | Service          : Fire rescue
+  | Status           : Declined
+  | Created          : 14 Nov 2026 10:45:38
+  | Updated          : 14 Nov 2026 10:45:39
+  +------------------------------------------------------------
+  +-- ASSIGNMENT #10021 --
+  | Incident         : 10011
+  | Team reference   : 10010
+  | Service          : Fire rescue
+  | Status           : Completed
+  | Created          : 14 Nov 2026 10:45:39
+  | Updated          : 14 Nov 2026 10:45:44
+  +------------------------------------------------------------
+Public timeline:
+  +-- TIMELINE --
+  | Incident         : 10011
+  | Update           : Incident reported by citizen
+  | Created          : 14 Nov 2026 10:45:37
+  +------------------------------------------------------------
+  +-- TIMELINE --
+  | Incident         : 10011
+  | Update           : Priority changed to HIGH
+  | Created          : 14 Nov 2026 10:45:37
+  +------------------------------------------------------------
+  +-- TIMELINE --
+  | Incident         : 10011
+  | Update           : POLICE team offered assistance
+  | Created          : 14 Nov 2026 10:45:38
+  +------------------------------------------------------------
+  +-- TIMELINE --
+  | Incident         : 10011
+  | Update           : AMBULANCE team offered assistance
+  | Created          : 14 Nov 2026 10:45:38
+  +------------------------------------------------------------
+  +-- TIMELINE --
+  | Incident         : 10011
+  | Update           : FIRE_RESCUE team offered assistance
+  | Created          : 14 Nov 2026 10:45:38
+  +------------------------------------------------------------
+  +-- TIMELINE --
+  | Incident         : 10011
+  | Update           : FIRE_RESCUE assignment DECLINED
+  | Created          : 14 Nov 2026 10:45:39
+  +------------------------------------------------------------
+  +-- TIMELINE --
+  | Incident         : 10011
+  | Update           : FIRE_RESCUE team offered assistance
+  | Created          : 14 Nov 2026 10:45:39
+  +------------------------------------------------------------
+  +-- TIMELINE --
+  | Incident         : 10011
+  | Update           : POLICE assignment ACCEPTED
+  | Created          : 14 Nov 2026 10:45:39
+  +------------------------------------------------------------
+  +-- TIMELINE --
+  | Incident         : 10011
+  | Update           : AMBULANCE assignment ACCEPTED
+  | Created          : 14 Nov 2026 10:45:39
+  +------------------------------------------------------------
+  +-- TIMELINE --
+  | Incident         : 10011
+  | Update           : FIRE_RESCUE assignment ACCEPTED
+  | Created          : 14 Nov 2026 10:45:40
+  +------------------------------------------------------------
+T next timeline | Enter to return: 
+==============================================================
+citizen1 [CITIZEN]
+--------------------------------------------------------------
+  1  Report an incident
+  2  My open reports
+  3  View a report and its progress
+  4  My history
+  5  Account and saved actions
+  6  Logout
+  0  Exit
+Choose:   +-- RESULT --
+  | Message          : Logged out
+  +------------------------------------------------------------
+
+==============================================================
+EMERGENCY HELP NETWORK | SIGN IN
+--------------------------------------------------------------
+  1  Create citizen account
+  2  Login
+  0  Exit
+Choose: 

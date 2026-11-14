@@ -1,0 +1,19 @@
+Module | Suite | Tests | Failures | Errors | Skipped
+common | FrameCodecTest | 6 | 0 | 0 | 0
+common | ValidationTest | 12 | 0 | 0 | 0
+server | DatabaseMechanismsTest | 3 | 0 | 0 | 0
+server | FinalWorkflowTest | 13 | 0 | 0 | 0
+server | FoundationIntegrationTest | 7 | 0 | 0 | 0
+server | IncidentValidationTest | 4 | 0 | 0 | 0
+server | Member2IntegrationTest | 20 | 0 | 0 | 0
+server | RevisionTransactionTest | 2 | 0 | 0 | 0
+server | ShortReferenceTest | 2 | 0 | 0 | 0
+server | SlowWriterTest | 2 | 0 | 0 | 0
+client | ConnectionManagerTest | 1 | 0 | 0 | 0
+client | HeartbeatTest | 2 | 0 | 0 | 0
+client | LiveStateTest | 4 | 0 | 0 | 0
+client | LocalJournalTest | 4 | 0 | 0 | 0
+client | PendingActionsTest | 3 | 0 | 0 | 0
+client | RecoveryIntegrationTest | 4 | 0 | 0 | 0
+client | PresentationTest | 3 | 0 | 0 | 0
+TOTAL | | 92 | 0 | 0 | 0

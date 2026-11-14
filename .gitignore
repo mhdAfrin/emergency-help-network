@@ -24,3 +24,6 @@ Thumbs.db
 *.log
 !docs/verification/evidence/**/*.log
 **/.local/
+
+# Intentional current console verification evidence
+!docs/verification/current/**/*.log

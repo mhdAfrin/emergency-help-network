@@ -1,7 +1,0 @@
-lk.emergency.common.FrameCodecTest: tests=6, failures=0, errors=0, skipped=0
-lk.emergency.server.DatabaseMechanismsTest: tests=3, failures=0, errors=0, skipped=0
-lk.emergency.server.FoundationIntegrationTest: tests=7, failures=0, errors=0, skipped=0
-lk.emergency.server.RevisionTransactionTest: tests=2, failures=0, errors=0, skipped=0
-lk.emergency.server.SlowWriterTest: tests=2, failures=0, errors=0, skipped=0
-lk.emergency.client.ConnectionManagerTest: tests=1, failures=0, errors=0, skipped=0
-Total: 21 passed

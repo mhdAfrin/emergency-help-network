@@ -1,71 +1,63 @@
 # Emergency Help Network
 
-**Police · Ambulance · Fire & Rescue**
+Java 21 console project for coordinating fictional Police, Ambulance and Fire & Rescue teams. Academic demonstration only; no real emergency dispatch.
 
-University of Ruhuna, Faculty of Engineering · EC5205 — Operating Systems & Network Programming
+This final edition starts from merged main d3c81ea and implements the user's simplified terminal interface. All three roles have seven main choices, readable result cards, short permanent numeric references and address-only reporting. The original brief is retained in docs/requirements/; the user's later UI/reference changes supersede its old coordinate and menu requirements.
 
-> Academic demonstration — no real emergency dispatch.
+## Run
 
-The complete Java 21 console prototype implements reporting, multi-service offers, responder acceptance/decline, independent progress, reassignment, eligible closure, persistent public/private history and disconnect recovery. It uses real TCP sockets, bounded platform threads, framed JSON and server-owned SQLite.
+1. Double-click **RUN-SERVER.cmd**. It builds if necessary, prepares demo accounts and starts the server. Leave that window open.
+2. Double-click **RUN-CLIENT.cmd** once per user. Login as a different role in each client window. Press Enter for host 127.0.0.1 and port 5050.
 
-## Build and run
+| Role | Demo username | Demo password |
+|---|---|---|
+| Citizen | citizen1 or citizen2 | DemoPass123! |
+| Operator | operator | DemoPass123! |
+| Responder | police1, ambulance1, fire1 or fire2 | DemoPass123! |
 
-From this checkout folder in PowerShell:
+The local ignored Java 21/tool cache supports this machine. On another machine install a Java 21 JDK and set JAVA_HOME. The project never requires a website or graphical toolkit.
+
+## Main menus
+
+| Choice | Citizen | Operator | Responder |
+|---|---|---|---|
+| 1 | Report an incident | Open reports | Current assignment |
+| 2 | My open reports | Assign a team | Accept / decline |
+| 3 | View report / progress | Manage incident | Next progress |
+| 4 | History | Teams / availability | My team / availability |
+| 5 | Account / saved actions | History / account | History / saved actions |
+| 6 | Logout | Logout | Logout |
+| 0 | Exit | Exit | Exit |
+
+Operator Manage groups details, priority, closure, rejection and cancellation. Nothing required for coordination was removed. Ping and recovery work automatically; no diagnostic buttons are needed. Empty lists say "Nothing to show yet". Every prompt expects the answer it displays: a filter is a state/priority name, not another main-menu number.
+
+Reports ask for category, address/landmark and description. No coordinate prompts or coordinate output appear. New accounts, teams, incidents, assignments and timeline rows receive permanent five-digit numeric references beginning at 10000. They are database IDs, not truncated UUIDs or temporary menu aliases. Message retry IDs remain internal; saved actions are selected by menu number.
+
+## Build and verify
+
+From this folder in PowerShell:
 
 ```powershell
-.\application\scripts\project.ps1 build
-.\application\scripts\project.ps1 seed
-.\application\scripts\project.ps1 server
+powershell -NoProfile -ExecutionPolicy Bypass -File .\application\scripts\project.ps1 build
+powershell -NoProfile -ExecutionPolicy Bypass -File .\application\scripts\project.ps1 smoke
+powershell -NoProfile -ExecutionPolicy Bypass -File .\application\scripts\project.ps1 load
+powershell -NoProfile -ExecutionPolicy Bypass -File .\application\scripts\project.ps1 package
 ```
 
-In a separate terminal for each citizen/operator/team:
-
-```powershell
-.\application\scripts\project.ps1 client
-```
-
-The helper uses the local validation JDK when present, otherwise an installed Java 21 JDK via JAVA_HOME/PATH. First build needs internet for the pinned Maven wrapper/dependencies; with a complete cache use `build -Offline`.
-
-Default connection: **127.0.0.1:5050**. Demo password **DemoPass123!** for operator, citizen1, citizen2, police1, ambulance1, fire1 and fire2. Citizen registration also works. Seeding is explicit, repeatable and does not reset saved accounts.
-
-For custom host/port/DB/session limits copy application/config/server.properties.example to application/config/server.properties. Manual JAR/Eclipse launches use **application/** as working directory. Clients never access SQLite. The default DB is application/.local/data/emergency.db; local per-server/user draft and pending-request journals are in application/.local/client/.
-
-## Demonstration
-
-Report → notify operator → set priority → offer several services → accept/decline → replace declined/cancelled offers → EN_ROUTE → ARRIVED → COMPLETED independently → close when all assignments are terminal and at least one completed.
-
-Clients send heartbeat every 15 seconds and detect 45 seconds without inbound frames. Reconnect uses 1/2/4/8/up to 15 seconds with jitter, requires login again and synchronizes an authorized snapshot before applying newer buffered events. BUSY teams remain reserved through disconnect/restart. Report drafts and original uncertain request IDs survive client restart. Menu 90 explicitly reconciles/retries saved requests; it never silently invents a new report ID.
-
-## Verification and delivery
-
-```powershell
-.\application\scripts\project.ps1 smoke
-.\application\scripts\project.ps1 load
-.\application\scripts\project.ps1 package
-```
-
-Smoke uses a real server and six separate console client JVMs, server restart/re-login, closure/history and draft recovery. Load uses 20 authenticated real TCP sessions and measures 50 commit-to-operator-receipt samples with one monotonic clock. Package creates source and runnable JAR ZIPs under ignored application/.local/submission/.
-
-Actual results, including failed intermediate attempts and manual limits, are in [the test report](docs/verification/TEST-RESULTS.md). Separate-laptop LAN, physical keyboard/terminal behavior, Eclipse interaction and lecturer-specific submission requirements must be checked by the group; no claim is made they were performed automatically.
+See [actual results](docs/verification/RESULTS.md). Smoke uses real separate client/server processes and isolated test data; it does not leave an operator running for your manual session. Load measures localhost, not a separate-laptop LAN. Generated packages are under application/.local/submission/ and exclude tools, databases, journals and target output.
 
 ## Documentation
 
-- [Documentation index](docs/README.md)
-- [Architecture/recovery sequence](docs/design/ARCHITECTURE.md), [database](docs/design/DATABASE.md), [protocol](docs/design/PROTOCOL.md), [state diagrams](docs/design/STATE-MACHINES.md)
-- [Setup/Eclipse/LAN](docs/guides/SETUP.md), [complete demo](docs/guides/DEMO.md), [troubleshooting and limits](docs/guides/TROUBLESHOOTING.md)
-- [All 29 Member 3 tasks](docs/handoff/MEMBER3-CHECKLIST.md), [final handoff](docs/handoff/HANDOFF.md), [actual contributions](docs/handoff/CONTRIBUTIONS.md)
-- [Acceptance-test traceability](docs/verification/TRACEABILITY.md), [LAN checklist](docs/verification/LAN-CHECKLIST.md), [submission checklist](docs/submission/CHECKLIST.md)
+- [Setup and terminal display](docs/guides/SETUP.md)
+- [Step-by-step demo](docs/guides/DEMO.md)
+- [Code map: where to edit each feature](docs/guides/CODE-MAP.md)
+- [Architecture](docs/design/ARCHITECTURE.md), [database and IDs](docs/design/DATABASE.md), [protocol](docs/design/PROTOCOL.md), [state rules](docs/design/STATE-MACHINES.md)
+- [LAN and troubleshooting](docs/guides/LAN.md)
 
-## Repository and scope
+## Data and scope
 
-```text
-member3-finalized/
-├── application/   common/, server/, client/, config/, scripts/, Maven wrapper and build
-├── docs/          Requirements, design, verification evidence and delivery guides
-├── .gitignore
-└── README.md
-```
+This separate folder uses a fresh demo database. Earlier project folders and their user records are preserved. Do not copy an older live DB/journal into this edition without a migration plan: existing UUID references are intentionally not rewritten, because changing referenced records and saved responses could break uncertain-request reconciliation. V002 adds the new reference sequence while keeping V001 intact. The 10000-99999 range holds 90,000 global records, including timelines; exhaustion is refused explicitly.
 
-Local JDK/caches/journals/DBs, module target/ directories and generated submission ZIPs are ignored. This independent checkout is on **member3-finalization**, based on Member 2 commit **e858384**. Other member folders are preserved; no commit, push or merge is performed automatically. Merge/review Member 2 before merging this stage into main.
+The client never sends coordinates; optional legacy protocol/database fields remain for existing test/compatibility contracts and are hidden from the interface. Authorization, transactions, revisions, replay protection, service privacy, heartbeat, reconnect/re-login and snapshots remain active. TCP is for trusted fictional localhost/LAN demonstrations, without TLS or real agency connections. Separate-laptop LAN and physical terminal checks remain manual.
 
-This is a fictional trusted-localhost/LAN prototype. TCP is unencrypted; no real agencies, production hosting, arrival guarantees or third-party dispatch services are involved.
+Source changes are uncommitted. No Git commit, push, merge or external upload is performed by this editing session. Use honest assisted-work/review attribution when publishing.

@@ -1,0 +1,2 @@
+PASS: actual RUN-SERVER.cmd seeds and starts; actual RUN-CLIENT.cmd logs in, displays seven-option citizen menu, five-digit account reference and logs out. Isolated temporary config/DB; user server/data untouched.
+Evidence: C:\Users\Afrin\Desktop\5TH SEM\Network Programming\project\EMERGENCY-HELP-NETWORK-FINAL\application\.local\launcher-check\0ae5cb0f4f52418ea161454e3d03bcfa

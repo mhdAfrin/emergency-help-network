@@ -16,7 +16,7 @@ public final class Validation {
       NOTE_MAX = 500,
       MAX_FRAME = 65536,
       QUEUE_CAPACITY = 100;
-  public static final String DISCLAIMER = "Academic demonstration — no real emergency dispatch.";
+  public static final String DISCLAIMER = "Academic demonstration - no real emergency dispatch.";
 
   private Validation() {}
 
@@ -25,13 +25,13 @@ public final class Validation {
     int length = result.codePointCount(0, result.length());
     if (length < min || length > max)
       throw new DomainException(
-          VALIDATION_ERROR, field + " must contain " + min + "–" + max + " characters");
+          VALIDATION_ERROR, field + " must contain " + min + "-" + max + " characters");
     return result;
   }
 
   public static String password(String value) {
     if (value == null || value.length() < PASSWORD_MIN || value.length() > PASSWORD_MAX)
-      throw new DomainException(VALIDATION_ERROR, "Password must contain 8–128 characters");
+      throw new DomainException(VALIDATION_ERROR, "Password must contain 8-128 characters");
     return value;
   }
 
@@ -65,7 +65,7 @@ public final class Validation {
 
   public static int limit(Integer value) {
     if (value != null && (value < 1 || value > 5))
-      throw new DomainException(VALIDATION_ERROR, "Limit must be 1–5");
+      throw new DomainException(VALIDATION_ERROR, "Limit must be 1-5");
     return value == null ? 5 : value;
   }
 }

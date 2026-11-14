@@ -1,0 +1,364 @@
+
+==============================================================
+EMERGENCY HELP NETWORK
+--------------------------------------------------------------
+Academic demonstration - no real emergency dispatch.
+Server host [127.0.0.1]: Server port [5050]: Connected to server. Login required.
+
+==============================================================
+EMERGENCY HELP NETWORK | SIGN IN
+--------------------------------------------------------------
+  1  Create citizen account
+  2  Login
+  0  Exit
+Choose: Username: Password (visible in this terminal): Welcome, fire2. Your account reference is 10009.
+Login successful. Your current assignments:
+
+==============================================================
+fire2 [RESPONDER]
+--------------------------------------------------------------
+  1  My current assignment
+  2  Accept or decline an offer
+  3  Update my progress
+  4  My team and availability
+  5  History and saved actions
+  6  Logout
+  0  Exit
+Choose: 
+[UPDATE 14 Nov 2026 10:45:39] Assignment offered
+  +-- RESULT --
+  Assignment:
+  +-- ASSIGNMENT #10021 --
+  | Incident         : 10011
+  | Team reference   : 10010
+  | Service          : Fire rescue
+  | Status           : Offered
+  | Created          : 14 Nov 2026 10:45:39
+  | Updated          : 14 Nov 2026 10:45:39
+  +------------------------------------------------------------
+  Incident:
+  +-- INCIDENT #10011 --
+  | Category         : Road accident
+  | Location         : Fictional campus gate
+  | Description      : Academic accident example
+  | Priority         : High
+  | Status           : Active
+  | Created          : 14 Nov 2026 10:45:37
+  | Updated          : 14 Nov 2026 10:45:39
+  +------------------------------------------------------------
+  +------------------------------------------------------------
+Choose: 
+[UPDATE 14 Nov 2026 10:45:39] Team updated
+  +-- TEAM #10010 --
+  | Team             : fire2 simulated team
+  | Service          : Fire rescue
+  | Availability     : Busy
+  | Connection       : Online
+  +------------------------------------------------------------
+Choose: 
+==============================================================
+RESPOND TO OFFER
+--------------------------------------------------------------
+  1  Accept
+  2  Decline
+  0  Back
+Choose:   +-- RESULT --
+  Assignment:
+  +-- ASSIGNMENT #10021 --
+  | Incident         : 10011
+  | Team reference   : 10010
+  | Service          : Fire rescue
+  | Status           : Offered
+  | Created          : 14 Nov 2026 10:45:39
+  | Updated          : 14 Nov 2026 10:45:39
+  +------------------------------------------------------------
+  Incident:
+  +-- INCIDENT #10011 --
+  | Category         : Road accident
+  | Location         : Fictional campus gate
+  | Description      : Academic accident example
+  | Priority         : High
+  | Status           : Active
+  | Created          : 14 Nov 2026 10:45:37
+  | Updated          : 14 Nov 2026 10:45:39
+  +------------------------------------------------------------
+  +------------------------------------------------------------
+Private note (optional): Review the displayed values. Confirm? y/N: 
+[UPDATE 14 Nov 2026 10:45:40] Assignment updated
+  +-- RESULT --
+  Incident:
+  +-- INCIDENT #10011 --
+  | Category         : Road accident
+  | Location         : Fictional campus gate
+  | Description      : Academic accident example
+  | Priority         : High
+  | Status           : Active
+  | Created          : 14 Nov 2026 10:45:37
+  | Updated          : 14 Nov 2026 10:45:40
+  +------------------------------------------------------------
+  Assignment:
+  +-- ASSIGNMENT #10021 --
+  | Incident         : 10011
+  | Team reference   : 10010
+  | Service          : Fire rescue
+  | Status           : Accepted
+  | Created          : 14 Nov 2026 10:45:39
+  | Updated          : 14 Nov 2026 10:45:40
+  +------------------------------------------------------------
+  +------------------------------------------------------------
+  +-- ASSIGNMENT #10021 --
+  | Incident         : 10011
+  | Team reference   : 10010
+  | Service          : Fire rescue
+  | Status           : Accepted
+  | Created          : 14 Nov 2026 10:45:39
+  | Updated          : 14 Nov 2026 10:45:40
+  +------------------------------------------------------------
+
+==============================================================
+fire2 [RESPONDER]
+--------------------------------------------------------------
+  1  My current assignment
+  2  Accept or decline an offer
+  3  Update my progress
+  4  My team and availability
+  5  History and saved actions
+  6  Logout
+  0  Exit
+Choose: Connection lost. Reconnecting in the background; login again after connection returns.
+Connected to server. Login required.
+Username: Password (visible in this terminal): Welcome, fire2. Your account reference is 10009.
+Login successful. Your current assignments:
+FIRE_RESCUE: ACCEPTED | 10021
+
+==============================================================
+fire2 [RESPONDER]
+--------------------------------------------------------------
+  1  My current assignment
+  2  Accept or decline an offer
+  3  Update my progress
+  4  My team and availability
+  5  History and saved actions
+  6  Logout
+  0  Exit
+Choose:   +-- RESULT --
+  Assignment:
+  +-- ASSIGNMENT #10021 --
+  | Incident         : 10011
+  | Team reference   : 10010
+  | Service          : Fire rescue
+  | Status           : Accepted
+  | Created          : 14 Nov 2026 10:45:39
+  | Updated          : 14 Nov 2026 10:45:40
+  +------------------------------------------------------------
+  Incident:
+  +-- INCIDENT #10011 --
+  | Category         : Road accident
+  | Location         : Fictional campus gate
+  | Description      : Academic accident example
+  | Priority         : High
+  | Status           : Active
+  | Created          : 14 Nov 2026 10:45:37
+  | Updated          : 14 Nov 2026 10:45:44
+  +------------------------------------------------------------
+  +------------------------------------------------------------
+Next valid progress: EN_ROUTE
+Private progress note (optional): Review the displayed values. Confirm? y/N: 
+[UPDATE 14 Nov 2026 10:45:44] Assignment updated
+  +-- RESULT --
+  Incident:
+  +-- INCIDENT #10011 --
+  | Category         : Road accident
+  | Location         : Fictional campus gate
+  | Description      : Academic accident example
+  | Priority         : High
+  | Status           : Active
+  | Created          : 14 Nov 2026 10:45:37
+  | Updated          : 14 Nov 2026 10:45:44
+  +------------------------------------------------------------
+  Assignment:
+  +-- ASSIGNMENT #10021 --
+  | Incident         : 10011
+  | Team reference   : 10010
+  | Service          : Fire rescue
+  | Status           : En route
+  | Created          : 14 Nov 2026 10:45:39
+  | Updated          : 14 Nov 2026 10:45:44
+  +------------------------------------------------------------
+  +------------------------------------------------------------
+
+[UPDATE 14 Nov 2026 10:45:44] Team updated
+  +-- TEAM #10010 --
+  | Team             : fire2 simulated team
+  | Service          : Fire rescue
+  | Availability     : Busy
+  | Connection       : Online
+  +------------------------------------------------------------
+  +-- ASSIGNMENT #10021 --
+  | Incident         : 10011
+  | Team reference   : 10010
+  | Service          : Fire rescue
+  | Status           : En route
+  | Created          : 14 Nov 2026 10:45:39
+  | Updated          : 14 Nov 2026 10:45:44
+  +------------------------------------------------------------
+
+==============================================================
+fire2 [RESPONDER]
+--------------------------------------------------------------
+  1  My current assignment
+  2  Accept or decline an offer
+  3  Update my progress
+  4  My team and availability
+  5  History and saved actions
+  6  Logout
+  0  Exit
+Choose:   +-- RESULT --
+  Assignment:
+  +-- ASSIGNMENT #10021 --
+  | Incident         : 10011
+  | Team reference   : 10010
+  | Service          : Fire rescue
+  | Status           : En route
+  | Created          : 14 Nov 2026 10:45:39
+  | Updated          : 14 Nov 2026 10:45:44
+  +------------------------------------------------------------
+  Incident:
+  +-- INCIDENT #10011 --
+  | Category         : Road accident
+  | Location         : Fictional campus gate
+  | Description      : Academic accident example
+  | Priority         : High
+  | Status           : Active
+  | Created          : 14 Nov 2026 10:45:37
+  | Updated          : 14 Nov 2026 10:45:44
+  +------------------------------------------------------------
+  | Your private note : PRIVATE-PROGRESS-NOTE
+  +------------------------------------------------------------
+Next valid progress: ARRIVED
+Private progress note (optional): Review the displayed values. Confirm? y/N: 
+[UPDATE 14 Nov 2026 10:45:44] Assignment updated
+  +-- RESULT --
+  Incident:
+  +-- INCIDENT #10011 --
+  | Category         : Road accident
+  | Location         : Fictional campus gate
+  | Description      : Academic accident example
+  | Priority         : High
+  | Status           : Active
+  | Created          : 14 Nov 2026 10:45:37
+  | Updated          : 14 Nov 2026 10:45:44
+  +------------------------------------------------------------
+  Assignment:
+  +-- ASSIGNMENT #10021 --
+  | Incident         : 10011
+  | Team reference   : 10010
+  | Service          : Fire rescue
+  | Status           : Arrived
+  | Created          : 14 Nov 2026 10:45:39
+  | Updated          : 14 Nov 2026 10:45:44
+  +------------------------------------------------------------
+  +------------------------------------------------------------
+  +-- ASSIGNMENT #10021 --
+  | Incident         : 10011
+  | Team reference   : 10010
+  | Service          : Fire rescue
+  | Status           : Arrived
+  | Created          : 14 Nov 2026 10:45:39
+  | Updated          : 14 Nov 2026 10:45:44
+  +------------------------------------------------------------
+
+==============================================================
+fire2 [RESPONDER]
+--------------------------------------------------------------
+  1  My current assignment
+  2  Accept or decline an offer
+  3  Update my progress
+  4  My team and availability
+  5  History and saved actions
+  6  Logout
+  0  Exit
+Choose:   +-- RESULT --
+  Assignment:
+  +-- ASSIGNMENT #10021 --
+  | Incident         : 10011
+  | Team reference   : 10010
+  | Service          : Fire rescue
+  | Status           : Arrived
+  | Created          : 14 Nov 2026 10:45:39
+  | Updated          : 14 Nov 2026 10:45:44
+  +------------------------------------------------------------
+  Incident:
+  +-- INCIDENT #10011 --
+  | Category         : Road accident
+  | Location         : Fictional campus gate
+  | Description      : Academic accident example
+  | Priority         : High
+  | Status           : Active
+  | Created          : 14 Nov 2026 10:45:37
+  | Updated          : 14 Nov 2026 10:45:44
+  +------------------------------------------------------------
+  | Your private note : PRIVATE-PROGRESS-NOTE
+  +------------------------------------------------------------
+Next valid progress: COMPLETED
+Private progress note (optional): Review the displayed values. Confirm? y/N: 
+[UPDATE 14 Nov 2026 10:45:44] Assignment updated
+  +-- RESULT --
+  Incident:
+  +-- INCIDENT #10011 --
+  | Category         : Road accident
+  | Location         : Fictional campus gate
+  | Description      : Academic accident example
+  | Priority         : High
+  | Status           : Active
+  | Created          : 14 Nov 2026 10:45:37
+  | Updated          : 14 Nov 2026 10:45:44
+  +------------------------------------------------------------
+  Assignment:
+  +-- ASSIGNMENT #10021 --
+  | Incident         : 10011
+  | Team reference   : 10010
+  | Service          : Fire rescue
+  | Status           : Completed
+  | Created          : 14 Nov 2026 10:45:39
+  | Updated          : 14 Nov 2026 10:45:44
+  +------------------------------------------------------------
+  +------------------------------------------------------------
+
+[UPDATE 14 Nov 2026 10:45:44] Team updated
+  +-- TEAM #10010 --
+  | Team             : fire2 simulated team
+  | Service          : Fire rescue
+  | Availability     : Available
+  | Connection       : Online
+  +------------------------------------------------------------
+  +-- ASSIGNMENT #10021 --
+  | Incident         : 10011
+  | Team reference   : 10010
+  | Service          : Fire rescue
+  | Status           : Completed
+  | Created          : 14 Nov 2026 10:45:39
+  | Updated          : 14 Nov 2026 10:45:44
+  +------------------------------------------------------------
+
+==============================================================
+fire2 [RESPONDER]
+--------------------------------------------------------------
+  1  My current assignment
+  2  Accept or decline an offer
+  3  Update my progress
+  4  My team and availability
+  5  History and saved actions
+  6  Logout
+  0  Exit
+Choose:   +-- RESULT --
+  | Message          : Logged out
+  +------------------------------------------------------------
+
+==============================================================
+EMERGENCY HELP NETWORK | SIGN IN
+--------------------------------------------------------------
+  1  Create citizen account
+  2  Login
+  0  Exit
+Choose: 

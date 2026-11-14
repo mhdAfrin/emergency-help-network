@@ -1,0 +1,21 @@
+Actual output captured from the successful console smoke
+
+citizen1 [CITIZEN]
+--------------------------------------------------------------
+  1  Report an incident
+  2  My open reports
+  3  View a report and its progress
+  4  My history
+  5  Account and saved actions
+  6  Logout
+  0  Exit
+
+  +-- INCIDENT #10011 --
+  | Category         : Road accident
+  | Location         : Fictional campus gate
+  | Description      : Academic accident example
+  | Priority         : Medium
+  | Status           : Reported
+  | Created          : 14 Nov 2026 10:45:37
+  | Updated          : 14 Nov 2026 10:45:37
+  +------------------------------------------------------------

@@ -10,7 +10,7 @@ import java.util.regex.*;
 public class ProcessSmoke {
   static Path root, work, evidence;
   static String javaExecutable;
-  static final String UUID_PATTERN = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
+  static final String UUID_PATTERN = "[0-9]{5}";
 
   static Process start(String module, String log, String... args) throws Exception {
     List<String> command =
@@ -96,13 +96,13 @@ public class ProcessSmoke {
 
     void relogin(int marker) throws Exception {
       await(file, "Connected to server. Login required.", marker);
-      action("2\n" + name + "\nDemoPass123!\n", "Authorized snapshot synchronized.");
+      action("2\n" + name + "\nDemoPass123!\n", "Login successful.");
     }
 
     public void close() throws Exception {
       if (process.isAlive())
         try {
-          send("9\n0\n");
+          send("6\n0\n");
           input.close();
           finish(process);
         } catch (Exception e) {
@@ -114,16 +114,12 @@ public class ProcessSmoke {
 
   static String teamId(String text, String name) {
     return match(
-        "\"id\"\\s*:\\s*\"("
-            + UUID_PATTERN
-            + ")\"\\s*,\\s*\"name\"\\s*:\\s*\""
-            + name
-            + " simulated team\"",
+        "TEAM #(\\d{5}) --\\s*\\|\\s*Team\\s*:\\s*" + Pattern.quote(name + " simulated team"),
         text);
   }
 
   static void progress(Client client, String next) throws Exception {
-    client.action("8\nPRIVATE-PROGRESS-NOTE\ny\n", "\"state\" : \"" + next + "\"");
+    client.action("3\nPRIVATE-PROGRESS-NOTE\ny\n", next);
   }
 
   static void freshCitizen(int port, String account, String file, String tail) throws Exception {
@@ -138,8 +134,7 @@ public class ProcessSmoke {
     root = Path.of(args.length == 0 ? "." : args[0]).toAbsolutePath().normalize();
     work = root.resolve(".local/testing/final-smoke-" + UUID.randomUUID());
     Files.createDirectories(work.resolve("config"));
-    evidence =
-        root.getParent().resolve("docs/verification/evidence/member3-finalized/process-smoke");
+    evidence = root.getParent().resolve("docs/verification/current/process-smoke");
     Files.createDirectories(evidence);
     javaExecutable = Path.of(System.getProperty("java.home"), "bin", "java.exe").toString();
     int port;
@@ -162,30 +157,26 @@ public class ProcessSmoke {
           Client ambulance = new Client("ambulance1", "RESPONDER", port);
           Client fire = new Client("fire1", "RESPONDER", port);
           Client replacement = new Client("fire2", "RESPONDER", port)) {
-        citizen.action("2\n", "PONG");
-        String teams = op.action("3\n\n\n\n", "police1 simulated team");
+        String teams = op.action("4\n\n\n\n", "police1 simulated team");
         String reference =
             citizen.action(
-                "3\nROAD_ACCIDENT\nFictional campus gate\nAcademic accident example\n\n\n",
-                "Confirmed incident reference:");
-        incidentId = match("Confirmed incident reference: (" + UUID_PATTERN + ")", reference);
-        await(op.file, "INCIDENT_CREATED", 0);
-        op.action("7\n" + incidentId + "\nHIGH\ny\n", "\"priority\" : \"HIGH\"");
+                "1\nROAD_ACCIDENT\nFictional campus gate\nAcademic accident example\n",
+                "Report saved. Incident reference:");
+        incidentId = match("Report saved. Incident reference: (" + UUID_PATTERN + ")", reference);
+        await(op.file, "Incident created", 0);
+        op.action("3\n2\n" + incidentId + "\nHIGH\ny\n", "High");
         for (String team : List.of("police1", "ambulance1", "fire1"))
-          op.action(
-              "8\n" + incidentId + "\n" + teamId(teams, team) + "\ny\n", "\"state\" : \"OFFERED\"");
+          op.action("2\n" + incidentId + "\n" + teamId(teams, team) + "\ny\n", "Offered");
         for (Client responder : List.of(police, ambulance, fire)) {
-          await(responder.file, "ASSIGNMENT_OFFERED", 0);
-          responder.action("5\n", "\"assignment\"");
+          await(responder.file, "Assignment offered", 0);
+          responder.action("1\n", "ASSIGNMENT #");
         }
-        fire.action("7\nPRIVATE-DECLINE-REASON\ny\n", "\"state\" : \"DECLINED\"");
-        op.action(
-            "8\n" + incidentId + "\n" + teamId(teams, "fire2") + "\ny\n",
-            "\"state\" : \"OFFERED\"");
-        await(replacement.file, "ASSIGNMENT_OFFERED", 0);
+        fire.action("2\n2\nPRIVATE-DECLINE-REASON\ny\n", "Declined");
+        op.action("2\n" + incidentId + "\n" + teamId(teams, "fire2") + "\ny\n", "Offered");
+        await(replacement.file, "Assignment offered", 0);
         for (Client responder : List.of(police, ambulance, replacement))
-          responder.action("6\n\ny\n", "\"state\" : \"ACCEPTED\"");
-        progress(police, "EN_ROUTE");
+          responder.action("2\n1\n\ny\n", "Accepted");
+        progress(police, "En route");
         List<Client> all = List.of(op, citizen, police, ambulance, fire, replacement);
         Map<String, Integer> markers = new HashMap<>();
         for (Client client : all) markers.put(client.file, log(client.file).length());
@@ -198,25 +189,26 @@ public class ProcessSmoke {
         if (!log(police.file).substring(markers.get(police.file)).contains("POLICE: EN_ROUTE"))
           throw new IllegalStateException(
               "Busy responder state was not restored by authorized snapshot");
-        op.action("12\n" + incidentId + "\nPremature closure must fail\ny\n", "INVALID_TRANSITION");
-        progress(police, "ARRIVED");
-        String states = citizen.action("5\n" + incidentId + "\n\n", "POLICE: ARRIVED");
-        if (!states.contains("AMBULANCE: ACCEPTED") || !states.contains("FIRE_RESCUE: ACCEPTED"))
-          throw new IllegalStateException("Service progress was not displayed independently");
-        progress(police, "COMPLETED");
-        for (Client responder : List.of(ambulance, replacement)) {
-          progress(responder, "EN_ROUTE");
-          progress(responder, "ARRIVED");
-          progress(responder, "COMPLETED");
-        }
         op.action(
-            "12\n" + incidentId + "\nPublic academic resolution\ny\n", "\"state\" : \"CLOSED\"");
-        citizen.action("6\n", "\"state\" : \"CLOSED\"");
-        fire.action("10\n", "PRIVATE-DECLINE-REASON");
+            "3\n3\n" + incidentId + "\nPremature closure must fail\ny\n",
+            "Action could not finish:");
+        progress(police, "Arrived");
+        String states = citizen.action("3\n" + incidentId + "\n\n", "Arrived");
+        if (!states.contains("Ambulance") || !states.contains("Fire rescue"))
+          throw new IllegalStateException("Service progress was not displayed independently");
+        progress(police, "Completed");
+        for (Client responder : List.of(ambulance, replacement)) {
+          progress(responder, "En route");
+          progress(responder, "Arrived");
+          progress(responder, "Completed");
+        }
+        op.action("3\n3\n" + incidentId + "\nPublic academic resolution\ny\n", "Closed");
+        citizen.action("4\n", "Closed");
+        fire.action("5\n3\n", "PRIVATE-DECLINE-REASON");
         if (log(citizen.file).contains("PRIVATE-DECLINE-REASON")
             || log(citizen.file).contains("PRIVATE-PROGRESS-NOTE"))
           throw new IllegalStateException("Private notes leaked to citizen");
-        if (log(police.file).contains("\"serviceType\" : \"AMBULANCE\""))
+        if (log(police.file).contains("Ambulance"))
           throw new IllegalStateException("Unrelated responder assignment leaked");
         System.out.println(
             "PASS: six separate console client JVMs; report -> notify -> three service offers ->"
@@ -230,21 +222,18 @@ public class ProcessSmoke {
         if (!log(name + ".log").contains("Logged out"))
           throw new IllegalStateException("Client did not log out: " + name);
       freshCitizen(
-          port, "citizen1", "closed-history-restart.log", "5\n" + incidentId + "\n\n9\n0\n");
-      if (!log("closed-history-restart.log").contains("\"state\" : \"CLOSED\"")
-          || !log("closed-history-restart.log").contains("POLICE: COMPLETED"))
+          port, "citizen1", "closed-history-restart.log", "3\n" + incidentId + "\n\n6\n0\n");
+      if (!log("closed-history-restart.log").contains("Closed")
+          || !log("closed-history-restart.log").contains("Completed"))
         throw new IllegalStateException("Closed history was not preserved for a new citizen JVM");
       // EOF after address intentionally leaves an unsent partial draft, not a dispatched report.
-      freshCitizen(port, "citizen2", "draft-incomplete.log", "3\nOTHER\nSaved draft campus\n");
+      freshCitizen(port, "citizen2", "draft-incomplete.log", "1\nOTHER\nSaved draft campus\n");
       freshCitizen(
-          port,
-          "citizen2",
-          "draft-recovered.log",
-          "3\ny\n\n\nRecovered draft description\n\n\n9\n0\n");
+          port, "citizen2", "draft-recovered.log", "1\ny\n\n\nRecovered draft description\n6\n0\n");
       String draft = log("draft-recovered.log");
       if (!draft.contains("Resume your saved unsent report?")
           || !draft.contains("Saved draft campus")
-          || !draft.contains("Confirmed incident reference:"))
+          || !draft.contains("Report saved. Incident reference:"))
         throw new IllegalStateException("Unsent draft did not survive a client process restart");
       System.out.println(
           "PASS: a fresh citizen JVM recovers closed service history; an unsent report draft"

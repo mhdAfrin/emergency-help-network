@@ -1,66 +1,24 @@
-# Emergency Help Network — complete project setup
+# Setup
 
-University of Ruhuna · Faculty of Engineering · EC5205 Operating Systems & Network Programming.
-Academic demonstration — no real emergency dispatch.
+Use the repository root containing RUN-SERVER.cmd and application/. Java 21 is required. No Python is required to build or run this project.
 
-All three implementation stages are implemented: foundation, reporting/assignment, responder progress/closure and recovery. See docs/handoff/MEMBER3-CHECKLIST.md and docs/handoff/HANDOFF.md.
+Double-click RUN-SERVER.cmd once, then RUN-CLIENT.cmd in three separate windows for citizen1, operator and fire1. A client connects to the same server; use 127.0.0.1 and 5050 on this laptop. Demo password: DemoPass123!. Registering creates a citizen account only. Police/Ambulance/Fire are responder service types, not separate role implementations.
 
-## Build and run (PowerShell)
+The launcher prepares demo accounts without resetting existing records, passwords or active reservations. Local data: application/.local/data/emergency.db; client drafts/pending actions: application/.local/client/. Stop with Ctrl+C or the client Exit option. Keep the database and journals for recovery; a network timeout is not proof a mutation failed.
 
-Use a Java 21 JDK. Set JAVA_HOME to its installation directory and put its bin first in PATH. First build needs internet for pinned dependencies and the Maven 3.9.9 wrapper; later builds can use cached dependencies. Open PowerShell in application/ (the Maven working directory). Use a UTF-8 console (`chcp 65001` in Windows Terminal if needed).
-
-```powershell
-$env:JAVA_HOME = 'C:\path\to\jdk-21'
-$env:PATH = "$env:JAVA_HOME\bin;$env:PATH"
-.\mvnw.cmd clean verify
-Copy-Item config/server.properties.example config/server.properties
-java -jar server/target/server-1.0.0-SNAPSHOT.jar --seed
-java -jar server/target/server-1.0.0-SNAPSHOT.jar
-```
-
-In each separate terminal:
+PowerShell alternatives from repository root:
 
 ```powershell
-java -jar client/target/client-1.0.0-SNAPSHOT.jar
+powershell -NoProfile -ExecutionPolicy Bypass -File .\application\scripts\project.ps1 seed
+powershell -NoProfile -ExecutionPolicy Bypass -File .\application\scripts\project.ps1 server
 ```
 
-Enter host 127.0.0.1 and port 5050 (or press Enter for defaults). Seed users: operator, citizen1, citizen2, police1, ambulance1, fire1, fire2. Every demo password is DemoPass123!. Registration also works without seeding. Seed must be run explicitly; startup does not silently create accounts. Data lives in .local/data/emergency.db relative to the server's working directory and survives restarts. Never run two servers on the same DB.
+In each separate client terminal:
 
-The optional .local/tools/ folder on this machine contains a checksum-verified Java 21 JDK used for validation; it is ignored by Git and is not a required source deliverable. In a restricted environment, `-Dmaven.repo.local=...` and MAVEN_USER_HOME can point to writable caches. docs/verification/TEST-RESULTS.md records the exact validation commands here.
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\application\scripts\project.ps1 client
+```
 
-## What to try
+Output uses ASCII separators and UTF-8. To opt into colored headings in a terminal supporting ANSI (such as Windows Terminal), set `$env:EHN_COLOR='1'` before starting a client. Set NO_COLOR or leave EHN_COLOR unset for ordinary plain text; color is never required for understanding a result. Font face/size are controlled by the terminal app. Passwords are hidden in an interactive Java console; redirected test input may display a visible-password notice.
 
-Log in to several separate clients. Citizen: report/list/filter/detail/public timeline. Operator: filter/review/priority/team offers/cancel/reject/close/history. Responder: own team/availability/current offers, accept/decline, next progress, history and assignment timeline. All roles retain identity, PING and logout. Logging the same user into another client notifies and closes the previous session. Heartbeat is 15 seconds, inbound inactivity deadline 45 seconds, and background reconnect requires login plus snapshot synchronization.
-
-Default connection limit 32; per-session outgoing limit 100 frames; max payload 65,536 bytes. config/server.properties can change host, port, maxConnections (1–200), and database path. All application logic is Java; no browser or GUI.
-
-## Eclipse
-
-1. Install/configure a Java 21 JDK in Window → Preferences → Java → Installed JREs and JavaSE-21 execution environment.
-2. File → Import → Maven → Existing Maven Projects; select application/ and import parent/common/server/client. Maven → Update Project if dependencies need refreshing.
-3. Build once with the wrapper. Create a Java Application launch for `lk.emergency.server.ServerMain` in server. Set working directory to application/. Run with argument `--seed` once, then remove it and launch server.
-4. Create a Java Application launch for `lk.emergency.client.ClientMain` in client, also with application/ as working directory. Allow multiple instances and run it once per person/team; Eclipse console selector switches among them. Console encoding UTF-8; passwords are visible in Eclipse because System.console() is absent.
-5. Use Terminate/Ctrl+C to stop clients/server; tests exercise explicit graceful close. Do not use Eclipse auto-generated module-info.java: this project uses the ordinary classpath.
-
-Eclipse steps are supplied, not interactively verified in the IDE during this session.
-
-## LAN and troubleshooting
-
-127.0.0.1 reaches this machine only. For LAN, bind the server to 0.0.0.0 in config/server.properties and connect remote clients to the server laptop's LAN IP (find with ipconfig). 0.0.0.0 is a bind address, never a client destination. Use a permitted trusted LAN with fictional data; TCP is unencrypted. Check matching ports, server process, Windows firewall inbound permission and Wi-Fi device isolation. No automatic firewall changes are made. Public hosting/TLS is outside scope. Separate-laptop LAN verification remains a group test.
-
-If bind fails, another server may own the port. If login fails, run --seed using the same working directory/config as the server. If SQLite is locked, check for a second server or external DB tool. If Maven cannot write .m2, choose a writable local repository; do not delete another project's cache. If the launcher hangs, use a real JDK bin path rather than a broken system Java shim.
-
-## Documentation
-
-- docs/design/ARCHITECTURE.md — sockets, threads, lifecycle and security boundaries
-- docs/design/DATABASE.md — schema and ER diagram
-- docs/design/PROTOCOL.md — envelopes, authorization, errors and extension contract
-- docs/verification/TEST-RESULTS.md — actual outcomes, measurements and untested items
-- docs/guides/DEMO.md — complete demonstration script
-- docs/handoff/MEMBER1-CHECKLIST.md — historical Member 1 tasks with evidence
-- docs/handoff/HANDOFF.md — final handoff and manual delivery checks
-- docs/handoff/CONTRIBUTIONS.md — honest contribution and Git workflow
-
-For source handoff/submission, exclude .local/, target/ and local configuration; .local/tools/ contains large local JDK/build caches. Keep the Maven wrapper, source, POMs and docs. The wrapper is Apache-generated with one Windows quoting fix for cache paths containing spaces; its distribution checksum is pinned.
-
-The finalized checkout uses local member3-finalization based on e858384. No Member 3 commit/push was created automatically. Review the final checklists/results, merge the reviewed Member 2 stage first, then publish/review Member 3 using the group's actual author identities.
+For Eclipse import application/ via Maven Existing Maven Projects, select JavaSE-21, and use application/ as the working directory. Entry points remain lk.emergency.server.ServerMain and lk.emergency.client.ClientMain. Source folders/packages remain normal Maven layout. Eclipse interaction has not been tested in this editing session.

@@ -1,0 +1,624 @@
+
+==============================================================
+EMERGENCY HELP NETWORK
+--------------------------------------------------------------
+Academic demonstration - no real emergency dispatch.
+Server host [127.0.0.1]: Server port [5050]: Connected to server. Login required.
+
+==============================================================
+EMERGENCY HELP NETWORK | SIGN IN
+--------------------------------------------------------------
+  1  Create citizen account
+  2  Login
+  0  Exit
+Choose: Username: Password (visible in this terminal): Welcome, citizen1. Your account reference is 10001.
+Login successful. Your current assignments:
+
+==============================================================
+citizen1 [CITIZEN]
+--------------------------------------------------------------
+  1  Report an incident
+  2  My open reports
+  3  View a report and its progress
+  4  My history
+  5  Account and saved actions
+  6  Logout
+  0  Exit
+Choose: Academic demonstration - no real emergency dispatch.
+Category MEDICAL/ROAD_ACCIDENT/FIRE/CRIME/OTHER: Address/landmark: Description:   +-- INCIDENT #10011 --
+  | Category         : Road accident
+  | Location         : Fictional campus gate
+  | Description      : Academic accident example
+  | Priority         : Medium
+  | Status           : Reported
+  | Created          : 14 Nov 2026 10:45:37
+  | Updated          : 14 Nov 2026 10:45:37
+  +------------------------------------------------------------
+Report saved. Incident reference: 10011
+
+==============================================================
+citizen1 [CITIZEN]
+--------------------------------------------------------------
+  1  Report an incident
+  2  My open reports
+  3  View a report and its progress
+  4  My history
+  5  Account and saved actions
+  6  Logout
+  0  Exit
+Choose: 
+[UPDATE 14 Nov 2026 10:45:37] Incident updated
+  +-- RESULT --
+  Incident:
+  +-- INCIDENT #10011 --
+  | Category         : Road accident
+  | Location         : Fictional campus gate
+  | Description      : Academic accident example
+  | Priority         : High
+  | Status           : Reported
+  | Created          : 14 Nov 2026 10:45:37
+  | Updated          : 14 Nov 2026 10:45:37
+  +------------------------------------------------------------
+  +------------------------------------------------------------
+Choose: 
+[UPDATE 14 Nov 2026 10:45:38] Incident updated
+  +-- RESULT --
+  Incident:
+  +-- INCIDENT #10011 --
+  | Category         : Road accident
+  | Location         : Fictional campus gate
+  | Description      : Academic accident example
+  | Priority         : High
+  | Status           : Active
+  | Created          : 14 Nov 2026 10:45:37
+  | Updated          : 14 Nov 2026 10:45:38
+  +------------------------------------------------------------
+  Assignment:
+  +-- ASSIGNMENT #10014 --
+  | Incident         : 10011
+  | Team reference   : 10004
+  | Service          : Police
+  | Status           : Offered
+  | Created          : 14 Nov 2026 10:45:38
+  | Updated          : 14 Nov 2026 10:45:38
+  +------------------------------------------------------------
+  +------------------------------------------------------------
+Choose: 
+[UPDATE 14 Nov 2026 10:45:38] Incident updated
+  +-- RESULT --
+  Incident:
+  +-- INCIDENT #10011 --
+  | Category         : Road accident
+  | Location         : Fictional campus gate
+  | Description      : Academic accident example
+  | Priority         : High
+  | Status           : Active
+  | Created          : 14 Nov 2026 10:45:37
+  | Updated          : 14 Nov 2026 10:45:38
+  +------------------------------------------------------------
+  Assignment:
+  +-- ASSIGNMENT #10016 --
+  | Incident         : 10011
+  | Team reference   : 10006
+  | Service          : Ambulance
+  | Status           : Offered
+  | Created          : 14 Nov 2026 10:45:38
+  | Updated          : 14 Nov 2026 10:45:38
+  +------------------------------------------------------------
+  +------------------------------------------------------------
+Choose: 
+[UPDATE 14 Nov 2026 10:45:38] Incident updated
+  +-- RESULT --
+  Incident:
+  +-- INCIDENT #10011 --
+  | Category         : Road accident
+  | Location         : Fictional campus gate
+  | Description      : Academic accident example
+  | Priority         : High
+  | Status           : Active
+  | Created          : 14 Nov 2026 10:45:37
+  | Updated          : 14 Nov 2026 10:45:38
+  +------------------------------------------------------------
+  Assignment:
+  +-- ASSIGNMENT #10018 --
+  | Incident         : 10011
+  | Team reference   : 10008
+  | Service          : Fire rescue
+  | Status           : Offered
+  | Created          : 14 Nov 2026 10:45:38
+  | Updated          : 14 Nov 2026 10:45:38
+  +------------------------------------------------------------
+  +------------------------------------------------------------
+Choose: 
+[UPDATE 14 Nov 2026 10:45:39] Incident updated
+  +-- RESULT --
+  Incident:
+  +-- INCIDENT #10011 --
+  | Category         : Road accident
+  | Location         : Fictional campus gate
+  | Description      : Academic accident example
+  | Priority         : High
+  | Status           : Active
+  | Created          : 14 Nov 2026 10:45:37
+  | Updated          : 14 Nov 2026 10:45:39
+  +------------------------------------------------------------
+  Assignment:
+  +-- ASSIGNMENT #10018 --
+  | Incident         : 10011
+  | Team reference   : 10008
+  | Service          : Fire rescue
+  | Status           : Declined
+  | Created          : 14 Nov 2026 10:45:38
+  | Updated          : 14 Nov 2026 10:45:39
+  +------------------------------------------------------------
+  +------------------------------------------------------------
+Choose: 
+[UPDATE 14 Nov 2026 10:45:39] Incident updated
+  +-- RESULT --
+  Incident:
+  +-- INCIDENT #10011 --
+  | Category         : Road accident
+  | Location         : Fictional campus gate
+  | Description      : Academic accident example
+  | Priority         : High
+  | Status           : Active
+  | Created          : 14 Nov 2026 10:45:37
+  | Updated          : 14 Nov 2026 10:45:39
+  +------------------------------------------------------------
+  Assignment:
+  +-- ASSIGNMENT #10021 --
+  | Incident         : 10011
+  | Team reference   : 10010
+  | Service          : Fire rescue
+  | Status           : Offered
+  | Created          : 14 Nov 2026 10:45:39
+  | Updated          : 14 Nov 2026 10:45:39
+  +------------------------------------------------------------
+  +------------------------------------------------------------
+Choose: 
+[UPDATE 14 Nov 2026 10:45:39] Incident updated
+  +-- RESULT --
+  Incident:
+  +-- INCIDENT #10011 --
+  | Category         : Road accident
+  | Location         : Fictional campus gate
+  | Description      : Academic accident example
+  | Priority         : High
+  | Status           : Active
+  | Created          : 14 Nov 2026 10:45:37
+  | Updated          : 14 Nov 2026 10:45:39
+  +------------------------------------------------------------
+  Assignment:
+  +-- ASSIGNMENT #10014 --
+  | Incident         : 10011
+  | Team reference   : 10004
+  | Service          : Police
+  | Status           : Accepted
+  | Created          : 14 Nov 2026 10:45:38
+  | Updated          : 14 Nov 2026 10:45:39
+  +------------------------------------------------------------
+  +------------------------------------------------------------
+Choose: 
+[UPDATE 14 Nov 2026 10:45:39] Incident updated
+  +-- RESULT --
+  Incident:
+  +-- INCIDENT #10011 --
+  | Category         : Road accident
+  | Location         : Fictional campus gate
+  | Description      : Academic accident example
+  | Priority         : High
+  | Status           : Active
+  | Created          : 14 Nov 2026 10:45:37
+  | Updated          : 14 Nov 2026 10:45:39
+  +------------------------------------------------------------
+  Assignment:
+  +-- ASSIGNMENT #10016 --
+  | Incident         : 10011
+  | Team reference   : 10006
+  | Service          : Ambulance
+  | Status           : Accepted
+  | Created          : 14 Nov 2026 10:45:38
+  | Updated          : 14 Nov 2026 10:45:39
+  +------------------------------------------------------------
+  +------------------------------------------------------------
+Choose: 
+[UPDATE 14 Nov 2026 10:45:40] Incident updated
+  +-- RESULT --
+  Incident:
+  +-- INCIDENT #10011 --
+  | Category         : Road accident
+  | Location         : Fictional campus gate
+  | Description      : Academic accident example
+  | Priority         : High
+  | Status           : Active
+  | Created          : 14 Nov 2026 10:45:37
+  | Updated          : 14 Nov 2026 10:45:40
+  +------------------------------------------------------------
+  Assignment:
+  +-- ASSIGNMENT #10021 --
+  | Incident         : 10011
+  | Team reference   : 10010
+  | Service          : Fire rescue
+  | Status           : Accepted
+  | Created          : 14 Nov 2026 10:45:39
+  | Updated          : 14 Nov 2026 10:45:40
+  +------------------------------------------------------------
+  +------------------------------------------------------------
+Choose: 
+[UPDATE 14 Nov 2026 10:45:40] Incident updated
+  +-- RESULT --
+  Incident:
+  +-- INCIDENT #10011 --
+  | Category         : Road accident
+  | Location         : Fictional campus gate
+  | Description      : Academic accident example
+  | Priority         : High
+  | Status           : Active
+  | Created          : 14 Nov 2026 10:45:37
+  | Updated          : 14 Nov 2026 10:45:40
+  +------------------------------------------------------------
+  Assignment:
+  +-- ASSIGNMENT #10014 --
+  | Incident         : 10011
+  | Team reference   : 10004
+  | Service          : Police
+  | Status           : En route
+  | Created          : 14 Nov 2026 10:45:38
+  | Updated          : 14 Nov 2026 10:45:40
+  +------------------------------------------------------------
+  +------------------------------------------------------------
+Choose: Connection lost. Reconnecting in the background; login again after connection returns.
+Connected to server. Login required.
+Username: Password (visible in this terminal): Welcome, citizen1. Your account reference is 10001.
+Login successful. Your current assignments:
+POLICE: EN_ROUTE | 10014
+AMBULANCE: ACCEPTED | 10016
+FIRE_RESCUE: ACCEPTED | 10021
+
+==============================================================
+citizen1 [CITIZEN]
+--------------------------------------------------------------
+  1  Report an incident
+  2  My open reports
+  3  View a report and its progress
+  4  My history
+  5  Account and saved actions
+  6  Logout
+  0  Exit
+Choose: 
+[UPDATE 14 Nov 2026 10:45:43] Incident updated
+  +-- RESULT --
+  Incident:
+  +-- INCIDENT #10011 --
+  | Category         : Road accident
+  | Location         : Fictional campus gate
+  | Description      : Academic accident example
+  | Priority         : High
+  | Status           : Active
+  | Created          : 14 Nov 2026 10:45:37
+  | Updated          : 14 Nov 2026 10:45:43
+  +------------------------------------------------------------
+  Assignment:
+  +-- ASSIGNMENT #10014 --
+  | Incident         : 10011
+  | Team reference   : 10004
+  | Service          : Police
+  | Status           : Arrived
+  | Created          : 14 Nov 2026 10:45:38
+  | Updated          : 14 Nov 2026 10:45:43
+  +------------------------------------------------------------
+  +------------------------------------------------------------
+Choose: Incident ID:   +-- INCIDENT #10011 --
+  | Category         : Road accident
+  | Location         : Fictional campus gate
+  | Description      : Academic accident example
+  | Priority         : High
+  | Status           : Active
+  | Created          : 14 Nov 2026 10:45:37
+  | Updated          : 14 Nov 2026 10:45:43
+  +------------------------------------------------------------
+Service progress:
+  +-- ASSIGNMENT #10014 --
+  | Incident         : 10011
+  | Team reference   : 10004
+  | Service          : Police
+  | Status           : Arrived
+  | Created          : 14 Nov 2026 10:45:38
+  | Updated          : 14 Nov 2026 10:45:43
+  +------------------------------------------------------------
+  +-- ASSIGNMENT #10016 --
+  | Incident         : 10011
+  | Team reference   : 10006
+  | Service          : Ambulance
+  | Status           : Accepted
+  | Created          : 14 Nov 2026 10:45:38
+  | Updated          : 14 Nov 2026 10:45:39
+  +------------------------------------------------------------
+  +-- ASSIGNMENT #10018 --
+  | Incident         : 10011
+  | Team reference   : 10008
+  | Service          : Fire rescue
+  | Status           : Declined
+  | Created          : 14 Nov 2026 10:45:38
+  | Updated          : 14 Nov 2026 10:45:39
+  +------------------------------------------------------------
+  +-- ASSIGNMENT #10021 --
+  | Incident         : 10011
+  | Team reference   : 10010
+  | Service          : Fire rescue
+  | Status           : Accepted
+  | Created          : 14 Nov 2026 10:45:39
+  | Updated          : 14 Nov 2026 10:45:40
+  +------------------------------------------------------------
+Public timeline:
+  +-- TIMELINE --
+  | Incident         : 10011
+  | Update           : Incident reported by citizen
+  | Created          : 14 Nov 2026 10:45:37
+  +------------------------------------------------------------
+  +-- TIMELINE --
+  | Incident         : 10011
+  | Update           : Priority changed to HIGH
+  | Created          : 14 Nov 2026 10:45:37
+  +------------------------------------------------------------
+  +-- TIMELINE --
+  | Incident         : 10011
+  | Update           : POLICE team offered assistance
+  | Created          : 14 Nov 2026 10:45:38
+  +------------------------------------------------------------
+  +-- TIMELINE --
+  | Incident         : 10011
+  | Update           : AMBULANCE team offered assistance
+  | Created          : 14 Nov 2026 10:45:38
+  +------------------------------------------------------------
+  +-- TIMELINE --
+  | Incident         : 10011
+  | Update           : FIRE_RESCUE team offered assistance
+  | Created          : 14 Nov 2026 10:45:38
+  +------------------------------------------------------------
+  +-- TIMELINE --
+  | Incident         : 10011
+  | Update           : FIRE_RESCUE assignment DECLINED
+  | Created          : 14 Nov 2026 10:45:39
+  +------------------------------------------------------------
+  +-- TIMELINE --
+  | Incident         : 10011
+  | Update           : FIRE_RESCUE team offered assistance
+  | Created          : 14 Nov 2026 10:45:39
+  +------------------------------------------------------------
+  +-- TIMELINE --
+  | Incident         : 10011
+  | Update           : POLICE assignment ACCEPTED
+  | Created          : 14 Nov 2026 10:45:39
+  +------------------------------------------------------------
+  +-- TIMELINE --
+  | Incident         : 10011
+  | Update           : AMBULANCE assignment ACCEPTED
+  | Created          : 14 Nov 2026 10:45:39
+  +------------------------------------------------------------
+  +-- TIMELINE --
+  | Incident         : 10011
+  | Update           : FIRE_RESCUE assignment ACCEPTED
+  | Created          : 14 Nov 2026 10:45:40
+  +------------------------------------------------------------
+T next timeline | Enter to return: 
+==============================================================
+citizen1 [CITIZEN]
+--------------------------------------------------------------
+  1  Report an incident
+  2  My open reports
+  3  View a report and its progress
+  4  My history
+  5  Account and saved actions
+  6  Logout
+  0  Exit
+Choose: 
+[UPDATE 14 Nov 2026 10:45:43] Incident updated
+  +-- RESULT --
+  Incident:
+  +-- INCIDENT #10011 --
+  | Category         : Road accident
+  | Location         : Fictional campus gate
+  | Description      : Academic accident example
+  | Priority         : High
+  | Status           : Active
+  | Created          : 14 Nov 2026 10:45:37
+  | Updated          : 14 Nov 2026 10:45:43
+  +------------------------------------------------------------
+  Assignment:
+  +-- ASSIGNMENT #10014 --
+  | Incident         : 10011
+  | Team reference   : 10004
+  | Service          : Police
+  | Status           : Completed
+  | Created          : 14 Nov 2026 10:45:38
+  | Updated          : 14 Nov 2026 10:45:43
+  +------------------------------------------------------------
+  +------------------------------------------------------------
+Choose: 
+[UPDATE 14 Nov 2026 10:45:43] Incident updated
+  +-- RESULT --
+  Incident:
+  +-- INCIDENT #10011 --
+  | Category         : Road accident
+  | Location         : Fictional campus gate
+  | Description      : Academic accident example
+  | Priority         : High
+  | Status           : Active
+  | Created          : 14 Nov 2026 10:45:37
+  | Updated          : 14 Nov 2026 10:45:43
+  +------------------------------------------------------------
+  Assignment:
+  +-- ASSIGNMENT #10016 --
+  | Incident         : 10011
+  | Team reference   : 10006
+  | Service          : Ambulance
+  | Status           : En route
+  | Created          : 14 Nov 2026 10:45:38
+  | Updated          : 14 Nov 2026 10:45:43
+  +------------------------------------------------------------
+  +------------------------------------------------------------
+Choose: 
+[UPDATE 14 Nov 2026 10:45:43] Incident updated
+  +-- RESULT --
+  Incident:
+  +-- INCIDENT #10011 --
+  | Category         : Road accident
+  | Location         : Fictional campus gate
+  | Description      : Academic accident example
+  | Priority         : High
+  | Status           : Active
+  | Created          : 14 Nov 2026 10:45:37
+  | Updated          : 14 Nov 2026 10:45:43
+  +------------------------------------------------------------
+  Assignment:
+  +-- ASSIGNMENT #10016 --
+  | Incident         : 10011
+  | Team reference   : 10006
+  | Service          : Ambulance
+  | Status           : Arrived
+  | Created          : 14 Nov 2026 10:45:38
+  | Updated          : 14 Nov 2026 10:45:43
+  +------------------------------------------------------------
+  +------------------------------------------------------------
+Choose: 
+[UPDATE 14 Nov 2026 10:45:44] Incident updated
+  +-- RESULT --
+  Incident:
+  +-- INCIDENT #10011 --
+  | Category         : Road accident
+  | Location         : Fictional campus gate
+  | Description      : Academic accident example
+  | Priority         : High
+  | Status           : Active
+  | Created          : 14 Nov 2026 10:45:37
+  | Updated          : 14 Nov 2026 10:45:44
+  +------------------------------------------------------------
+  Assignment:
+  +-- ASSIGNMENT #10016 --
+  | Incident         : 10011
+  | Team reference   : 10006
+  | Service          : Ambulance
+  | Status           : Completed
+  | Created          : 14 Nov 2026 10:45:38
+  | Updated          : 14 Nov 2026 10:45:44
+  +------------------------------------------------------------
+  +------------------------------------------------------------
+Choose: 
+[UPDATE 14 Nov 2026 10:45:44] Incident updated
+  +-- RESULT --
+  Incident:
+  +-- INCIDENT #10011 --
+  | Category         : Road accident
+  | Location         : Fictional campus gate
+  | Description      : Academic accident example
+  | Priority         : High
+  | Status           : Active
+  | Created          : 14 Nov 2026 10:45:37
+  | Updated          : 14 Nov 2026 10:45:44
+  +------------------------------------------------------------
+  Assignment:
+  +-- ASSIGNMENT #10021 --
+  | Incident         : 10011
+  | Team reference   : 10010
+  | Service          : Fire rescue
+  | Status           : En route
+  | Created          : 14 Nov 2026 10:45:39
+  | Updated          : 14 Nov 2026 10:45:44
+  +------------------------------------------------------------
+  +------------------------------------------------------------
+Choose: 
+[UPDATE 14 Nov 2026 10:45:44] Incident updated
+  +-- RESULT --
+  Incident:
+  +-- INCIDENT #10011 --
+  | Category         : Road accident
+  | Location         : Fictional campus gate
+  | Description      : Academic accident example
+  | Priority         : High
+  | Status           : Active
+  | Created          : 14 Nov 2026 10:45:37
+  | Updated          : 14 Nov 2026 10:45:44
+  +------------------------------------------------------------
+  Assignment:
+  +-- ASSIGNMENT #10021 --
+  | Incident         : 10011
+  | Team reference   : 10010
+  | Service          : Fire rescue
+  | Status           : Arrived
+  | Created          : 14 Nov 2026 10:45:39
+  | Updated          : 14 Nov 2026 10:45:44
+  +------------------------------------------------------------
+  +------------------------------------------------------------
+Choose: 
+[UPDATE 14 Nov 2026 10:45:44] Incident updated
+  +-- RESULT --
+  Incident:
+  +-- INCIDENT #10011 --
+  | Category         : Road accident
+  | Location         : Fictional campus gate
+  | Description      : Academic accident example
+  | Priority         : High
+  | Status           : Active
+  | Created          : 14 Nov 2026 10:45:37
+  | Updated          : 14 Nov 2026 10:45:44
+  +------------------------------------------------------------
+  Assignment:
+  +-- ASSIGNMENT #10021 --
+  | Incident         : 10011
+  | Team reference   : 10010
+  | Service          : Fire rescue
+  | Status           : Completed
+  | Created          : 14 Nov 2026 10:45:39
+  | Updated          : 14 Nov 2026 10:45:44
+  +------------------------------------------------------------
+  +------------------------------------------------------------
+Choose: 
+[UPDATE 14 Nov 2026 10:45:44] Incident updated
+  +-- RESULT --
+  Incident:
+  +-- INCIDENT #10011 --
+  | Category         : Road accident
+  | Location         : Fictional campus gate
+  | Description      : Academic accident example
+  | Priority         : High
+  | Status           : Closed
+  | Resolution       : Public academic resolution
+  | Created          : 14 Nov 2026 10:45:37
+  | Updated          : 14 Nov 2026 10:45:44
+  | Closed           : 14 Nov 2026 10:45:44
+  +------------------------------------------------------------
+  +------------------------------------------------------------
+Choose:   +-- INCIDENT #10011 --
+  | Category         : Road accident
+  | Location         : Fictional campus gate
+  | Description      : Academic accident example
+  | Priority         : High
+  | Status           : Closed
+  | Resolution       : Public academic resolution
+  | Created          : 14 Nov 2026 10:45:37
+  | Updated          : 14 Nov 2026 10:45:44
+  | Closed           : 14 Nov 2026 10:45:44
+  +------------------------------------------------------------
+
+==============================================================
+citizen1 [CITIZEN]
+--------------------------------------------------------------
+  1  Report an incident
+  2  My open reports
+  3  View a report and its progress
+  4  My history
+  5  Account and saved actions
+  6  Logout
+  0  Exit
+Choose:   +-- RESULT --
+  | Message          : Logged out
+  +------------------------------------------------------------
+
+==============================================================
+EMERGENCY HELP NETWORK | SIGN IN
+--------------------------------------------------------------
+  1  Create citizen account
+  2  Login
+  0  Exit
+Choose: 

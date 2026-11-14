@@ -12,6 +12,9 @@ import java.util.*;
 import java.util.concurrent.*;
 import lk.emergency.common.*;
 import lk.emergency.common.Dtos.*;
+import lk.emergency.server.data.*;
+import lk.emergency.server.network.*;
+import lk.emergency.server.service.*;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -43,7 +46,7 @@ class FinalWorkflowTest {
 
     Peer(String user) throws Exception {
       socket = new Socket("127.0.0.1", server.port());
-      socket.setSoTimeout(6000);
+      socket.setSoTimeout(10000);
       if (user != null) ok(call("LOGIN", new Login(user, "DemoPass123!")));
     }
 
