@@ -4,10 +4,13 @@ import java.nio.file.*;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
-import lk.emergency.client.*;
+import lk.emergency.client.network.*;
+import lk.emergency.client.recovery.*;
 import lk.emergency.common.*;
 import lk.emergency.common.Dtos.*;
-import lk.emergency.server.*;
+import lk.emergency.server.data.*;
+import lk.emergency.server.network.*;
+import lk.emergency.server.service.*;
 
 /** Twenty authenticated real TCP sessions; local monotonic commit-to-application-receipt timing. */
 public class LocalLoadTest {
@@ -22,7 +25,7 @@ public class LocalLoadTest {
     Path root = Path.of(args.length == 0 ? "." : args[0]).toAbsolutePath().normalize();
     Path work = root.resolve(".local/testing/load-" + UUID.randomUUID());
     Files.createDirectories(work);
-    Path evidence = root.getParent().resolve("docs/verification/evidence/member3-finalized");
+    Path evidence = root.getParent().resolve("docs/verification/current");
     Files.createDirectories(evidence);
     AtomicLong committed = new AtomicLong();
     List<ConnectionManager> peers = new ArrayList<>();

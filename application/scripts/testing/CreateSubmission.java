@@ -74,8 +74,8 @@ public class CreateSubmission {
       text(
           zip,
           "START-HERE.txt",
-          "Emergency Help Network — University of Ruhuna / EC5205\n"
-              + "Academic demonstration — no real emergency dispatch.\n\n"
+          "Emergency Help Network â€” University of Ruhuna / EC5205\n"
+              + "Academic demonstration â€” no real emergency dispatch.\n\n"
               + "Requires Java 21 installed on PATH. Extract this ZIP into a writable folder.\n"
               + "From that folder run:\n"
               + "  java -jar server.jar --seed\n"
@@ -90,7 +90,8 @@ public class CreateSubmission {
               + "Copy config/server.properties.example to config/server.properties to customize.\n"
               + "Persistent DB: .local/data/emergency.db. Client journals: .local/client/. Never"
               + " erase these to retry an uncertain action.\n"
-              + "Log in again after reconnect; menu 90 reconciles saved original request IDs.\n"
+              + "Log in again after reconnect; Account / Saved actions reconciles saved original"
+              + " request IDs.\n"
               + "Use the source ZIP for protocol/design/test evidence and Eclipse instructions.\n");
     }
     System.out.println(

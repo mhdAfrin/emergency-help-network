@@ -1,0 +1,237 @@
+
+==============================================================
+EMERGENCY HELP NETWORK
+--------------------------------------------------------------
+Academic demonstration - no real emergency dispatch.
+Server host [127.0.0.1]: Server port [5050]: Connected to server. Login required.
+
+==============================================================
+EMERGENCY HELP NETWORK | SIGN IN
+--------------------------------------------------------------
+  1  Create citizen account
+  2  Login
+  0  Exit
+Choose: Username: Password (visible in this terminal): Welcome, fire1. Your account reference is 10007.
+Login successful. Your current assignments:
+
+==============================================================
+fire1 [RESPONDER]
+--------------------------------------------------------------
+  1  My current assignment
+  2  Accept or decline an offer
+  3  Update my progress
+  4  My team and availability
+  5  History and saved actions
+  6  Logout
+  0  Exit
+Choose: 
+[UPDATE 14 Nov 2026 10:45:38] Assignment offered
+  +-- RESULT --
+  Assignment:
+  +-- ASSIGNMENT #10018 --
+  | Incident         : 10011
+  | Team reference   : 10008
+  | Service          : Fire rescue
+  | Status           : Offered
+  | Created          : 14 Nov 2026 10:45:38
+  | Updated          : 14 Nov 2026 10:45:38
+  +------------------------------------------------------------
+  Incident:
+  +-- INCIDENT #10011 --
+  | Category         : Road accident
+  | Location         : Fictional campus gate
+  | Description      : Academic accident example
+  | Priority         : High
+  | Status           : Active
+  | Created          : 14 Nov 2026 10:45:37
+  | Updated          : 14 Nov 2026 10:45:38
+  +------------------------------------------------------------
+  +------------------------------------------------------------
+Choose: 
+[UPDATE 14 Nov 2026 10:45:38] Team updated
+  +-- TEAM #10008 --
+  | Team             : fire1 simulated team
+  | Service          : Fire rescue
+  | Availability     : Busy
+  | Connection       : Online
+  +------------------------------------------------------------
+Choose:   +-- RESULT --
+  Assignment:
+  +-- ASSIGNMENT #10018 --
+  | Incident         : 10011
+  | Team reference   : 10008
+  | Service          : Fire rescue
+  | Status           : Offered
+  | Created          : 14 Nov 2026 10:45:38
+  | Updated          : 14 Nov 2026 10:45:38
+  +------------------------------------------------------------
+  Incident:
+  +-- INCIDENT #10011 --
+  | Category         : Road accident
+  | Location         : Fictional campus gate
+  | Description      : Academic accident example
+  | Priority         : High
+  | Status           : Active
+  | Created          : 14 Nov 2026 10:45:37
+  | Updated          : 14 Nov 2026 10:45:38
+  +------------------------------------------------------------
+  +------------------------------------------------------------
+
+==============================================================
+fire1 [RESPONDER]
+--------------------------------------------------------------
+  1  My current assignment
+  2  Accept or decline an offer
+  3  Update my progress
+  4  My team and availability
+  5  History and saved actions
+  6  Logout
+  0  Exit
+Choose: 
+==============================================================
+RESPOND TO OFFER
+--------------------------------------------------------------
+  1  Accept
+  2  Decline
+  0  Back
+Choose:   +-- RESULT --
+  Assignment:
+  +-- ASSIGNMENT #10018 --
+  | Incident         : 10011
+  | Team reference   : 10008
+  | Service          : Fire rescue
+  | Status           : Offered
+  | Created          : 14 Nov 2026 10:45:38
+  | Updated          : 14 Nov 2026 10:45:38
+  +------------------------------------------------------------
+  Incident:
+  +-- INCIDENT #10011 --
+  | Category         : Road accident
+  | Location         : Fictional campus gate
+  | Description      : Academic accident example
+  | Priority         : High
+  | Status           : Active
+  | Created          : 14 Nov 2026 10:45:37
+  | Updated          : 14 Nov 2026 10:45:38
+  +------------------------------------------------------------
+  +------------------------------------------------------------
+Private decline reason (required): Review the displayed values. Confirm? y/N: 
+[UPDATE 14 Nov 2026 10:45:39] Assignment updated
+  +-- RESULT --
+  Incident:
+  +-- INCIDENT #10011 --
+  | Category         : Road accident
+  | Location         : Fictional campus gate
+  | Description      : Academic accident example
+  | Priority         : High
+  | Status           : Active
+  | Created          : 14 Nov 2026 10:45:37
+  | Updated          : 14 Nov 2026 10:45:39
+  +------------------------------------------------------------
+  Assignment:
+  +-- ASSIGNMENT #10018 --
+  | Incident         : 10011
+  | Team reference   : 10008
+  | Service          : Fire rescue
+  | Status           : Declined
+  | Created          : 14 Nov 2026 10:45:38
+  | Updated          : 14 Nov 2026 10:45:39
+  +------------------------------------------------------------
+  +------------------------------------------------------------
+
+[UPDATE 14 Nov 2026 10:45:39] Team updated
+  +-- TEAM #10008 --
+  | Team             : fire1 simulated team
+  | Service          : Fire rescue
+  | Availability     : Available
+  | Connection       : Online
+  +------------------------------------------------------------
+  +-- ASSIGNMENT #10018 --
+  | Incident         : 10011
+  | Team reference   : 10008
+  | Service          : Fire rescue
+  | Status           : Declined
+  | Created          : 14 Nov 2026 10:45:38
+  | Updated          : 14 Nov 2026 10:45:39
+  +------------------------------------------------------------
+
+==============================================================
+fire1 [RESPONDER]
+--------------------------------------------------------------
+  1  My current assignment
+  2  Accept or decline an offer
+  3  Update my progress
+  4  My team and availability
+  5  History and saved actions
+  6  Logout
+  0  Exit
+Choose: Connection lost. Reconnecting in the background; login again after connection returns.
+Connected to server. Login required.
+Username: Password (visible in this terminal): Welcome, fire1. Your account reference is 10007.
+Login successful. Your current assignments:
+
+==============================================================
+fire1 [RESPONDER]
+--------------------------------------------------------------
+  1  My current assignment
+  2  Accept or decline an offer
+  3  Update my progress
+  4  My team and availability
+  5  History and saved actions
+  6  Logout
+  0  Exit
+Choose: 
+==============================================================
+HISTORY AND ACCOUNT
+--------------------------------------------------------------
+  1  My account
+  2  Saved actions
+  3  History
+  4  Assignment timeline
+  0  Back
+Choose:   +-- RESULT --
+  Assignment:
+  +-- ASSIGNMENT #10018 --
+  | Incident         : 10011
+  | Team reference   : 10008
+  | Service          : Fire rescue
+  | Status           : Declined
+  | Created          : 14 Nov 2026 10:45:38
+  | Updated          : 14 Nov 2026 10:45:39
+  +------------------------------------------------------------
+  Incident:
+  +-- INCIDENT #10011 --
+  | Category         : Road accident
+  | Location         : Fictional campus gate
+  | Description      : Academic accident example
+  | Priority         : High
+  | Status           : Closed
+  | Resolution       : Public academic resolution
+  | Created          : 14 Nov 2026 10:45:37
+  | Updated          : 14 Nov 2026 10:45:44
+  | Closed           : 14 Nov 2026 10:45:44
+  +------------------------------------------------------------
+  | Your private note : PRIVATE-DECLINE-REASON
+  +------------------------------------------------------------
+
+==============================================================
+fire1 [RESPONDER]
+--------------------------------------------------------------
+  1  My current assignment
+  2  Accept or decline an offer
+  3  Update my progress
+  4  My team and availability
+  5  History and saved actions
+  6  Logout
+  0  Exit
+Choose:   +-- RESULT --
+  | Message          : Logged out
+  +------------------------------------------------------------
+
+==============================================================
+EMERGENCY HELP NETWORK | SIGN IN
+--------------------------------------------------------------
+  1  Create citizen account
+  2  Login
+  0  Exit
+Choose: 

@@ -1,3 +1,0 @@
-PASS: six separate console client JVMs; report -> notify -> three service offers -> decline -> replacement -> accept -> independent EN_ROUTE/ARRIVED/COMPLETED -> eligible closure and histories.
-PASS: server process restart; clients reconnect while menu input is idle, require login again, and restore BUSY service state through authorized snapshots.
-PASS: a fresh citizen JVM recovers closed service history; an unsent report draft survives client EOF/restart; privacy checks and all console exits passed. Evidence: C:\Users\Afrin\Desktop\5TH SEM\Network Programming\project\member3-finalized\docs\verification\evidence\member3-finalized\process-smoke

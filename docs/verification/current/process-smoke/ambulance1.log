@@ -1,0 +1,396 @@
+
+==============================================================
+EMERGENCY HELP NETWORK
+--------------------------------------------------------------
+Academic demonstration - no real emergency dispatch.
+Server host [127.0.0.1]: Server port [5050]: Connected to server. Login required.
+
+==============================================================
+EMERGENCY HELP NETWORK | SIGN IN
+--------------------------------------------------------------
+  1  Create citizen account
+  2  Login
+  0  Exit
+Choose: Username: Password (visible in this terminal): Welcome, ambulance1. Your account reference is 10005.
+Login successful. Your current assignments:
+
+==============================================================
+ambulance1 [RESPONDER]
+--------------------------------------------------------------
+  1  My current assignment
+  2  Accept or decline an offer
+  3  Update my progress
+  4  My team and availability
+  5  History and saved actions
+  6  Logout
+  0  Exit
+Choose: 
+[UPDATE 14 Nov 2026 10:45:38] Assignment offered
+  +-- RESULT --
+  Assignment:
+  +-- ASSIGNMENT #10016 --
+  | Incident         : 10011
+  | Team reference   : 10006
+  | Service          : Ambulance
+  | Status           : Offered
+  | Created          : 14 Nov 2026 10:45:38
+  | Updated          : 14 Nov 2026 10:45:38
+  +------------------------------------------------------------
+  Incident:
+  +-- INCIDENT #10011 --
+  | Category         : Road accident
+  | Location         : Fictional campus gate
+  | Description      : Academic accident example
+  | Priority         : High
+  | Status           : Active
+  | Created          : 14 Nov 2026 10:45:37
+  | Updated          : 14 Nov 2026 10:45:38
+  +------------------------------------------------------------
+  +------------------------------------------------------------
+Choose: 
+[UPDATE 14 Nov 2026 10:45:38] Team updated
+  +-- TEAM #10006 --
+  | Team             : ambulance1 simulated team
+  | Service          : Ambulance
+  | Availability     : Busy
+  | Connection       : Online
+  +------------------------------------------------------------
+Choose:   +-- RESULT --
+  Assignment:
+  +-- ASSIGNMENT #10016 --
+  | Incident         : 10011
+  | Team reference   : 10006
+  | Service          : Ambulance
+  | Status           : Offered
+  | Created          : 14 Nov 2026 10:45:38
+  | Updated          : 14 Nov 2026 10:45:38
+  +------------------------------------------------------------
+  Incident:
+  +-- INCIDENT #10011 --
+  | Category         : Road accident
+  | Location         : Fictional campus gate
+  | Description      : Academic accident example
+  | Priority         : High
+  | Status           : Active
+  | Created          : 14 Nov 2026 10:45:37
+  | Updated          : 14 Nov 2026 10:45:38
+  +------------------------------------------------------------
+  +------------------------------------------------------------
+
+==============================================================
+ambulance1 [RESPONDER]
+--------------------------------------------------------------
+  1  My current assignment
+  2  Accept or decline an offer
+  3  Update my progress
+  4  My team and availability
+  5  History and saved actions
+  6  Logout
+  0  Exit
+Choose: 
+==============================================================
+RESPOND TO OFFER
+--------------------------------------------------------------
+  1  Accept
+  2  Decline
+  0  Back
+Choose:   +-- RESULT --
+  Assignment:
+  +-- ASSIGNMENT #10016 --
+  | Incident         : 10011
+  | Team reference   : 10006
+  | Service          : Ambulance
+  | Status           : Offered
+  | Created          : 14 Nov 2026 10:45:38
+  | Updated          : 14 Nov 2026 10:45:38
+  +------------------------------------------------------------
+  Incident:
+  +-- INCIDENT #10011 --
+  | Category         : Road accident
+  | Location         : Fictional campus gate
+  | Description      : Academic accident example
+  | Priority         : High
+  | Status           : Active
+  | Created          : 14 Nov 2026 10:45:37
+  | Updated          : 14 Nov 2026 10:45:39
+  +------------------------------------------------------------
+  +------------------------------------------------------------
+Private note (optional): Review the displayed values. Confirm? y/N: 
+[UPDATE 14 Nov 2026 10:45:39] Assignment updated
+  +-- RESULT --
+  Incident:
+  +-- INCIDENT #10011 --
+  | Category         : Road accident
+  | Location         : Fictional campus gate
+  | Description      : Academic accident example
+  | Priority         : High
+  | Status           : Active
+  | Created          : 14 Nov 2026 10:45:37
+  | Updated          : 14 Nov 2026 10:45:39
+  +------------------------------------------------------------
+  Assignment:
+  +-- ASSIGNMENT #10016 --
+  | Incident         : 10011
+  | Team reference   : 10006
+  | Service          : Ambulance
+  | Status           : Accepted
+  | Created          : 14 Nov 2026 10:45:38
+  | Updated          : 14 Nov 2026 10:45:39
+  +------------------------------------------------------------
+  +------------------------------------------------------------
+  +-- ASSIGNMENT #10016 --
+  | Incident         : 10011
+  | Team reference   : 10006
+  | Service          : Ambulance
+  | Status           : Accepted
+  | Created          : 14 Nov 2026 10:45:38
+  | Updated          : 14 Nov 2026 10:45:39
+  +------------------------------------------------------------
+
+==============================================================
+ambulance1 [RESPONDER]
+--------------------------------------------------------------
+  1  My current assignment
+  2  Accept or decline an offer
+  3  Update my progress
+  4  My team and availability
+  5  History and saved actions
+  6  Logout
+  0  Exit
+Choose: Connection lost. Reconnecting in the background; login again after connection returns.
+Connected to server. Login required.
+Username: Password (visible in this terminal): Welcome, ambulance1. Your account reference is 10005.
+Login successful. Your current assignments:
+AMBULANCE: ACCEPTED | 10016
+
+==============================================================
+ambulance1 [RESPONDER]
+--------------------------------------------------------------
+  1  My current assignment
+  2  Accept or decline an offer
+  3  Update my progress
+  4  My team and availability
+  5  History and saved actions
+  6  Logout
+  0  Exit
+Choose:   +-- RESULT --
+  Assignment:
+  +-- ASSIGNMENT #10016 --
+  | Incident         : 10011
+  | Team reference   : 10006
+  | Service          : Ambulance
+  | Status           : Accepted
+  | Created          : 14 Nov 2026 10:45:38
+  | Updated          : 14 Nov 2026 10:45:39
+  +------------------------------------------------------------
+  Incident:
+  +-- INCIDENT #10011 --
+  | Category         : Road accident
+  | Location         : Fictional campus gate
+  | Description      : Academic accident example
+  | Priority         : High
+  | Status           : Active
+  | Created          : 14 Nov 2026 10:45:37
+  | Updated          : 14 Nov 2026 10:45:43
+  +------------------------------------------------------------
+  +------------------------------------------------------------
+Next valid progress: EN_ROUTE
+Private progress note (optional): Review the displayed values. Confirm? y/N: 
+[UPDATE 14 Nov 2026 10:45:43] Assignment updated
+  +-- RESULT --
+  Incident:
+  +-- INCIDENT #10011 --
+  | Category         : Road accident
+  | Location         : Fictional campus gate
+  | Description      : Academic accident example
+  | Priority         : High
+  | Status           : Active
+  | Created          : 14 Nov 2026 10:45:37
+  | Updated          : 14 Nov 2026 10:45:43
+  +------------------------------------------------------------
+  Assignment:
+  +-- ASSIGNMENT #10016 --
+  | Incident         : 10011
+  | Team reference   : 10006
+  | Service          : Ambulance
+  | Status           : En route
+  | Created          : 14 Nov 2026 10:45:38
+  | Updated          : 14 Nov 2026 10:45:43
+  +------------------------------------------------------------
+  +------------------------------------------------------------
+
+[UPDATE 14 Nov 2026 10:45:43] Team updated
+  +-- TEAM #10006 --
+  | Team             : ambulance1 simulated team
+  | Service          : Ambulance
+  | Availability     : Busy
+  | Connection       : Online
+  +------------------------------------------------------------
+  +-- ASSIGNMENT #10016 --
+  | Incident         : 10011
+  | Team reference   : 10006
+  | Service          : Ambulance
+  | Status           : En route
+  | Created          : 14 Nov 2026 10:45:38
+  | Updated          : 14 Nov 2026 10:45:43
+  +------------------------------------------------------------
+
+==============================================================
+ambulance1 [RESPONDER]
+--------------------------------------------------------------
+  1  My current assignment
+  2  Accept or decline an offer
+  3  Update my progress
+  4  My team and availability
+  5  History and saved actions
+  6  Logout
+  0  Exit
+Choose:   +-- RESULT --
+  Assignment:
+  +-- ASSIGNMENT #10016 --
+  | Incident         : 10011
+  | Team reference   : 10006
+  | Service          : Ambulance
+  | Status           : En route
+  | Created          : 14 Nov 2026 10:45:38
+  | Updated          : 14 Nov 2026 10:45:43
+  +------------------------------------------------------------
+  Incident:
+  +-- INCIDENT #10011 --
+  | Category         : Road accident
+  | Location         : Fictional campus gate
+  | Description      : Academic accident example
+  | Priority         : High
+  | Status           : Active
+  | Created          : 14 Nov 2026 10:45:37
+  | Updated          : 14 Nov 2026 10:45:43
+  +------------------------------------------------------------
+  | Your private note : PRIVATE-PROGRESS-NOTE
+  +------------------------------------------------------------
+Next valid progress: ARRIVED
+Private progress note (optional): Review the displayed values. Confirm? y/N: 
+[UPDATE 14 Nov 2026 10:45:43] Assignment updated
+  +-- RESULT --
+  Incident:
+  +-- INCIDENT #10011 --
+  | Category         : Road accident
+  | Location         : Fictional campus gate
+  | Description      : Academic accident example
+  | Priority         : High
+  | Status           : Active
+  | Created          : 14 Nov 2026 10:45:37
+  | Updated          : 14 Nov 2026 10:45:43
+  +------------------------------------------------------------
+  Assignment:
+  +-- ASSIGNMENT #10016 --
+  | Incident         : 10011
+  | Team reference   : 10006
+  | Service          : Ambulance
+  | Status           : Arrived
+  | Created          : 14 Nov 2026 10:45:38
+  | Updated          : 14 Nov 2026 10:45:43
+  +------------------------------------------------------------
+  +------------------------------------------------------------
+  +-- ASSIGNMENT #10016 --
+  | Incident         : 10011
+  | Team reference   : 10006
+  | Service          : Ambulance
+  | Status           : Arrived
+  | Created          : 14 Nov 2026 10:45:38
+  | Updated          : 14 Nov 2026 10:45:43
+  +------------------------------------------------------------
+
+==============================================================
+ambulance1 [RESPONDER]
+--------------------------------------------------------------
+  1  My current assignment
+  2  Accept or decline an offer
+  3  Update my progress
+  4  My team and availability
+  5  History and saved actions
+  6  Logout
+  0  Exit
+Choose:   +-- RESULT --
+  Assignment:
+  +-- ASSIGNMENT #10016 --
+  | Incident         : 10011
+  | Team reference   : 10006
+  | Service          : Ambulance
+  | Status           : Arrived
+  | Created          : 14 Nov 2026 10:45:38
+  | Updated          : 14 Nov 2026 10:45:43
+  +------------------------------------------------------------
+  Incident:
+  +-- INCIDENT #10011 --
+  | Category         : Road accident
+  | Location         : Fictional campus gate
+  | Description      : Academic accident example
+  | Priority         : High
+  | Status           : Active
+  | Created          : 14 Nov 2026 10:45:37
+  | Updated          : 14 Nov 2026 10:45:43
+  +------------------------------------------------------------
+  | Your private note : PRIVATE-PROGRESS-NOTE
+  +------------------------------------------------------------
+Next valid progress: COMPLETED
+Private progress note (optional): Review the displayed values. Confirm? y/N: 
+[UPDATE 14 Nov 2026 10:45:44] Assignment updated
+  +-- RESULT --
+  Incident:
+  +-- INCIDENT #10011 --
+  | Category         : Road accident
+  | Location         : Fictional campus gate
+  | Description      : Academic accident example
+  | Priority         : High
+  | Status           : Active
+  | Created          : 14 Nov 2026 10:45:37
+  | Updated          : 14 Nov 2026 10:45:44
+  +------------------------------------------------------------
+  Assignment:
+  +-- ASSIGNMENT #10016 --
+  | Incident         : 10011
+  | Team reference   : 10006
+  | Service          : Ambulance
+  | Status           : Completed
+  | Created          : 14 Nov 2026 10:45:38
+  | Updated          : 14 Nov 2026 10:45:44
+  +------------------------------------------------------------
+  +------------------------------------------------------------
+
+[UPDATE 14 Nov 2026 10:45:44] Team updated
+  +-- TEAM #10006 --
+  | Team             : ambulance1 simulated team
+  | Service          : Ambulance
+  | Availability     : Available
+  | Connection       : Online
+  +------------------------------------------------------------
+  +-- ASSIGNMENT #10016 --
+  | Incident         : 10011
+  | Team reference   : 10006
+  | Service          : Ambulance
+  | Status           : Completed
+  | Created          : 14 Nov 2026 10:45:38
+  | Updated          : 14 Nov 2026 10:45:44
+  +------------------------------------------------------------
+
+==============================================================
+ambulance1 [RESPONDER]
+--------------------------------------------------------------
+  1  My current assignment
+  2  Accept or decline an offer
+  3  Update my progress
+  4  My team and availability
+  5  History and saved actions
+  6  Logout
+  0  Exit
+Choose:   +-- RESULT --
+  | Message          : Logged out
+  +------------------------------------------------------------
+
+==============================================================
+EMERGENCY HELP NETWORK | SIGN IN
+--------------------------------------------------------------
+  1  Create citizen account
+  2  Login
+  0  Exit
+Choose: 

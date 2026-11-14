@@ -1,5 +1,0 @@
-PASS: exactly four root entries
-PASS: database SHA-256 unchanged
-PASS: documentation links resolve
-PASS: 21 automated tests
-PASS: separate-process smoke

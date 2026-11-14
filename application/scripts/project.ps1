@@ -5,6 +5,10 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
+$utf8 = New-Object System.Text.UTF8Encoding($false)
+[Console]::InputEncoding = $utf8
+[Console]::OutputEncoding = $utf8
+$OutputEncoding = $utf8
 $projectRoot = Split-Path -Parent $PSScriptRoot
 $localJdk = Join-Path $projectRoot '.local/tools/jdk-21.0.13+9'
 if (Test-Path -LiteralPath (Join-Path $localJdk 'bin/java.exe')) {

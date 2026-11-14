@@ -1,3 +1,0 @@
-PASS: all current local Markdown links resolve
-PASS: 60 executed tests with zero failures/errors/skips
-PASS: six-client process workflow, clean exits and server restart
