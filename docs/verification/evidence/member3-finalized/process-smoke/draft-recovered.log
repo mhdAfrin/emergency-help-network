@@ -1,0 +1,40 @@
+Academic demonstration — no real emergency dispatch.
+Server host [127.0.0.1]: Server port [5050]: Connected to server. Login required.
+
+1 Register citizen | 2 Login | 3 Ping | 0 Exit
+> Username: Password input is visible here; use fictional credentials.
+Password: {
+  "id" : "ec4ad713-8e7b-4103-a3a1-ada6a1622f0e",
+  "username" : "citizen2",
+  "displayName" : "citizen2",
+  "role" : "CITIZEN"
+}
+Authorized snapshot synchronized. Recovered service states:
+
+citizen2 [CITIZEN] — 1 My identity | 2 Ping | 3 Report incident | 4 My active incidents/filter | 5 Details/services/timeline | 6 History | 90 Pending actions | 9 Logout | 0 Exit
+> Academic demonstration — no real emergency dispatch.
+Resume your saved unsent report? y/N: Category MEDICAL/ROAD_ACCIDENT/FIRE/CRIME/OTHER [Enter keeps saved; - clears]: Address/landmark [Enter keeps saved; - clears]: Description: Latitude (optional): Longitude (optional): {
+  "id" : "2af86ecc-6521-454e-b52b-b0e8313995f2",
+  "citizenId" : "ec4ad713-8e7b-4103-a3a1-ada6a1622f0e",
+  "category" : "OTHER",
+  "address" : "Saved draft campus",
+  "description" : "Recovered draft description",
+  "latitude" : null,
+  "longitude" : null,
+  "priority" : "MEDIUM",
+  "state" : "REPORTED",
+  "publicResolutionReason" : null,
+  "createdAt" : "2026-11-13 19:12:54 Asia/Colombo",
+  "updatedAt" : "2026-11-13 19:12:54 Asia/Colombo",
+  "closedAt" : null,
+  "revision" : 0
+}
+Confirmed incident reference: 2af86ecc-6521-454e-b52b-b0e8313995f2
+
+citizen2 [CITIZEN] — 1 My identity | 2 Ping | 3 Report incident | 4 My active incidents/filter | 5 Details/services/timeline | 6 History | 90 Pending actions | 9 Logout | 0 Exit
+> {
+  "message" : "Logged out"
+}
+
+1 Register citizen | 2 Login | 3 Ping | 0 Exit
+> 

@@ -11,7 +11,7 @@ import java.util.function.Consumer;
 import lk.emergency.common.*;
 
 /** One reader, one writer. Pending IDs survive timeout until response or disconnect. */
-public final class ConnectionManager implements AutoCloseable {
+public final class ConnectionManager implements Transport {
   private final Socket socket = new Socket();
   private final OutboundQueue outgoing = new OutboundQueue();
   private final Map<String, CompletableFuture<Envelope>> pending = new ConcurrentHashMap<>();
@@ -19,15 +19,37 @@ public final class ConnectionManager implements AutoCloseable {
   private final AtomicBoolean closed = new AtomicBoolean();
   private final Thread reader, writer;
   private final Consumer<Envelope> events;
+  private final NetworkTiming timing;
+  private final ScheduledExecutorService heartbeat =
+      Executors.newSingleThreadScheduledExecutor(r -> new Thread(r, "client-heartbeat"));
+  private volatile long lastInbound = System.nanoTime(),
+      lastHeartbeat = System.nanoTime(),
+      writingSince;
 
   public ConnectionManager(String host, int port, Consumer<Envelope> events) throws IOException {
+    this(host, port, events, NetworkTiming.DEFAULT);
+  }
+
+  public ConnectionManager(String host, int port, Consumer<Envelope> events, NetworkTiming timing)
+      throws IOException {
     this.events = events;
-    socket.connect(new InetSocketAddress(host, port), 5000);
+    this.timing = timing;
+    try {
+      socket.connect(new InetSocketAddress(host, port), 5000);
+    } catch (IOException e) {
+      try {
+        socket.close();
+      } catch (IOException ignored) {
+      }
+      heartbeat.shutdownNow();
+      throw e;
+    }
     socket.setTcpNoDelay(true);
     reader = new Thread(this::readLoop, "client-reader");
     writer = new Thread(this::writeLoop, "client-writer");
     reader.start();
     writer.start();
+    heartbeat.scheduleAtFixedRate(this::tick, 50, 50, TimeUnit.MILLISECONDS);
   }
 
   public CompletableFuture<Envelope> send(Envelope request) {
@@ -43,6 +65,11 @@ public final class ConnectionManager implements AutoCloseable {
       pendingRequests.remove(request.requestId());
       future.completeExceptionally(new IOException("Outbound queue full"));
       close();
+    }
+    if (closed.get()) {
+      pending.remove(request.requestId());
+      pendingRequests.remove(request.requestId());
+      future.completeExceptionally(new IOException("Disconnected"));
     }
     return future;
   }
@@ -80,6 +107,7 @@ public final class ConnectionManager implements AutoCloseable {
       while (!closed.get()) {
         Envelope frame = FrameCodec.read(socket.getInputStream());
         if (frame == null) break;
+        lastInbound = System.nanoTime();
         if (frame.version() != 1) throw new IOException("Unsupported server version");
         if (frame.kind() == Kind.RESPONSE && frame.requestId() != null) {
           CompletableFuture<Envelope> waiting = pending.remove(frame.requestId());
@@ -97,7 +125,12 @@ public final class ConnectionManager implements AutoCloseable {
 
   private void writeLoop() {
     try {
-      while (!closed.get()) FrameCodec.write(socket.getOutputStream(), outgoing.take());
+      while (!closed.get()) {
+        Envelope frame = outgoing.take();
+        writingSince = System.nanoTime();
+        FrameCodec.write(socket.getOutputStream(), frame);
+        writingSince = 0;
+      }
     } catch (IOException e) {
       close();
     } catch (InterruptedException e) {
@@ -118,6 +151,8 @@ public final class ConnectionManager implements AutoCloseable {
     }
     pending.values().forEach(f -> f.completeExceptionally(new IOException("Disconnected")));
     pending.clear();
+    pendingRequests.clear();
+    heartbeat.shutdownNow();
     reader.interrupt();
     writer.interrupt();
     for (Thread thread : List.of(reader, writer))
@@ -127,5 +162,28 @@ public final class ConnectionManager implements AutoCloseable {
         } catch (InterruptedException e) {
           Thread.currentThread().interrupt();
         }
+  }
+
+  @Override
+  public CompletableFuture<Envelope> resend(Envelope request) {
+    CompletableFuture<Envelope> future = pending.get(request.requestId());
+    if (future == null) return send(request);
+    if (!outgoing.offer(request)) close();
+    return future;
+  }
+
+  private void tick() {
+    if (closed.get()) return;
+    long now = System.nanoTime();
+    if (now - lastInbound > TimeUnit.MILLISECONDS.toNanos(timing.inactivityMillis())
+        || (writingSince != 0
+            && now - writingSince > TimeUnit.MILLISECONDS.toNanos(timing.writeTimeoutMillis()))) {
+      close();
+      return;
+    }
+    if (now - lastHeartbeat >= TimeUnit.MILLISECONDS.toNanos(timing.heartbeatMillis())) {
+      lastHeartbeat = now;
+      send(Envelope.request("PING", UUID.randomUUID().toString(), Map.of()));
+    }
   }
 }

@@ -17,9 +17,27 @@ public final class TcpServer implements AutoCloseable {
   private final RequestRouter router;
   private final AtomicBoolean closed = new AtomicBoolean();
   private final Thread acceptor;
+  private final lk.emergency.common.NetworkTiming timing;
 
   public TcpServer(String host, int port, int limit, Database db, AuthService auth)
       throws IOException {
+    this(host, port, limit, db, auth, lk.emergency.common.NetworkTiming.DEFAULT);
+  }
+
+  public TcpServer(
+      String host,
+      int port,
+      int limit,
+      Database db,
+      AuthService auth,
+      lk.emergency.common.NetworkTiming timing)
+      throws IOException {
+    this.timing = timing;
+    db.transaction(
+        c -> {
+          new TeamRepository().reconcile(c);
+          return null;
+        });
     if (limit < 1 || limit > 200)
       throw new IllegalArgumentException("Connection limit must be 1–200");
     slots = new Semaphore(limit);
@@ -52,7 +70,14 @@ public final class TcpServer implements AutoCloseable {
           socket.close();
           continue;
         }
-        ClientSession session = new ClientSession(socket, router, registry, watchdog, 5000);
+        ClientSession session =
+            new ClientSession(
+                socket,
+                router,
+                registry,
+                watchdog,
+                timing.writeTimeoutMillis(),
+                timing.inactivityMillis());
         sessions.add(session);
         try {
           readers.execute(
@@ -88,11 +113,11 @@ public final class TcpServer implements AutoCloseable {
       Thread.currentThread().interrupt();
     }
     sessions.forEach(ClientSession::close);
-    readers.shutdownNow();
-    watchdog.shutdownNow();
+    readers.shutdown();
+    watchdog.shutdown();
     try {
-      readers.awaitTermination(10, TimeUnit.SECONDS);
-      watchdog.awaitTermination(2, TimeUnit.SECONDS);
+      if (!readers.awaitTermination(10, TimeUnit.SECONDS)) readers.shutdownNow();
+      if (!watchdog.awaitTermination(2, TimeUnit.SECONDS)) watchdog.shutdownNow();
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
     }

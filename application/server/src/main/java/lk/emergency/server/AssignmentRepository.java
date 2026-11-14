@@ -134,4 +134,35 @@ public final class AssignmentRepository {
         r.getString("updated_at"),
         r.getLong("revision"));
   }
+
+  public void transition(
+      Connection c, AssignmentView current, AssignmentState next, String reason, String now)
+      throws SQLException {
+    try (var p =
+        c.prepareStatement(
+            "UPDATE assignments SET state=?,reason=?,updated_at=?,revision=revision+1 WHERE id=?"
+                + " AND revision=? AND state=?")) {
+      p.setString(1, next.name());
+      p.setString(2, reason);
+      p.setString(3, now);
+      p.setString(4, current.id());
+      p.setLong(5, current.revision());
+      p.setString(6, current.state().name());
+      MutationSupport.requireUpdated(p.executeUpdate());
+    }
+  }
+
+  public List<AssignmentView> teamHistory(Connection c, String id, int offset, int limit)
+      throws SQLException {
+    return page(c, "team_id=?", id, offset, limit);
+  }
+
+  public String reason(Connection c, String id) throws SQLException {
+    try (var p = c.prepareStatement("SELECT reason FROM assignments WHERE id=?")) {
+      p.setString(1, id);
+      try (var rows = p.executeQuery()) {
+        return rows.next() ? rows.getString(1) : null;
+      }
+    }
+  }
 }

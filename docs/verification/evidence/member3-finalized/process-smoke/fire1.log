@@ -1,0 +1,216 @@
+Academic demonstration — no real emergency dispatch.
+Server host [127.0.0.1]: Server port [5050]: Connected to server. Login required.
+
+1 Register citizen | 2 Login | 3 Ping | 0 Exit
+> Username: Password input is visible here; use fictional credentials.
+Password: {
+  "id" : "16d3a1fa-96c3-4a75-bfc1-dd0cddeaa254",
+  "username" : "fire1",
+  "displayName" : "fire1",
+  "role" : "RESPONDER"
+}
+Authorized snapshot synchronized. Recovered service states:
+
+fire1 [RESPONDER] — 1 My identity | 2 Ping | 3 My team | 4 Set availability | 5 My offers/current assignment | 6 Accept | 7 Decline | 8 Next progress | 10 History | 11 Assignment timeline | 90 Pending actions | 9 Logout | 0 Exit
+> 
+[2026-11-13 19:12:42 Asia/Colombo] ASSIGNMENT_OFFERED
+{
+  "assignment" : {
+    "id" : "a332fe20-409a-4023-8e25-92d3f5ae33fe",
+    "incidentId" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "teamId" : "dc48d71f-fab6-4cf2-9857-62e01f533d95",
+    "serviceType" : "FIRE_RESCUE",
+    "state" : "OFFERED",
+    "createdAt" : "2026-11-13 19:12:42 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:42 Asia/Colombo",
+    "revision" : 0
+  },
+  "incident" : {
+    "id" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "citizenId" : "12ebec6f-7c7b-4c43-891f-161445e86520",
+    "category" : "ROAD_ACCIDENT",
+    "address" : "Fictional campus gate",
+    "description" : "Academic accident example",
+    "latitude" : null,
+    "longitude" : null,
+    "priority" : "HIGH",
+    "state" : "ACTIVE",
+    "publicResolutionReason" : null,
+    "createdAt" : "2026-11-13 19:12:41 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:42 Asia/Colombo",
+    "closedAt" : null,
+    "revision" : 4
+  },
+  "privateReason" : null
+}
+> 
+[2026-11-13 19:12:42 Asia/Colombo] TEAM_UPDATED
+{
+  "id" : "dc48d71f-fab6-4cf2-9857-62e01f533d95",
+  "name" : "fire1 simulated team",
+  "serviceType" : "FIRE_RESCUE",
+  "availability" : "BUSY",
+  "revision" : 1,
+  "presence" : "ONLINE"
+}
+> [ {
+  "assignment" : {
+    "id" : "a332fe20-409a-4023-8e25-92d3f5ae33fe",
+    "incidentId" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "teamId" : "dc48d71f-fab6-4cf2-9857-62e01f533d95",
+    "serviceType" : "FIRE_RESCUE",
+    "state" : "OFFERED",
+    "createdAt" : "2026-11-13 19:12:42 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:42 Asia/Colombo",
+    "revision" : 0
+  },
+  "incident" : {
+    "id" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "citizenId" : "12ebec6f-7c7b-4c43-891f-161445e86520",
+    "category" : "ROAD_ACCIDENT",
+    "address" : "Fictional campus gate",
+    "description" : "Academic accident example",
+    "latitude" : null,
+    "longitude" : null,
+    "priority" : "HIGH",
+    "state" : "ACTIVE",
+    "publicResolutionReason" : null,
+    "createdAt" : "2026-11-13 19:12:41 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:42 Asia/Colombo",
+    "closedAt" : null,
+    "revision" : 4
+  },
+  "privateReason" : null
+} ]
+
+fire1 [RESPONDER] — 1 My identity | 2 Ping | 3 My team | 4 Set availability | 5 My offers/current assignment | 6 Accept | 7 Decline | 8 Next progress | 10 History | 11 Assignment timeline | 90 Pending actions | 9 Logout | 0 Exit
+> {
+  "assignment" : {
+    "id" : "a332fe20-409a-4023-8e25-92d3f5ae33fe",
+    "incidentId" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "teamId" : "dc48d71f-fab6-4cf2-9857-62e01f533d95",
+    "serviceType" : "FIRE_RESCUE",
+    "state" : "OFFERED",
+    "createdAt" : "2026-11-13 19:12:42 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:42 Asia/Colombo",
+    "revision" : 0
+  },
+  "incident" : {
+    "id" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "citizenId" : "12ebec6f-7c7b-4c43-891f-161445e86520",
+    "category" : "ROAD_ACCIDENT",
+    "address" : "Fictional campus gate",
+    "description" : "Academic accident example",
+    "latitude" : null,
+    "longitude" : null,
+    "priority" : "HIGH",
+    "state" : "ACTIVE",
+    "publicResolutionReason" : null,
+    "createdAt" : "2026-11-13 19:12:41 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:42 Asia/Colombo",
+    "closedAt" : null,
+    "revision" : 4
+  },
+  "privateReason" : null
+}
+Private decline reason (required): Review the displayed values. Confirm? y/N: 
+[2026-11-13 19:12:43 Asia/Colombo] ASSIGNMENT_UPDATED
+{
+  "incident" : {
+    "id" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "citizenId" : "12ebec6f-7c7b-4c43-891f-161445e86520",
+    "category" : "ROAD_ACCIDENT",
+    "address" : "Fictional campus gate",
+    "description" : "Academic accident example",
+    "latitude" : null,
+    "longitude" : null,
+    "priority" : "HIGH",
+    "state" : "ACTIVE",
+    "publicResolutionReason" : null,
+    "createdAt" : "2026-11-13 19:12:41 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:43 Asia/Colombo",
+    "closedAt" : null,
+    "revision" : 5
+  },
+  "assignment" : {
+    "id" : "a332fe20-409a-4023-8e25-92d3f5ae33fe",
+    "incidentId" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "teamId" : "dc48d71f-fab6-4cf2-9857-62e01f533d95",
+    "serviceType" : "FIRE_RESCUE",
+    "state" : "DECLINED",
+    "createdAt" : "2026-11-13 19:12:42 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:43 Asia/Colombo",
+    "revision" : 1
+  }
+}
+
+[2026-11-13 19:12:43 Asia/Colombo] TEAM_UPDATED
+{
+  "id" : "dc48d71f-fab6-4cf2-9857-62e01f533d95",
+  "name" : "fire1 simulated team",
+  "serviceType" : "FIRE_RESCUE",
+  "availability" : "AVAILABLE",
+  "revision" : 2,
+  "presence" : "ONLINE"
+}
+{
+  "id" : "a332fe20-409a-4023-8e25-92d3f5ae33fe",
+  "incidentId" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+  "teamId" : "dc48d71f-fab6-4cf2-9857-62e01f533d95",
+  "serviceType" : "FIRE_RESCUE",
+  "state" : "DECLINED",
+  "createdAt" : "2026-11-13 19:12:42 Asia/Colombo",
+  "updatedAt" : "2026-11-13 19:12:43 Asia/Colombo",
+  "revision" : 1
+}
+
+fire1 [RESPONDER] — 1 My identity | 2 Ping | 3 My team | 4 Set availability | 5 My offers/current assignment | 6 Accept | 7 Decline | 8 Next progress | 10 History | 11 Assignment timeline | 90 Pending actions | 9 Logout | 0 Exit
+> Connection lost. Reconnecting in the background; login again after connection returns.
+Connected to server. Login required.
+Username: Password input is visible here; use fictional credentials.
+Password: {
+  "id" : "16d3a1fa-96c3-4a75-bfc1-dd0cddeaa254",
+  "username" : "fire1",
+  "displayName" : "fire1",
+  "role" : "RESPONDER"
+}
+Authorized snapshot synchronized. Recovered service states:
+
+fire1 [RESPONDER] — 1 My identity | 2 Ping | 3 My team | 4 Set availability | 5 My offers/current assignment | 6 Accept | 7 Decline | 8 Next progress | 10 History | 11 Assignment timeline | 90 Pending actions | 9 Logout | 0 Exit
+> [ {
+  "assignment" : {
+    "id" : "a332fe20-409a-4023-8e25-92d3f5ae33fe",
+    "incidentId" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "teamId" : "dc48d71f-fab6-4cf2-9857-62e01f533d95",
+    "serviceType" : "FIRE_RESCUE",
+    "state" : "DECLINED",
+    "createdAt" : "2026-11-13 19:12:42 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:43 Asia/Colombo",
+    "revision" : 1
+  },
+  "incident" : {
+    "id" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "citizenId" : "12ebec6f-7c7b-4c43-891f-161445e86520",
+    "category" : "ROAD_ACCIDENT",
+    "address" : "Fictional campus gate",
+    "description" : "Academic accident example",
+    "latitude" : null,
+    "longitude" : null,
+    "priority" : "HIGH",
+    "state" : "CLOSED",
+    "publicResolutionReason" : "Public academic resolution",
+    "createdAt" : "2026-11-13 19:12:41 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:50 Asia/Colombo",
+    "closedAt" : "2026-11-13 19:12:50 Asia/Colombo",
+    "revision" : 19
+  },
+  "privateReason" : "PRIVATE-DECLINE-REASON"
+} ]
+
+fire1 [RESPONDER] — 1 My identity | 2 Ping | 3 My team | 4 Set availability | 5 My offers/current assignment | 6 Accept | 7 Decline | 8 Next progress | 10 History | 11 Assignment timeline | 90 Pending actions | 9 Logout | 0 Exit
+> {
+  "message" : "Logged out"
+}
+
+1 Register citizen | 2 Login | 3 Ping | 0 Exit
+> 

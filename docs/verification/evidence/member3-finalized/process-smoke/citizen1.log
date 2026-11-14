@@ -1,0 +1,725 @@
+Academic demonstration — no real emergency dispatch.
+Server host [127.0.0.1]: Server port [5050]: Connected to server. Login required.
+
+1 Register citizen | 2 Login | 3 Ping | 0 Exit
+> Username: Password input is visible here; use fictional credentials.
+Password: {
+  "id" : "12ebec6f-7c7b-4c43-891f-161445e86520",
+  "username" : "citizen1",
+  "displayName" : "citizen1",
+  "role" : "CITIZEN"
+}
+Authorized snapshot synchronized. Recovered service states:
+
+citizen1 [CITIZEN] — 1 My identity | 2 Ping | 3 Report incident | 4 My active incidents/filter | 5 Details/services/timeline | 6 History | 90 Pending actions | 9 Logout | 0 Exit
+> {
+  "message" : "PONG"
+}
+
+citizen1 [CITIZEN] — 1 My identity | 2 Ping | 3 Report incident | 4 My active incidents/filter | 5 Details/services/timeline | 6 History | 90 Pending actions | 9 Logout | 0 Exit
+> Academic demonstration — no real emergency dispatch.
+Category MEDICAL/ROAD_ACCIDENT/FIRE/CRIME/OTHER: Address/landmark: Description: Latitude (optional): Longitude (optional): {
+  "id" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+  "citizenId" : "12ebec6f-7c7b-4c43-891f-161445e86520",
+  "category" : "ROAD_ACCIDENT",
+  "address" : "Fictional campus gate",
+  "description" : "Academic accident example",
+  "latitude" : null,
+  "longitude" : null,
+  "priority" : "MEDIUM",
+  "state" : "REPORTED",
+  "publicResolutionReason" : null,
+  "createdAt" : "2026-11-13 19:12:41 Asia/Colombo",
+  "updatedAt" : "2026-11-13 19:12:41 Asia/Colombo",
+  "closedAt" : null,
+  "revision" : 0
+}
+Confirmed incident reference: e3ece77e-c097-46c4-8caa-c795f4808a6e
+
+citizen1 [CITIZEN] — 1 My identity | 2 Ping | 3 Report incident | 4 My active incidents/filter | 5 Details/services/timeline | 6 History | 90 Pending actions | 9 Logout | 0 Exit
+> 
+[2026-11-13 19:12:42 Asia/Colombo] INCIDENT_UPDATED
+{
+  "incident" : {
+    "id" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "citizenId" : "12ebec6f-7c7b-4c43-891f-161445e86520",
+    "category" : "ROAD_ACCIDENT",
+    "address" : "Fictional campus gate",
+    "description" : "Academic accident example",
+    "latitude" : null,
+    "longitude" : null,
+    "priority" : "HIGH",
+    "state" : "REPORTED",
+    "publicResolutionReason" : null,
+    "createdAt" : "2026-11-13 19:12:41 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:42 Asia/Colombo",
+    "closedAt" : null,
+    "revision" : 1
+  },
+  "assignment" : null
+}
+> 
+[2026-11-13 19:12:42 Asia/Colombo] INCIDENT_UPDATED
+{
+  "incident" : {
+    "id" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "citizenId" : "12ebec6f-7c7b-4c43-891f-161445e86520",
+    "category" : "ROAD_ACCIDENT",
+    "address" : "Fictional campus gate",
+    "description" : "Academic accident example",
+    "latitude" : null,
+    "longitude" : null,
+    "priority" : "HIGH",
+    "state" : "ACTIVE",
+    "publicResolutionReason" : null,
+    "createdAt" : "2026-11-13 19:12:41 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:42 Asia/Colombo",
+    "closedAt" : null,
+    "revision" : 2
+  },
+  "assignment" : {
+    "id" : "9eea7cc0-76be-4afd-968b-923b2e8f6c6b",
+    "incidentId" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "teamId" : "9c77e894-07c0-4c87-84e0-e17f06e2d4f3",
+    "serviceType" : "POLICE",
+    "state" : "OFFERED",
+    "createdAt" : "2026-11-13 19:12:42 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:42 Asia/Colombo",
+    "revision" : 0
+  }
+}
+> 
+[2026-11-13 19:12:42 Asia/Colombo] INCIDENT_UPDATED
+{
+  "incident" : {
+    "id" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "citizenId" : "12ebec6f-7c7b-4c43-891f-161445e86520",
+    "category" : "ROAD_ACCIDENT",
+    "address" : "Fictional campus gate",
+    "description" : "Academic accident example",
+    "latitude" : null,
+    "longitude" : null,
+    "priority" : "HIGH",
+    "state" : "ACTIVE",
+    "publicResolutionReason" : null,
+    "createdAt" : "2026-11-13 19:12:41 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:42 Asia/Colombo",
+    "closedAt" : null,
+    "revision" : 3
+  },
+  "assignment" : {
+    "id" : "da11e567-ac81-4e42-84a0-d8b830c17f12",
+    "incidentId" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "teamId" : "a3103b81-2814-4d5c-b74d-199431b90abc",
+    "serviceType" : "AMBULANCE",
+    "state" : "OFFERED",
+    "createdAt" : "2026-11-13 19:12:42 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:42 Asia/Colombo",
+    "revision" : 0
+  }
+}
+> 
+[2026-11-13 19:12:42 Asia/Colombo] INCIDENT_UPDATED
+{
+  "incident" : {
+    "id" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "citizenId" : "12ebec6f-7c7b-4c43-891f-161445e86520",
+    "category" : "ROAD_ACCIDENT",
+    "address" : "Fictional campus gate",
+    "description" : "Academic accident example",
+    "latitude" : null,
+    "longitude" : null,
+    "priority" : "HIGH",
+    "state" : "ACTIVE",
+    "publicResolutionReason" : null,
+    "createdAt" : "2026-11-13 19:12:41 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:42 Asia/Colombo",
+    "closedAt" : null,
+    "revision" : 4
+  },
+  "assignment" : {
+    "id" : "a332fe20-409a-4023-8e25-92d3f5ae33fe",
+    "incidentId" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "teamId" : "dc48d71f-fab6-4cf2-9857-62e01f533d95",
+    "serviceType" : "FIRE_RESCUE",
+    "state" : "OFFERED",
+    "createdAt" : "2026-11-13 19:12:42 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:42 Asia/Colombo",
+    "revision" : 0
+  }
+}
+> 
+[2026-11-13 19:12:43 Asia/Colombo] INCIDENT_UPDATED
+{
+  "incident" : {
+    "id" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "citizenId" : "12ebec6f-7c7b-4c43-891f-161445e86520",
+    "category" : "ROAD_ACCIDENT",
+    "address" : "Fictional campus gate",
+    "description" : "Academic accident example",
+    "latitude" : null,
+    "longitude" : null,
+    "priority" : "HIGH",
+    "state" : "ACTIVE",
+    "publicResolutionReason" : null,
+    "createdAt" : "2026-11-13 19:12:41 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:43 Asia/Colombo",
+    "closedAt" : null,
+    "revision" : 5
+  },
+  "assignment" : {
+    "id" : "a332fe20-409a-4023-8e25-92d3f5ae33fe",
+    "incidentId" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "teamId" : "dc48d71f-fab6-4cf2-9857-62e01f533d95",
+    "serviceType" : "FIRE_RESCUE",
+    "state" : "DECLINED",
+    "createdAt" : "2026-11-13 19:12:42 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:43 Asia/Colombo",
+    "revision" : 1
+  }
+}
+> 
+[2026-11-13 19:12:43 Asia/Colombo] INCIDENT_UPDATED
+{
+  "incident" : {
+    "id" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "citizenId" : "12ebec6f-7c7b-4c43-891f-161445e86520",
+    "category" : "ROAD_ACCIDENT",
+    "address" : "Fictional campus gate",
+    "description" : "Academic accident example",
+    "latitude" : null,
+    "longitude" : null,
+    "priority" : "HIGH",
+    "state" : "ACTIVE",
+    "publicResolutionReason" : null,
+    "createdAt" : "2026-11-13 19:12:41 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:43 Asia/Colombo",
+    "closedAt" : null,
+    "revision" : 6
+  },
+  "assignment" : {
+    "id" : "4d1c3a41-2605-48e8-9bb8-5da0eb0b29b3",
+    "incidentId" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "teamId" : "96d3c47f-c6a0-49c9-ab7f-91dc7375def0",
+    "serviceType" : "FIRE_RESCUE",
+    "state" : "OFFERED",
+    "createdAt" : "2026-11-13 19:12:43 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:43 Asia/Colombo",
+    "revision" : 0
+  }
+}
+> 
+[2026-11-13 19:12:43 Asia/Colombo] INCIDENT_UPDATED
+{
+  "incident" : {
+    "id" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "citizenId" : "12ebec6f-7c7b-4c43-891f-161445e86520",
+    "category" : "ROAD_ACCIDENT",
+    "address" : "Fictional campus gate",
+    "description" : "Academic accident example",
+    "latitude" : null,
+    "longitude" : null,
+    "priority" : "HIGH",
+    "state" : "ACTIVE",
+    "publicResolutionReason" : null,
+    "createdAt" : "2026-11-13 19:12:41 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:43 Asia/Colombo",
+    "closedAt" : null,
+    "revision" : 7
+  },
+  "assignment" : {
+    "id" : "9eea7cc0-76be-4afd-968b-923b2e8f6c6b",
+    "incidentId" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "teamId" : "9c77e894-07c0-4c87-84e0-e17f06e2d4f3",
+    "serviceType" : "POLICE",
+    "state" : "ACCEPTED",
+    "createdAt" : "2026-11-13 19:12:42 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:43 Asia/Colombo",
+    "revision" : 1
+  }
+}
+> 
+[2026-11-13 19:12:43 Asia/Colombo] INCIDENT_UPDATED
+{
+  "incident" : {
+    "id" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "citizenId" : "12ebec6f-7c7b-4c43-891f-161445e86520",
+    "category" : "ROAD_ACCIDENT",
+    "address" : "Fictional campus gate",
+    "description" : "Academic accident example",
+    "latitude" : null,
+    "longitude" : null,
+    "priority" : "HIGH",
+    "state" : "ACTIVE",
+    "publicResolutionReason" : null,
+    "createdAt" : "2026-11-13 19:12:41 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:43 Asia/Colombo",
+    "closedAt" : null,
+    "revision" : 8
+  },
+  "assignment" : {
+    "id" : "da11e567-ac81-4e42-84a0-d8b830c17f12",
+    "incidentId" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "teamId" : "a3103b81-2814-4d5c-b74d-199431b90abc",
+    "serviceType" : "AMBULANCE",
+    "state" : "ACCEPTED",
+    "createdAt" : "2026-11-13 19:12:42 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:43 Asia/Colombo",
+    "revision" : 1
+  }
+}
+> 
+[2026-11-13 19:12:43 Asia/Colombo] INCIDENT_UPDATED
+{
+  "incident" : {
+    "id" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "citizenId" : "12ebec6f-7c7b-4c43-891f-161445e86520",
+    "category" : "ROAD_ACCIDENT",
+    "address" : "Fictional campus gate",
+    "description" : "Academic accident example",
+    "latitude" : null,
+    "longitude" : null,
+    "priority" : "HIGH",
+    "state" : "ACTIVE",
+    "publicResolutionReason" : null,
+    "createdAt" : "2026-11-13 19:12:41 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:43 Asia/Colombo",
+    "closedAt" : null,
+    "revision" : 9
+  },
+  "assignment" : {
+    "id" : "4d1c3a41-2605-48e8-9bb8-5da0eb0b29b3",
+    "incidentId" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "teamId" : "96d3c47f-c6a0-49c9-ab7f-91dc7375def0",
+    "serviceType" : "FIRE_RESCUE",
+    "state" : "ACCEPTED",
+    "createdAt" : "2026-11-13 19:12:43 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:43 Asia/Colombo",
+    "revision" : 1
+  }
+}
+> 
+[2026-11-13 19:12:43 Asia/Colombo] INCIDENT_UPDATED
+{
+  "incident" : {
+    "id" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "citizenId" : "12ebec6f-7c7b-4c43-891f-161445e86520",
+    "category" : "ROAD_ACCIDENT",
+    "address" : "Fictional campus gate",
+    "description" : "Academic accident example",
+    "latitude" : null,
+    "longitude" : null,
+    "priority" : "HIGH",
+    "state" : "ACTIVE",
+    "publicResolutionReason" : null,
+    "createdAt" : "2026-11-13 19:12:41 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:43 Asia/Colombo",
+    "closedAt" : null,
+    "revision" : 10
+  },
+  "assignment" : {
+    "id" : "9eea7cc0-76be-4afd-968b-923b2e8f6c6b",
+    "incidentId" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "teamId" : "9c77e894-07c0-4c87-84e0-e17f06e2d4f3",
+    "serviceType" : "POLICE",
+    "state" : "EN_ROUTE",
+    "createdAt" : "2026-11-13 19:12:42 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:43 Asia/Colombo",
+    "revision" : 2
+  }
+}
+> Connection lost. Reconnecting in the background; login again after connection returns.
+Connected to server. Login required.
+Username: Password input is visible here; use fictional credentials.
+Password: {
+  "id" : "12ebec6f-7c7b-4c43-891f-161445e86520",
+  "username" : "citizen1",
+  "displayName" : "citizen1",
+  "role" : "CITIZEN"
+}
+Authorized snapshot synchronized. Recovered service states:
+FIRE_RESCUE: ACCEPTED | 4d1c3a41-2605-48e8-9bb8-5da0eb0b29b3
+POLICE: EN_ROUTE | 9eea7cc0-76be-4afd-968b-923b2e8f6c6b
+AMBULANCE: ACCEPTED | da11e567-ac81-4e42-84a0-d8b830c17f12
+
+citizen1 [CITIZEN] — 1 My identity | 2 Ping | 3 Report incident | 4 My active incidents/filter | 5 Details/services/timeline | 6 History | 90 Pending actions | 9 Logout | 0 Exit
+> 
+[2026-11-13 19:12:49 Asia/Colombo] INCIDENT_UPDATED
+{
+  "incident" : {
+    "id" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "citizenId" : "12ebec6f-7c7b-4c43-891f-161445e86520",
+    "category" : "ROAD_ACCIDENT",
+    "address" : "Fictional campus gate",
+    "description" : "Academic accident example",
+    "latitude" : null,
+    "longitude" : null,
+    "priority" : "HIGH",
+    "state" : "ACTIVE",
+    "publicResolutionReason" : null,
+    "createdAt" : "2026-11-13 19:12:41 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:49 Asia/Colombo",
+    "closedAt" : null,
+    "revision" : 11
+  },
+  "assignment" : {
+    "id" : "9eea7cc0-76be-4afd-968b-923b2e8f6c6b",
+    "incidentId" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "teamId" : "9c77e894-07c0-4c87-84e0-e17f06e2d4f3",
+    "serviceType" : "POLICE",
+    "state" : "ARRIVED",
+    "createdAt" : "2026-11-13 19:12:42 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:49 Asia/Colombo",
+    "revision" : 3
+  }
+}
+> Incident ID: {
+  "id" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+  "citizenId" : "12ebec6f-7c7b-4c43-891f-161445e86520",
+  "category" : "ROAD_ACCIDENT",
+  "address" : "Fictional campus gate",
+  "description" : "Academic accident example",
+  "latitude" : null,
+  "longitude" : null,
+  "priority" : "HIGH",
+  "state" : "ACTIVE",
+  "publicResolutionReason" : null,
+  "createdAt" : "2026-11-13 19:12:41 Asia/Colombo",
+  "updatedAt" : "2026-11-13 19:12:49 Asia/Colombo",
+  "closedAt" : null,
+  "revision" : 11
+}
+Separate service assignments:
+POLICE: ARRIVED | assignment 9eea7cc0-76be-4afd-968b-923b2e8f6c6b | revision 3
+AMBULANCE: ACCEPTED | assignment da11e567-ac81-4e42-84a0-d8b830c17f12 | revision 1
+FIRE_RESCUE: DECLINED | assignment a332fe20-409a-4023-8e25-92d3f5ae33fe | revision 1
+FIRE_RESCUE: ACCEPTED | assignment 4d1c3a41-2605-48e8-9bb8-5da0eb0b29b3 | revision 1
+Public timeline:
+[ {
+  "id" : "dd423f30-f6a3-48f8-869e-9babc5af0a08",
+  "incidentId" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+  "assignmentId" : null,
+  "eventType" : "INCIDENT_REPORTED",
+  "publicMessage" : "Incident reported by citizen",
+  "createdAt" : "2026-11-13 19:12:41 Asia/Colombo"
+}, {
+  "id" : "9e5bda5f-f6e9-4ecc-a979-a388fbdd59f2",
+  "incidentId" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+  "assignmentId" : null,
+  "eventType" : "PRIORITY_UPDATED",
+  "publicMessage" : "Priority changed to HIGH",
+  "createdAt" : "2026-11-13 19:12:42 Asia/Colombo"
+}, {
+  "id" : "d0609aa0-4ff9-4988-9aeb-d50888dfb805",
+  "incidentId" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+  "assignmentId" : "9eea7cc0-76be-4afd-968b-923b2e8f6c6b",
+  "eventType" : "TEAM_ASSIGNED",
+  "publicMessage" : "POLICE team offered assistance",
+  "createdAt" : "2026-11-13 19:12:42 Asia/Colombo"
+}, {
+  "id" : "9c4ea07c-95d4-4c88-aee7-ae2e641e6fb5",
+  "incidentId" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+  "assignmentId" : "da11e567-ac81-4e42-84a0-d8b830c17f12",
+  "eventType" : "TEAM_ASSIGNED",
+  "publicMessage" : "AMBULANCE team offered assistance",
+  "createdAt" : "2026-11-13 19:12:42 Asia/Colombo"
+}, {
+  "id" : "54efab60-c04b-4aa8-bb87-9bc633055567",
+  "incidentId" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+  "assignmentId" : "a332fe20-409a-4023-8e25-92d3f5ae33fe",
+  "eventType" : "TEAM_ASSIGNED",
+  "publicMessage" : "FIRE_RESCUE team offered assistance",
+  "createdAt" : "2026-11-13 19:12:42 Asia/Colombo"
+}, {
+  "id" : "1b7d1bcd-58c9-48bc-baa5-ac45d27a51da",
+  "incidentId" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+  "assignmentId" : "a332fe20-409a-4023-8e25-92d3f5ae33fe",
+  "eventType" : "ASSIGNMENT_DECLINED",
+  "publicMessage" : "FIRE_RESCUE assignment DECLINED",
+  "createdAt" : "2026-11-13 19:12:43 Asia/Colombo"
+}, {
+  "id" : "5f77061b-8d0d-4b4f-9e70-86053d1f98e1",
+  "incidentId" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+  "assignmentId" : "4d1c3a41-2605-48e8-9bb8-5da0eb0b29b3",
+  "eventType" : "TEAM_ASSIGNED",
+  "publicMessage" : "FIRE_RESCUE team offered assistance",
+  "createdAt" : "2026-11-13 19:12:43 Asia/Colombo"
+}, {
+  "id" : "d4622e9e-788f-453f-a187-70f2cdaf5a58",
+  "incidentId" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+  "assignmentId" : "9eea7cc0-76be-4afd-968b-923b2e8f6c6b",
+  "eventType" : "ASSIGNMENT_ACCEPTED",
+  "publicMessage" : "POLICE assignment ACCEPTED",
+  "createdAt" : "2026-11-13 19:12:43 Asia/Colombo"
+}, {
+  "id" : "2a8b11e6-a578-46db-8b25-e7cdb9125541",
+  "incidentId" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+  "assignmentId" : "da11e567-ac81-4e42-84a0-d8b830c17f12",
+  "eventType" : "ASSIGNMENT_ACCEPTED",
+  "publicMessage" : "AMBULANCE assignment ACCEPTED",
+  "createdAt" : "2026-11-13 19:12:43 Asia/Colombo"
+}, {
+  "id" : "936d5805-0948-4f5f-8e50-4a4e0f47ca73",
+  "incidentId" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+  "assignmentId" : "4d1c3a41-2605-48e8-9bb8-5da0eb0b29b3",
+  "eventType" : "ASSIGNMENT_ACCEPTED",
+  "publicMessage" : "FIRE_RESCUE assignment ACCEPTED",
+  "createdAt" : "2026-11-13 19:12:43 Asia/Colombo"
+} ]
+T next timeline | Enter to return: 
+citizen1 [CITIZEN] — 1 My identity | 2 Ping | 3 Report incident | 4 My active incidents/filter | 5 Details/services/timeline | 6 History | 90 Pending actions | 9 Logout | 0 Exit
+> 
+[2026-11-13 19:12:49 Asia/Colombo] INCIDENT_UPDATED
+{
+  "incident" : {
+    "id" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "citizenId" : "12ebec6f-7c7b-4c43-891f-161445e86520",
+    "category" : "ROAD_ACCIDENT",
+    "address" : "Fictional campus gate",
+    "description" : "Academic accident example",
+    "latitude" : null,
+    "longitude" : null,
+    "priority" : "HIGH",
+    "state" : "ACTIVE",
+    "publicResolutionReason" : null,
+    "createdAt" : "2026-11-13 19:12:41 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:49 Asia/Colombo",
+    "closedAt" : null,
+    "revision" : 12
+  },
+  "assignment" : {
+    "id" : "9eea7cc0-76be-4afd-968b-923b2e8f6c6b",
+    "incidentId" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "teamId" : "9c77e894-07c0-4c87-84e0-e17f06e2d4f3",
+    "serviceType" : "POLICE",
+    "state" : "COMPLETED",
+    "createdAt" : "2026-11-13 19:12:42 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:49 Asia/Colombo",
+    "revision" : 4
+  }
+}
+> 
+[2026-11-13 19:12:50 Asia/Colombo] INCIDENT_UPDATED
+{
+  "incident" : {
+    "id" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "citizenId" : "12ebec6f-7c7b-4c43-891f-161445e86520",
+    "category" : "ROAD_ACCIDENT",
+    "address" : "Fictional campus gate",
+    "description" : "Academic accident example",
+    "latitude" : null,
+    "longitude" : null,
+    "priority" : "HIGH",
+    "state" : "ACTIVE",
+    "publicResolutionReason" : null,
+    "createdAt" : "2026-11-13 19:12:41 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:50 Asia/Colombo",
+    "closedAt" : null,
+    "revision" : 13
+  },
+  "assignment" : {
+    "id" : "da11e567-ac81-4e42-84a0-d8b830c17f12",
+    "incidentId" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "teamId" : "a3103b81-2814-4d5c-b74d-199431b90abc",
+    "serviceType" : "AMBULANCE",
+    "state" : "EN_ROUTE",
+    "createdAt" : "2026-11-13 19:12:42 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:50 Asia/Colombo",
+    "revision" : 2
+  }
+}
+> 
+[2026-11-13 19:12:50 Asia/Colombo] INCIDENT_UPDATED
+{
+  "incident" : {
+    "id" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "citizenId" : "12ebec6f-7c7b-4c43-891f-161445e86520",
+    "category" : "ROAD_ACCIDENT",
+    "address" : "Fictional campus gate",
+    "description" : "Academic accident example",
+    "latitude" : null,
+    "longitude" : null,
+    "priority" : "HIGH",
+    "state" : "ACTIVE",
+    "publicResolutionReason" : null,
+    "createdAt" : "2026-11-13 19:12:41 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:50 Asia/Colombo",
+    "closedAt" : null,
+    "revision" : 14
+  },
+  "assignment" : {
+    "id" : "da11e567-ac81-4e42-84a0-d8b830c17f12",
+    "incidentId" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "teamId" : "a3103b81-2814-4d5c-b74d-199431b90abc",
+    "serviceType" : "AMBULANCE",
+    "state" : "ARRIVED",
+    "createdAt" : "2026-11-13 19:12:42 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:50 Asia/Colombo",
+    "revision" : 3
+  }
+}
+> 
+[2026-11-13 19:12:50 Asia/Colombo] INCIDENT_UPDATED
+{
+  "incident" : {
+    "id" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "citizenId" : "12ebec6f-7c7b-4c43-891f-161445e86520",
+    "category" : "ROAD_ACCIDENT",
+    "address" : "Fictional campus gate",
+    "description" : "Academic accident example",
+    "latitude" : null,
+    "longitude" : null,
+    "priority" : "HIGH",
+    "state" : "ACTIVE",
+    "publicResolutionReason" : null,
+    "createdAt" : "2026-11-13 19:12:41 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:50 Asia/Colombo",
+    "closedAt" : null,
+    "revision" : 15
+  },
+  "assignment" : {
+    "id" : "da11e567-ac81-4e42-84a0-d8b830c17f12",
+    "incidentId" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "teamId" : "a3103b81-2814-4d5c-b74d-199431b90abc",
+    "serviceType" : "AMBULANCE",
+    "state" : "COMPLETED",
+    "createdAt" : "2026-11-13 19:12:42 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:50 Asia/Colombo",
+    "revision" : 4
+  }
+}
+> 
+[2026-11-13 19:12:50 Asia/Colombo] INCIDENT_UPDATED
+{
+  "incident" : {
+    "id" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "citizenId" : "12ebec6f-7c7b-4c43-891f-161445e86520",
+    "category" : "ROAD_ACCIDENT",
+    "address" : "Fictional campus gate",
+    "description" : "Academic accident example",
+    "latitude" : null,
+    "longitude" : null,
+    "priority" : "HIGH",
+    "state" : "ACTIVE",
+    "publicResolutionReason" : null,
+    "createdAt" : "2026-11-13 19:12:41 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:50 Asia/Colombo",
+    "closedAt" : null,
+    "revision" : 16
+  },
+  "assignment" : {
+    "id" : "4d1c3a41-2605-48e8-9bb8-5da0eb0b29b3",
+    "incidentId" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "teamId" : "96d3c47f-c6a0-49c9-ab7f-91dc7375def0",
+    "serviceType" : "FIRE_RESCUE",
+    "state" : "EN_ROUTE",
+    "createdAt" : "2026-11-13 19:12:43 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:50 Asia/Colombo",
+    "revision" : 2
+  }
+}
+> 
+[2026-11-13 19:12:50 Asia/Colombo] INCIDENT_UPDATED
+{
+  "incident" : {
+    "id" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "citizenId" : "12ebec6f-7c7b-4c43-891f-161445e86520",
+    "category" : "ROAD_ACCIDENT",
+    "address" : "Fictional campus gate",
+    "description" : "Academic accident example",
+    "latitude" : null,
+    "longitude" : null,
+    "priority" : "HIGH",
+    "state" : "ACTIVE",
+    "publicResolutionReason" : null,
+    "createdAt" : "2026-11-13 19:12:41 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:50 Asia/Colombo",
+    "closedAt" : null,
+    "revision" : 17
+  },
+  "assignment" : {
+    "id" : "4d1c3a41-2605-48e8-9bb8-5da0eb0b29b3",
+    "incidentId" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "teamId" : "96d3c47f-c6a0-49c9-ab7f-91dc7375def0",
+    "serviceType" : "FIRE_RESCUE",
+    "state" : "ARRIVED",
+    "createdAt" : "2026-11-13 19:12:43 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:50 Asia/Colombo",
+    "revision" : 3
+  }
+}
+> 
+[2026-11-13 19:12:50 Asia/Colombo] INCIDENT_UPDATED
+{
+  "incident" : {
+    "id" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "citizenId" : "12ebec6f-7c7b-4c43-891f-161445e86520",
+    "category" : "ROAD_ACCIDENT",
+    "address" : "Fictional campus gate",
+    "description" : "Academic accident example",
+    "latitude" : null,
+    "longitude" : null,
+    "priority" : "HIGH",
+    "state" : "ACTIVE",
+    "publicResolutionReason" : null,
+    "createdAt" : "2026-11-13 19:12:41 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:50 Asia/Colombo",
+    "closedAt" : null,
+    "revision" : 18
+  },
+  "assignment" : {
+    "id" : "4d1c3a41-2605-48e8-9bb8-5da0eb0b29b3",
+    "incidentId" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "teamId" : "96d3c47f-c6a0-49c9-ab7f-91dc7375def0",
+    "serviceType" : "FIRE_RESCUE",
+    "state" : "COMPLETED",
+    "createdAt" : "2026-11-13 19:12:43 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:50 Asia/Colombo",
+    "revision" : 4
+  }
+}
+> 
+[2026-11-13 19:12:50 Asia/Colombo] INCIDENT_UPDATED
+{
+  "incident" : {
+    "id" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "citizenId" : "12ebec6f-7c7b-4c43-891f-161445e86520",
+    "category" : "ROAD_ACCIDENT",
+    "address" : "Fictional campus gate",
+    "description" : "Academic accident example",
+    "latitude" : null,
+    "longitude" : null,
+    "priority" : "HIGH",
+    "state" : "CLOSED",
+    "publicResolutionReason" : "Public academic resolution",
+    "createdAt" : "2026-11-13 19:12:41 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:50 Asia/Colombo",
+    "closedAt" : "2026-11-13 19:12:50 Asia/Colombo",
+    "revision" : 19
+  },
+  "assignment" : null
+}
+> [ {
+  "id" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+  "citizenId" : "12ebec6f-7c7b-4c43-891f-161445e86520",
+  "category" : "ROAD_ACCIDENT",
+  "address" : "Fictional campus gate",
+  "description" : "Academic accident example",
+  "latitude" : null,
+  "longitude" : null,
+  "priority" : "HIGH",
+  "state" : "CLOSED",
+  "publicResolutionReason" : "Public academic resolution",
+  "createdAt" : "2026-11-13 19:12:41 Asia/Colombo",
+  "updatedAt" : "2026-11-13 19:12:50 Asia/Colombo",
+  "closedAt" : "2026-11-13 19:12:50 Asia/Colombo",
+  "revision" : 19
+} ]
+
+citizen1 [CITIZEN] — 1 My identity | 2 Ping | 3 Report incident | 4 My active incidents/filter | 5 Details/services/timeline | 6 History | 90 Pending actions | 9 Logout | 0 Exit
+> {
+  "message" : "Logged out"
+}
+
+1 Register citizen | 2 Login | 3 Ping | 0 Exit
+> 

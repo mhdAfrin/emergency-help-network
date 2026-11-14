@@ -1,13 +1,13 @@
-# Documentation
+# Documentation index
 
 | Area | Read |
 |---|---|
-| Requirements | [Original supplied project brief](requirements/project-brief.txt) |
-| Design | [Architecture](design/ARCHITECTURE.md), [database](design/DATABASE.md), [protocol](design/PROTOCOL.md) |
-| Run/demo | [Setup/Eclipse/LAN](guides/SETUP.md), [Member 2 demo](guides/DEMO.md), [layout](guides/REPOSITORY-LAYOUT.md) |
-| Completion | [Member 1 checklist](handoff/MEMBER1-CHECKLIST.md), [Member 2 checklist](handoff/MEMBER2-CHECKLIST.md) |
-| Handoff | [Member 3 tasks](handoff/HANDOFF.md), [original Member 1 handoff](handoff/MEMBER1-HANDOFF.md) |
-| Review/Git | [Actual contribution record](handoff/CONTRIBUTIONS.md), [push to Member 2 branch](handoff/PUSH-MEMBER2.md) |
-| Verification | [Actual results](verification/TEST-RESULTS.md), [evidence index](verification/evidence/README.md) |
+| Requirements | [Original supplied brief](requirements/project-brief.txt) |
+| Design | [Architecture/recovery](design/ARCHITECTURE.md), [database](design/DATABASE.md), [protocol](design/PROTOCOL.md), [state diagrams](design/STATE-MACHINES.md) |
+| Run/demo | [Setup/Eclipse](guides/SETUP.md), [complete demo](guides/DEMO.md), [troubleshooting/limits](guides/TROUBLESHOOTING.md), [layout](guides/REPOSITORY-LAYOUT.md) |
+| Work stages | [Member 1](handoff/MEMBER1-CHECKLIST.md), [Member 2](handoff/MEMBER2-CHECKLIST.md), [Member 3](handoff/MEMBER3-CHECKLIST.md) |
+| Handoff | [Final handoff](handoff/HANDOFF.md), [Member 2 historical handoff](handoff/MEMBER2-HANDOFF.md), [actual contributions](handoff/CONTRIBUTIONS.md) |
+| Verification | [Actual results](verification/TEST-RESULTS.md), [acceptance mapping](verification/TRACEABILITY.md), [LAN manual checklist](verification/LAN-CHECKLIST.md) |
+| Delivery | [Submission checklist](submission/CHECKLIST.md) |
 
-Build/source/config paths are relative to application/; docs/ paths refer to the checkout root. Historical evidence is kept with its original timestamps/paths. Current results distinguish implemented Member 2 behavior from Member 3 backlog and unverified manual checks.
+Build/source/config paths are relative to application/ unless stated otherwise. Historical evidence retains its original timestamps/paths. Current results distinguish actual local execution from manual actions needing additional hardware or a final commit.

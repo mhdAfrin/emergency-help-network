@@ -1,17 +1,17 @@
-# Member 2 demonstration
+# Complete demonstration
 
 Academic demonstration — no real emergency dispatch.
 
-1. From the checkout root, run the helper with build, then smoke. The automated smoke starts its own isolated server and six actual console client JVMs; see the test report for actual results.
-2. For manual use run seed, then server. Open separate terminals and launch client for operator, citizen1, police1, ambulance1, fire1 and fire2. Use localhost:5050 and DemoPass123!. Console input remains active while events print.
-3. Citizen1 chooses 3, reads the disclaimer and reports a fictional ROAD_ACCIDENT. Enter address/description and either both coordinates or two blank values. Copy the confirmed UUID.
-4. Operator receives INCIDENT_CREATED without polling. Choose 5 to filter reports by state/priority; 6 to inspect public details/timeline; 7 to set HIGH priority after reviewing the current revision.
-5. Choose 3 to filter teams by service/availability/presence. Choose 8 three times to offer police1, ambulance1 and fire1 to the same incident. Review the incident/team values and confirm each offer. Busy/offline/unavailable teams cannot be selected successfully.
-6. Each responder receives only its own ASSIGNMENT_OFFERED and can choose 5 to inspect the saved current offer. Own team view shows BUSY. Availability changes are refused while assigned. Acceptance/progress controls are intentionally absent.
-7. Citizen1 chooses 5 and sees independent POLICE, AMBULANCE and FIRE_RESCUE states and a public timeline. Use A/T to page when offered. No private reason is returned.
-8. Operator chooses 10, supplies incident ID and a displayed assignment UUID, enters a private cancellation reason, reviews current values and confirms. Only OFFERED/ACCEPTED may be cancelled. The team becomes AVAILABLE; the incident remains ACTIVE. Choose 8 and offer fire2 as replacement for the cancelled fire service.
-9. Citizen submits a separate fictional duplicate report. Operator chooses 11 and rejects that never-assigned report with a public reason. Citizen receives the rejection update. A report with assignment history cannot be rejected.
-10. To exercise timeout behavior use the PendingActionsTest controlled delayed server. In manual use, if a business request times out, choose 90 to inspect retained input and reconcile/retry its exact original ID. Do not create a new report as a blind retry.
-11. Restart the server and log in again manually. Records and BUSY reservations persist; responders start OFFLINE until login. Automatic heartbeat, reconnect, snapshots, acceptance and completion/closure are Member 3 work.
+1. Build, then run the smoke helper for an automated demonstration using a real server and six console client JVMs. Logs/results are in the current verification report.
+2. For a manual demonstration seed and start the server, then open clients for operator, citizen1, police1, ambulance1, fire1 and fire2. Default demo password is DemoPass123!.
+3. Citizen chooses 3 and reports a fictional ROAD_ACCIDENT after reading the disclaimer. Optional coordinates must be supplied together. Copy the confirmed reference. Operator immediately receives INCIDENT_CREATED while waiting for menu input.
+4. Operator lists/filters incidents (5), reads details (6), sets HIGH priority (7), lists service/availability/presence (3) and offers police1, ambulance1 and fire1 (8). Review current values/revisions and confirm each action.
+5. Each responder sees only its own offer (5). Fire1 declines (7) with a private reason. The team becomes AVAILABLE and the incident remains ACTIVE. Operator offers fire2 instead. Police1, ambulance1 and fire2 accept (6).
+6. Police1 sends EN_ROUTE (8). Stop/restart the server. Clients reconnect independently of console input and explicitly require login again. Log in and observe restored authorized service state and BUSY reservation. No team is automatically freed/reassigned.
+7. Operator attempts premature closure (12) and receives INVALID_TRANSITION. Police progresses ARRIVED while other services remain ACCEPTED. Citizen details (5) display separate service/assignment states, never an aggregate all-arrived claim. Use T/A to page timelines/assignments.
+8. Each accepted responder sends only the next valid progress (8) through COMPLETED. Operator closes with a public resolution (12) after every assignment is terminal and at least one completed. Citizen/operator histories show the closed report; responders see own assignment history (10) and own timeline (11). Operator-only notes remain private from citizens/unrelated teams.
+9. Test public rejection with a separate never-assigned report. Eligible OFFERED/ACCEPTED cancellation is operator action 10; EN_ROUTE/ARRIVED cancellation must fail. Cancellation/decline permit a replacement only after the previous assignment is terminal.
+10. If an action is confirmation pending, menu 90 shows its saved original ID/input and consumes a late result or retries unchanged after login. Restart a client mid-report to resume completed draft fields. No passwords are persisted or auto-replayed.
+11. Logout/exit clients and stop the server. Restart and confirm saved histories. Run load to reproduce 20 authenticated sessions and the documented localhost event-latency samples. Perform separate-laptop LAN and physical prompt checks using the linked checklists.
 
-Direct commands and Eclipse setup are in SETUP.md. Use application/ as the working directory for Eclipse/JAR launches. Separate-laptop permitted LAN operation and physical interactive prompt behavior must still be reviewed on the group's actual machines.
+All data is fictional. Direct commands and Eclipse launches use application/ as the working directory. The runtime ZIP can also be extracted and run with Java 21 without Maven.

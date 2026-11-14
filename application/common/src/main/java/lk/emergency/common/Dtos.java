@@ -31,11 +31,19 @@ public final class Dtos {
       String id, Long expectedRevision, Integer assignmentOffset, Integer timelineOffset) {}
 
   public record IncidentFilter(
-      IncidentState state, Priority priority, Integer offset, Integer limit) {}
+      IncidentState state, Priority priority, Integer offset, Integer limit, Boolean history) {
+    public IncidentFilter(IncidentState state, Priority priority, Integer offset, Integer limit) {
+      this(state, priority, offset, limit, false);
+    }
+  }
 
   public record TeamFilter(ServiceType serviceType, Availability availability, Presence presence) {}
 
-  public record AssignmentFilter(Integer offset, Integer limit) {}
+  public record AssignmentFilter(Integer offset, Integer limit, Boolean history) {
+    public AssignmentFilter(Integer offset, Integer limit) {
+      this(offset, limit, false);
+    }
+  }
 
   public record PriorityUpdateInput(String id, Priority priority, Long expectedRevision) {}
 
@@ -98,11 +106,69 @@ public final class Dtos {
 
   public record IncidentUpdate(IncidentView incident, AssignmentView assignment) {}
 
-  public record AssignmentOffer(AssignmentView assignment, IncidentView incident) {}
+  public record AssignmentOffer(
+      AssignmentView assignment, IncidentView incident, String privateReason) {
+    public AssignmentOffer(AssignmentView assignment, IncidentView incident) {
+      this(assignment, incident, null);
+    }
+  }
 
   public record Snapshot(
       UserView user,
       List<TeamView> teams,
       List<IncidentView> incidents,
       List<AssignmentView> assignments) {}
+
+  public enum AssignmentDecision {
+    ACCEPT,
+    DECLINE
+  }
+
+  public record AssignmentResponseInput(
+      String assignmentId,
+      AssignmentDecision decision,
+      String reason,
+      Long expectedRevision,
+      Long expectedIncidentRevision,
+      Long expectedTeamRevision) {}
+
+  public record AssignmentStatusInput(
+      String assignmentId,
+      AssignmentState status,
+      String note,
+      Long expectedRevision,
+      Long expectedIncidentRevision,
+      Long expectedTeamRevision) {}
+
+  public record IncidentClosureInput(
+      String incidentId, String resolutionReason, Long expectedRevision) {}
+
+  public record SnapshotQuery(String snapshotId, Integer offset) {}
+
+  public record SnapshotPage(
+      String snapshotId,
+      int offset,
+      Integer nextOffset,
+      UserView user,
+      List<IncidentView> incidents,
+      List<AssignmentView> assignments,
+      List<TeamView> teams,
+      String epoch,
+      long sequence,
+      String createdAt) {}
+
+  public record LiveEvent(
+      String epoch, long sequence, com.fasterxml.jackson.databind.JsonNode data) {}
+
+  public record AssignmentQuery(String id, Integer offset) {}
+
+  public record AssignmentTimelineEvent(
+      String id, String eventType, String publicMessage, String ownPrivateNote, String createdAt) {}
+
+  public record AssignmentDetails(
+      AssignmentView assignment,
+      IncidentView incident,
+      List<AssignmentTimelineEvent> timeline,
+      int offset,
+      boolean more) {}
 }

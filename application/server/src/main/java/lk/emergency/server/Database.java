@@ -14,10 +14,16 @@ public final class Database implements AutoCloseable {
   private final ExecutorService executor =
       Executors.newSingleThreadExecutor(r -> new Thread(r, "database"));
   private Connection connection;
+  private final java.util.function.LongConsumer commitObserver;
   private final java.util.concurrent.atomic.AtomicBoolean closed =
       new java.util.concurrent.atomic.AtomicBoolean();
 
   public Database(Path path) {
+    this(path, time -> {});
+  }
+
+  public Database(Path path, java.util.function.LongConsumer commitObserver) {
+    this.commitObserver = commitObserver;
     try {
       Path parent = path.toAbsolutePath().getParent();
       Files.createDirectories(parent);
@@ -92,6 +98,11 @@ public final class Database implements AutoCloseable {
           try {
             T result = work.run(c);
             c.commit();
+            long committedAt = System.nanoTime();
+            try {
+              commitObserver.accept(committedAt);
+            } catch (RuntimeException ignored) {
+            }
             return result;
           } catch (Exception e) {
             c.rollback();

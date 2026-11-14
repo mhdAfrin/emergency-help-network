@@ -1,37 +1,65 @@
-# Architecture — completed Member 2 stage
+# Final architecture and recovery
 
 Academic demonstration — no real emergency dispatch.
 
-Confirmed supplied requirements are Java-only network communication and real-time exchange. The original lecturer assignment document was not supplied. Java 21, Maven, framed TCP JSON, SQLite and console menus are the group's implementation choices. The original student brief remains in ../requirements/project-brief.txt; no new threading mandate was discovered.
-
 ```mermaid
 flowchart LR
- C[Separate console client JVMs] <-->|Length-prefixed JSON over TCP| S[ServerSocket]
- S --> R[Bounded session readers / RequestRouter]
- R --> A[Session-derived identity and authorization]
- A --> M[MutationSupport]
- M --> D[Single database executor / short transaction]
- D --> DB[(SQLite records + saved successful response)]
- M --> N[Post-commit NotificationService]
- N --> Q[Authorized recipient queues]
- Q --> W[One writer per socket]
+ C[Separate console client JVMs] <-->|Framed JSON over TCP| S[ServerSocket]
+ S --> R[Bounded reader pool / RequestRouter]
+ R --> A[Connection-bound identity / role / ownership]
+ A --> M[MutationSupport: canonical request ID replay]
+ M --> D[Single DB executor / short transaction]
+ D --> DB[(SQLite state + timeline + saved success)]
+ M --> N[Post-commit notifications]
+ N --> Q[Private recipient queues / 100 frames]
+ Q --> W[One socket writer / write watchdog]
  W --> C
+ C --> J[Local atomic drafts / original request-ID journal]
+ C --> H[Heartbeat / reconnect supervisor]
+ C --> L[Snapshot + buffered event/revision state]
 ```
 
-Default 32 sessions, configurable 1–200; a semaphore bounds reader submissions. Each connection has one reader and one writer with a 100-frame nonblocking outgoing queue. Full queues close that session, and a five-second writer watchdog closes blocked writers. Frame payloads are capped at 65,536 bytes. Public list/detail pages are bounded to keep responses within that cap. JSON and socket reads never depend on the console input loop.
+The server accepts 32 simultaneous sessions by default (configurable 1–200) using bounded platform threads. A semaphore bounds submitted readers. Each session has one writer, a 100-frame queue and five-second write deadline. Idle sessions close after 45 seconds without a complete inbound frame, including partial-frame stalls. Client PING/PONG runs every 15 seconds independently of menus; client inbound inactivity/write watchdogs also close lost/stalled sockets.
 
-The existing registry monitor serializes identity changes with protected request routing. Business SQL runs exclusively on the database executor. Session-derived presence reads a concurrent map and isClosed without taking the registry monitor from a database callback; acquiring it there would deadlock while a router waits for the executor. Never recursively call Database.call/transaction inside database work.
+Every protected action derives actor/team identity from the authenticated session. The session registry monitor serializes identity changes, business routing, snapshot creation and event sequence allocation. SQL callbacks run on one database executor and must never recursively call Database or acquire the registry monitor. Presence reads use a concurrent map/closed flag. PBKDF2 is outside the DB executor and remains 600,000 iterations with salted constant-time verification.
 
-MutationSupport recursively sorts object keys, including the outer type/payload object, before SHA-256 hashing. It scopes deduplication to user/request ID, executes business SQL and saves the success envelope in one transaction, and returns a replay flag. All Member 2 business mutations use it. Login/registration/logout do not replay stored business responses.
+MutationSupport checks user/request ID and canonical SHA-256, saves a successful envelope atomically with business state and timeline, and returns whether it replayed. Request type and recursively sorted object keys are hashed deterministically; arrays/numeric representation retain meaning. Response and event delivery happen after JDBC commit. A failed notification cannot undo the commit; replays suppress repeated notifications. Delivery is best effort, not exactly-once TCP or a persistent event journal.
 
-After commit, NotificationService reads the committed projection and enqueues authorized events. Replay suppresses repeated events. Notification errors are caught after commit and cannot turn committed changes into rollbacks. Delivery remains best effort; there is no persistent offline event queue or exactly-once network guarantee.
+Assignment offers reserve ONLINE/AVAILABLE teams as BUSY and activate/touch the incident in one transaction. Responder transitions check assignment/incident/team revisions and stored ownership. Terminal decline/completion releases the team; cancellation permits OFFERED/ACCEPTED only. Incident closure atomically requires ACTIVE, at least one COMPLETED assignment, and no nonterminal assignments. Startup reconciles BUSY from persisted active assignments before accepting clients.
 
-Incident creation saves its public timeline atomically. Operator priority/rejection and assignment/cancellation require explicit expected revisions. Assignment derives the service and responder identity from the stored team, verifies ONLINE + AVAILABLE, checks active conflicts, creates OFFERED, reserves BUSY, and activates/touches the incident atomically. Both partial unique indexes remain authoritative safeguards. Cancellation permits OFFERED/ACCEPTED only, stores its reason as a private internal note, releases AVAILABLE, and leaves the incident ACTIVE for reassignment.
+## Snapshot and event ordering
 
-Public detail DTOs contain no private note/actor credential/contact fields. Responders list offers only by their session-derived team. Operator filters do not weaken ownership checks. Private notes remain stored server-side; the Member 2 public timeline projection does not expose them to any role.
+```mermaid
+sequenceDiagram
+ participant C as Client reader + main
+ participant S as Server registry/router
+ participant D as DB executor
+ C->>S: LOGIN (credentials are never persisted)
+ S->>S: Bind identity / subscribe authenticated socket
+ S-->>C: Login result
+ C->>S: GET_SNAPSHOT offset=0
+ S->>D: Freeze authorized active state
+ D-->>S: Immutable records + epoch/watermark
+ S-->>C: Bounded snapshot page / socket-owned token
+ S-->>C: New events with epoch + sequence
+ Note over C: Buffer events during pagination
+ C->>S: Remaining token/offset pages
+ S-->>C: Same frozen epoch + watermark
+ Note over C: Atomically install snapshot; apply only buffered sequence > watermark; ignore older entity revisions
+```
 
-Client PendingActions retains the original request and future when ten seconds elapse. Menu 90 shows pending/late-completed outcomes for the current user and can resend the unchanged request ID. The map is bounded to 20 and isolates records by user ID. This is an in-memory, same-client-session mechanism; durable drafts and reconnect reconciliation remain Member 3 work.
+Snapshots contain only authorized active incidents/assignments and permitted team projections, not private notes. They are frozen per socket under the routing monitor, paged at five records, limited to 5,000 active records and expire after 30 seconds. Logout/disconnect/lease cleanup releases the freeze. Full historical queries are separately paginated. Scope/lease failures require a fresh synchronization.
 
-No automatic heartbeat or reconnection is implemented. The snapshot's blocking reader behavior is retained; connection count and write queues remain bounded. Disconnecting a BUSY responder does not release its stored reservation. Tests verify persistence and offline presence after restart, but full snapshot-based responder recovery is still Member 3's responsibility.
+Business events carry optional envelope epoch/sequence metadata. Presence events use the same ordering even when a team's database revision is unchanged. LiveState buffers up to 1,000 events, filters pre-snapshot/old-epoch events, swaps the snapshot atomically and ignores older entity revisions. An overflow fails synchronization and requests a new snapshot rather than silently dropping state. Entity caches are capped at 5,000 each.
 
-Server shutdown closes listener/sessions and joins network workers before closing the database; the shutdown hook closes both server and DB. Client shutdown closes its socket, fails pending futures and interrupts/joins its network threads. Expected disconnects/malformed frames do not dump message contents to logs.
+## Client recovery and local data
+
+ReconnectingClient supervises sockets independently of console input. Backoff bases are 1/2/4/8/15 seconds, jittered and capped at 15. Reconnection clears authentication; no password is cached or auto-replayed. Login synchronizes before returning to role controls. Old-generation socket responses/events cannot authenticate a new connection or overwrite a new server epoch.
+
+LocalJournal writes original business envelopes before sending, merges pending IDs under short file locks and atomically replaces user/server-scoped JSON files. It never accepts LOGIN/registration/password records. Completed input fields are saved as an unsent report draft. PendingActions removes a journal entry only after a definite response, retains uncertain outcomes, and resends the exact original envelope through menu 90 after login. The journal stores fictional reports/private notes locally without encryption; use the same trusted OS account and preserve it when reconciling uncertain requests.
+
+ConsoleIO serializes output and redraws the prompt without holding its lock during input. Times display in Asia/Colombo. Ordinary terminal echo can split partially typed text; physical keyboard behavior remains a manual check. Data/logic stays Java-only; PowerShell scripts only build/run/package it.
+
+## Shutdown and verification boundaries
+
+Server shutdown closes listener/sessions, cooperatively waits for readers/writers and watchdogs, then closes SQLite. Client shutdown stops reconnect/heartbeat tasks, closes the socket and joins network workers. Tests inject short timers; production defaults remain 15s/45s/5s. The actual process smoke exercises reconnect, restored reservations, complete service progress, closure, history and draft restart. Load timing uses real loopback TCP with server and headless clients in one JVM and timestamps immediately after commit and after event decoding. It does not measure physical screen repaint or separate-laptop network latency.

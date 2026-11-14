@@ -1,0 +1,381 @@
+Academic demonstration — no real emergency dispatch.
+Server host [127.0.0.1]: Server port [5050]: Connected to server. Login required.
+
+1 Register citizen | 2 Login | 3 Ping | 0 Exit
+> Username: Password input is visible here; use fictional credentials.
+Password: {
+  "id" : "5f121784-b25f-4558-94ee-635b1384a679",
+  "username" : "fire2",
+  "displayName" : "fire2",
+  "role" : "RESPONDER"
+}
+Authorized snapshot synchronized. Recovered service states:
+
+fire2 [RESPONDER] — 1 My identity | 2 Ping | 3 My team | 4 Set availability | 5 My offers/current assignment | 6 Accept | 7 Decline | 8 Next progress | 10 History | 11 Assignment timeline | 90 Pending actions | 9 Logout | 0 Exit
+> 
+[2026-11-13 19:12:43 Asia/Colombo] ASSIGNMENT_OFFERED
+{
+  "assignment" : {
+    "id" : "4d1c3a41-2605-48e8-9bb8-5da0eb0b29b3",
+    "incidentId" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "teamId" : "96d3c47f-c6a0-49c9-ab7f-91dc7375def0",
+    "serviceType" : "FIRE_RESCUE",
+    "state" : "OFFERED",
+    "createdAt" : "2026-11-13 19:12:43 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:43 Asia/Colombo",
+    "revision" : 0
+  },
+  "incident" : {
+    "id" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "citizenId" : "12ebec6f-7c7b-4c43-891f-161445e86520",
+    "category" : "ROAD_ACCIDENT",
+    "address" : "Fictional campus gate",
+    "description" : "Academic accident example",
+    "latitude" : null,
+    "longitude" : null,
+    "priority" : "HIGH",
+    "state" : "ACTIVE",
+    "publicResolutionReason" : null,
+    "createdAt" : "2026-11-13 19:12:41 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:43 Asia/Colombo",
+    "closedAt" : null,
+    "revision" : 6
+  },
+  "privateReason" : null
+}
+> 
+[2026-11-13 19:12:43 Asia/Colombo] TEAM_UPDATED
+{
+  "id" : "96d3c47f-c6a0-49c9-ab7f-91dc7375def0",
+  "name" : "fire2 simulated team",
+  "serviceType" : "FIRE_RESCUE",
+  "availability" : "BUSY",
+  "revision" : 1,
+  "presence" : "ONLINE"
+}
+> {
+  "assignment" : {
+    "id" : "4d1c3a41-2605-48e8-9bb8-5da0eb0b29b3",
+    "incidentId" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "teamId" : "96d3c47f-c6a0-49c9-ab7f-91dc7375def0",
+    "serviceType" : "FIRE_RESCUE",
+    "state" : "OFFERED",
+    "createdAt" : "2026-11-13 19:12:43 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:43 Asia/Colombo",
+    "revision" : 0
+  },
+  "incident" : {
+    "id" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "citizenId" : "12ebec6f-7c7b-4c43-891f-161445e86520",
+    "category" : "ROAD_ACCIDENT",
+    "address" : "Fictional campus gate",
+    "description" : "Academic accident example",
+    "latitude" : null,
+    "longitude" : null,
+    "priority" : "HIGH",
+    "state" : "ACTIVE",
+    "publicResolutionReason" : null,
+    "createdAt" : "2026-11-13 19:12:41 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:43 Asia/Colombo",
+    "closedAt" : null,
+    "revision" : 8
+  },
+  "privateReason" : null
+}
+Private note (optional): Review the displayed values. Confirm? y/N: 
+[2026-11-13 19:12:43 Asia/Colombo] ASSIGNMENT_UPDATED
+{
+  "incident" : {
+    "id" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "citizenId" : "12ebec6f-7c7b-4c43-891f-161445e86520",
+    "category" : "ROAD_ACCIDENT",
+    "address" : "Fictional campus gate",
+    "description" : "Academic accident example",
+    "latitude" : null,
+    "longitude" : null,
+    "priority" : "HIGH",
+    "state" : "ACTIVE",
+    "publicResolutionReason" : null,
+    "createdAt" : "2026-11-13 19:12:41 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:43 Asia/Colombo",
+    "closedAt" : null,
+    "revision" : 9
+  },
+  "assignment" : {
+    "id" : "4d1c3a41-2605-48e8-9bb8-5da0eb0b29b3",
+    "incidentId" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "teamId" : "96d3c47f-c6a0-49c9-ab7f-91dc7375def0",
+    "serviceType" : "FIRE_RESCUE",
+    "state" : "ACCEPTED",
+    "createdAt" : "2026-11-13 19:12:43 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:43 Asia/Colombo",
+    "revision" : 1
+  }
+}
+{
+  "id" : "4d1c3a41-2605-48e8-9bb8-5da0eb0b29b3",
+  "incidentId" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+  "teamId" : "96d3c47f-c6a0-49c9-ab7f-91dc7375def0",
+  "serviceType" : "FIRE_RESCUE",
+  "state" : "ACCEPTED",
+  "createdAt" : "2026-11-13 19:12:43 Asia/Colombo",
+  "updatedAt" : "2026-11-13 19:12:43 Asia/Colombo",
+  "revision" : 1
+}
+
+fire2 [RESPONDER] — 1 My identity | 2 Ping | 3 My team | 4 Set availability | 5 My offers/current assignment | 6 Accept | 7 Decline | 8 Next progress | 10 History | 11 Assignment timeline | 90 Pending actions | 9 Logout | 0 Exit
+> Connection lost. Reconnecting in the background; login again after connection returns.
+Connected to server. Login required.
+Username: Password input is visible here; use fictional credentials.
+Password: {
+  "id" : "5f121784-b25f-4558-94ee-635b1384a679",
+  "username" : "fire2",
+  "displayName" : "fire2",
+  "role" : "RESPONDER"
+}
+Authorized snapshot synchronized. Recovered service states:
+FIRE_RESCUE: ACCEPTED | 4d1c3a41-2605-48e8-9bb8-5da0eb0b29b3
+
+fire2 [RESPONDER] — 1 My identity | 2 Ping | 3 My team | 4 Set availability | 5 My offers/current assignment | 6 Accept | 7 Decline | 8 Next progress | 10 History | 11 Assignment timeline | 90 Pending actions | 9 Logout | 0 Exit
+> {
+  "assignment" : {
+    "id" : "4d1c3a41-2605-48e8-9bb8-5da0eb0b29b3",
+    "incidentId" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "teamId" : "96d3c47f-c6a0-49c9-ab7f-91dc7375def0",
+    "serviceType" : "FIRE_RESCUE",
+    "state" : "ACCEPTED",
+    "createdAt" : "2026-11-13 19:12:43 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:43 Asia/Colombo",
+    "revision" : 1
+  },
+  "incident" : {
+    "id" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "citizenId" : "12ebec6f-7c7b-4c43-891f-161445e86520",
+    "category" : "ROAD_ACCIDENT",
+    "address" : "Fictional campus gate",
+    "description" : "Academic accident example",
+    "latitude" : null,
+    "longitude" : null,
+    "priority" : "HIGH",
+    "state" : "ACTIVE",
+    "publicResolutionReason" : null,
+    "createdAt" : "2026-11-13 19:12:41 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:50 Asia/Colombo",
+    "closedAt" : null,
+    "revision" : 15
+  },
+  "privateReason" : null
+}
+Next valid progress: EN_ROUTE
+Private progress note (optional): Review the displayed values. Confirm? y/N: 
+[2026-11-13 19:12:50 Asia/Colombo] ASSIGNMENT_UPDATED
+{
+  "incident" : {
+    "id" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "citizenId" : "12ebec6f-7c7b-4c43-891f-161445e86520",
+    "category" : "ROAD_ACCIDENT",
+    "address" : "Fictional campus gate",
+    "description" : "Academic accident example",
+    "latitude" : null,
+    "longitude" : null,
+    "priority" : "HIGH",
+    "state" : "ACTIVE",
+    "publicResolutionReason" : null,
+    "createdAt" : "2026-11-13 19:12:41 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:50 Asia/Colombo",
+    "closedAt" : null,
+    "revision" : 16
+  },
+  "assignment" : {
+    "id" : "4d1c3a41-2605-48e8-9bb8-5da0eb0b29b3",
+    "incidentId" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "teamId" : "96d3c47f-c6a0-49c9-ab7f-91dc7375def0",
+    "serviceType" : "FIRE_RESCUE",
+    "state" : "EN_ROUTE",
+    "createdAt" : "2026-11-13 19:12:43 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:50 Asia/Colombo",
+    "revision" : 2
+  }
+}
+
+[2026-11-13 19:12:50 Asia/Colombo] TEAM_UPDATED
+{
+  "id" : "96d3c47f-c6a0-49c9-ab7f-91dc7375def0",
+  "name" : "fire2 simulated team",
+  "serviceType" : "FIRE_RESCUE",
+  "availability" : "BUSY",
+  "revision" : 1,
+  "presence" : "ONLINE"
+}
+{
+  "id" : "4d1c3a41-2605-48e8-9bb8-5da0eb0b29b3",
+  "incidentId" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+  "teamId" : "96d3c47f-c6a0-49c9-ab7f-91dc7375def0",
+  "serviceType" : "FIRE_RESCUE",
+  "state" : "EN_ROUTE",
+  "createdAt" : "2026-11-13 19:12:43 Asia/Colombo",
+  "updatedAt" : "2026-11-13 19:12:50 Asia/Colombo",
+  "revision" : 2
+}
+
+fire2 [RESPONDER] — 1 My identity | 2 Ping | 3 My team | 4 Set availability | 5 My offers/current assignment | 6 Accept | 7 Decline | 8 Next progress | 10 History | 11 Assignment timeline | 90 Pending actions | 9 Logout | 0 Exit
+> {
+  "assignment" : {
+    "id" : "4d1c3a41-2605-48e8-9bb8-5da0eb0b29b3",
+    "incidentId" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "teamId" : "96d3c47f-c6a0-49c9-ab7f-91dc7375def0",
+    "serviceType" : "FIRE_RESCUE",
+    "state" : "EN_ROUTE",
+    "createdAt" : "2026-11-13 19:12:43 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:50 Asia/Colombo",
+    "revision" : 2
+  },
+  "incident" : {
+    "id" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "citizenId" : "12ebec6f-7c7b-4c43-891f-161445e86520",
+    "category" : "ROAD_ACCIDENT",
+    "address" : "Fictional campus gate",
+    "description" : "Academic accident example",
+    "latitude" : null,
+    "longitude" : null,
+    "priority" : "HIGH",
+    "state" : "ACTIVE",
+    "publicResolutionReason" : null,
+    "createdAt" : "2026-11-13 19:12:41 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:50 Asia/Colombo",
+    "closedAt" : null,
+    "revision" : 16
+  },
+  "privateReason" : "PRIVATE-PROGRESS-NOTE"
+}
+Next valid progress: ARRIVED
+Private progress note (optional): Review the displayed values. Confirm? y/N: 
+[2026-11-13 19:12:50 Asia/Colombo] ASSIGNMENT_UPDATED
+{
+  "incident" : {
+    "id" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "citizenId" : "12ebec6f-7c7b-4c43-891f-161445e86520",
+    "category" : "ROAD_ACCIDENT",
+    "address" : "Fictional campus gate",
+    "description" : "Academic accident example",
+    "latitude" : null,
+    "longitude" : null,
+    "priority" : "HIGH",
+    "state" : "ACTIVE",
+    "publicResolutionReason" : null,
+    "createdAt" : "2026-11-13 19:12:41 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:50 Asia/Colombo",
+    "closedAt" : null,
+    "revision" : 17
+  },
+  "assignment" : {
+    "id" : "4d1c3a41-2605-48e8-9bb8-5da0eb0b29b3",
+    "incidentId" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "teamId" : "96d3c47f-c6a0-49c9-ab7f-91dc7375def0",
+    "serviceType" : "FIRE_RESCUE",
+    "state" : "ARRIVED",
+    "createdAt" : "2026-11-13 19:12:43 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:50 Asia/Colombo",
+    "revision" : 3
+  }
+}
+{
+  "id" : "4d1c3a41-2605-48e8-9bb8-5da0eb0b29b3",
+  "incidentId" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+  "teamId" : "96d3c47f-c6a0-49c9-ab7f-91dc7375def0",
+  "serviceType" : "FIRE_RESCUE",
+  "state" : "ARRIVED",
+  "createdAt" : "2026-11-13 19:12:43 Asia/Colombo",
+  "updatedAt" : "2026-11-13 19:12:50 Asia/Colombo",
+  "revision" : 3
+}
+
+fire2 [RESPONDER] — 1 My identity | 2 Ping | 3 My team | 4 Set availability | 5 My offers/current assignment | 6 Accept | 7 Decline | 8 Next progress | 10 History | 11 Assignment timeline | 90 Pending actions | 9 Logout | 0 Exit
+> {
+  "assignment" : {
+    "id" : "4d1c3a41-2605-48e8-9bb8-5da0eb0b29b3",
+    "incidentId" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "teamId" : "96d3c47f-c6a0-49c9-ab7f-91dc7375def0",
+    "serviceType" : "FIRE_RESCUE",
+    "state" : "ARRIVED",
+    "createdAt" : "2026-11-13 19:12:43 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:50 Asia/Colombo",
+    "revision" : 3
+  },
+  "incident" : {
+    "id" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "citizenId" : "12ebec6f-7c7b-4c43-891f-161445e86520",
+    "category" : "ROAD_ACCIDENT",
+    "address" : "Fictional campus gate",
+    "description" : "Academic accident example",
+    "latitude" : null,
+    "longitude" : null,
+    "priority" : "HIGH",
+    "state" : "ACTIVE",
+    "publicResolutionReason" : null,
+    "createdAt" : "2026-11-13 19:12:41 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:50 Asia/Colombo",
+    "closedAt" : null,
+    "revision" : 17
+  },
+  "privateReason" : "PRIVATE-PROGRESS-NOTE"
+}
+Next valid progress: COMPLETED
+Private progress note (optional): Review the displayed values. Confirm? y/N: 
+[2026-11-13 19:12:50 Asia/Colombo] ASSIGNMENT_UPDATED
+{
+  "incident" : {
+    "id" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "citizenId" : "12ebec6f-7c7b-4c43-891f-161445e86520",
+    "category" : "ROAD_ACCIDENT",
+    "address" : "Fictional campus gate",
+    "description" : "Academic accident example",
+    "latitude" : null,
+    "longitude" : null,
+    "priority" : "HIGH",
+    "state" : "ACTIVE",
+    "publicResolutionReason" : null,
+    "createdAt" : "2026-11-13 19:12:41 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:50 Asia/Colombo",
+    "closedAt" : null,
+    "revision" : 18
+  },
+  "assignment" : {
+    "id" : "4d1c3a41-2605-48e8-9bb8-5da0eb0b29b3",
+    "incidentId" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+    "teamId" : "96d3c47f-c6a0-49c9-ab7f-91dc7375def0",
+    "serviceType" : "FIRE_RESCUE",
+    "state" : "COMPLETED",
+    "createdAt" : "2026-11-13 19:12:43 Asia/Colombo",
+    "updatedAt" : "2026-11-13 19:12:50 Asia/Colombo",
+    "revision" : 4
+  }
+}
+
+[2026-11-13 19:12:50 Asia/Colombo] TEAM_UPDATED
+{
+  "id" : "96d3c47f-c6a0-49c9-ab7f-91dc7375def0",
+  "name" : "fire2 simulated team",
+  "serviceType" : "FIRE_RESCUE",
+  "availability" : "AVAILABLE",
+  "revision" : 2,
+  "presence" : "ONLINE"
+}
+{
+  "id" : "4d1c3a41-2605-48e8-9bb8-5da0eb0b29b3",
+  "incidentId" : "e3ece77e-c097-46c4-8caa-c795f4808a6e",
+  "teamId" : "96d3c47f-c6a0-49c9-ab7f-91dc7375def0",
+  "serviceType" : "FIRE_RESCUE",
+  "state" : "COMPLETED",
+  "createdAt" : "2026-11-13 19:12:43 Asia/Colombo",
+  "updatedAt" : "2026-11-13 19:12:50 Asia/Colombo",
+  "revision" : 4
+}
+
+fire2 [RESPONDER] — 1 My identity | 2 Ping | 3 My team | 4 Set availability | 5 My offers/current assignment | 6 Accept | 7 Decline | 8 Next progress | 10 History | 11 Assignment timeline | 90 Pending actions | 9 Logout | 0 Exit
+> {
+  "message" : "Logged out"
+}
+
+1 Register citizen | 2 Login | 3 Ping | 0 Exit
+> 

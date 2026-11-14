@@ -15,6 +15,7 @@ public final class RequestRouter {
   private final AssignmentService assignments;
   private final MutationSupport mutations;
   private final NotificationService notifications;
+  private final SnapshotService snapshots;
 
   public RequestRouter(AuthService auth, Database db, SessionRegistry registry) {
     this.auth = auth;
@@ -24,6 +25,8 @@ public final class RequestRouter {
     assignments = new AssignmentService(db);
     mutations = new MutationSupport(db);
     notifications = new NotificationService(db, registry);
+    snapshots = new SnapshotService(db, registry);
+    if (db != null) registry.presenceListener(notifications::presence);
   }
 
   public Envelope route(ClientSession session, Envelope request) {
@@ -35,7 +38,9 @@ public final class RequestRouter {
           || request.requestId() == null
           || request.eventId() != null
           || request.ok() != null
-          || request.error() != null)
+          || request.error() != null
+          || request.epoch() != null
+          || request.sequence() != null)
         throw new DomainException(ErrorCode.VALIDATION_ERROR, "Invalid request envelope");
       try {
         UUID.fromString(request.requestId());
@@ -109,7 +114,7 @@ public final class RequestRouter {
           case GET_INCIDENT -> {
             requireRole(role, Role.CITIZEN, Role.OPERATOR);
             var query = Validation.payload(request.payload(), IncidentQuery.class);
-            return Envelope.success(request, incidents.details(user, role, query));
+            return Envelope.success(request, incidents.detailPayload(user, role, query));
           }
           case LIST_INCIDENTS -> {
             requireRole(role, Role.CITIZEN, Role.OPERATOR);
@@ -178,16 +183,45 @@ public final class RequestRouter {
                     "TEST_NOTIFICATION", Map.of("message", "Authorized socket event received")));
             return Envelope.success(request, Map.of("message", "Private test event queued"));
           }
-          default -> {
-            switch (type) {
-              case CLOSE_INCIDENT -> requireRole(role, Role.OPERATOR);
-              case RESPOND_ASSIGNMENT, UPDATE_ASSIGNMENT_STATUS ->
-                  requireRole(role, Role.RESPONDER);
-              default -> {}
-            }
-            throw new DomainException(
-                ErrorCode.INVALID_TRANSITION, "This action is reserved for Member 3");
+          case RESPOND_ASSIGNMENT -> {
+            requireRole(role, Role.RESPONDER);
+            var input = Validation.payload(request.payload(), AssignmentResponseInput.class);
+            return mutate(
+                user,
+                request,
+                c -> Envelope.success(request, assignments.respond(c, user, input)),
+                e -> notifications.assignment(convert(e, AssignmentView.class), false));
           }
+          case UPDATE_ASSIGNMENT_STATUS -> {
+            requireRole(role, Role.RESPONDER);
+            var input = Validation.payload(request.payload(), AssignmentStatusInput.class);
+            return mutate(
+                user,
+                request,
+                c -> Envelope.success(request, assignments.progress(c, user, input)),
+                e -> notifications.assignment(convert(e, AssignmentView.class), false));
+          }
+          case CLOSE_INCIDENT -> {
+            requireRole(role, Role.OPERATOR);
+            var input = Validation.payload(request.payload(), IncidentClosureInput.class);
+            return mutate(
+                user,
+                request,
+                c -> Envelope.success(request, incidents.closeIncident(c, user, input)),
+                e -> notifications.incident(convert(e, IncidentView.class)));
+          }
+          case GET_ASSIGNMENT -> {
+            requireRole(role, Role.RESPONDER);
+            return Envelope.success(
+                request,
+                assignments.details(
+                    user, Validation.payload(request.payload(), AssignmentQuery.class)));
+          }
+          case GET_SNAPSHOT -> {
+            var input = Validation.payload(request.payload(), SnapshotQuery.class);
+            return Envelope.success(request, snapshots.page(session, input));
+          }
+          default -> throw new DomainException(ErrorCode.VALIDATION_ERROR, "Unsupported request");
         }
       }
     } catch (DomainException e) {

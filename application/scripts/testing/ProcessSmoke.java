@@ -1,11 +1,12 @@
 import java.io.*;
+import java.net.ServerSocket;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.*;
 
-/** Runs actual console clients and server in separate JVMs using an isolated fictional database. */
+/** Full actual-process console demonstration with a fixed ephemeral port for reconnect/restart. */
 public class ProcessSmoke {
   static Path root, work, evidence;
   static String javaExecutable;
@@ -26,58 +27,76 @@ public class ProcessSmoke {
         .start();
   }
 
-  static String log(String name) throws IOException {
-    Path path = evidence.resolve(name);
+  static String log(String file) throws IOException {
+    Path path = evidence.resolve(file);
     return Files.exists(path) ? new String(Files.readAllBytes(path), StandardCharsets.UTF_8) : "";
   }
 
-  static String await(String file, String text) throws Exception {
-    long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(20);
-    while (System.nanoTime() < deadline) {
+  static String await(String file, String text, int offset) throws Exception {
+    long end = System.nanoTime() + TimeUnit.SECONDS.toNanos(25);
+    while (System.nanoTime() < end) {
       String current = log(file);
-      if (current.contains(text)) return current;
+      if (current.length() >= offset && current.substring(offset).contains(text)) return current;
       Thread.sleep(40);
     }
-    throw new IllegalStateException(file + " did not contain " + text + "; inspect " + evidence);
+    throw new IllegalStateException(
+        file + " missing " + text + " after offset " + offset + "; inspect " + evidence);
   }
 
-  static String lastMatch(String expression, String text) {
+  static String match(String expression, String text) {
     Matcher matcher = Pattern.compile(expression, Pattern.DOTALL).matcher(text);
     String result = null;
     while (matcher.find()) result = matcher.group(1);
-    if (result == null) throw new IllegalStateException("Pattern not found: " + expression);
+    if (result == null) throw new IllegalStateException("Pattern missing: " + expression);
     return result;
   }
 
-  static void finished(Process process) throws Exception {
+  static void finish(Process process) throws Exception {
     if (!process.waitFor(25, TimeUnit.SECONDS)) {
       process.destroyForcibly();
-      throw new IllegalStateException("Process timed out");
+      throw new IllegalStateException("Console process timed out");
     }
     if (process.exitValue() != 0)
-      throw new IllegalStateException("Process exit " + process.exitValue());
+      throw new IllegalStateException("Process failed: " + process.exitValue());
   }
 
   static class Client implements AutoCloseable {
-    final String name;
+    final String name, role, file;
     final Process process;
     final Writer input;
 
-    Client(String name, int port, String role) throws Exception {
+    Client(String name, String role, int port) throws Exception {
       this.name = name;
-      process = start("client", name + ".log");
+      this.role = role;
+      file = name + ".log";
+      process = start("client", file);
       input = new OutputStreamWriter(process.getOutputStream(), StandardCharsets.UTF_8);
-      send("127.0.0.1\n" + port + "\n2\n" + name + "\nDemoPass123!\n");
-      await(name + ".log", "[" + role + "]");
+      try {
+        send("127.0.0.1\n" + port + "\n2\n" + name + "\nDemoPass123!\n");
+        await(file, "[" + role + "]", 0);
+      } catch (Exception e) {
+        process.destroyForcibly();
+        input.close();
+        throw e;
+      }
     }
 
-    void send(String text) throws IOException {
-      input.write(text);
+    void send(String value) throws IOException {
+      input.write(value);
       input.flush();
     }
 
-    String waitFor(String text) throws Exception {
-      return await(name + ".log", text);
+    String action(String input, String expected) throws Exception {
+      int marker = log(file).length();
+      send(input);
+      String result = await(file, expected, marker);
+      await(file, "[" + role + "]", marker);
+      return result;
+    }
+
+    void relogin(int marker) throws Exception {
+      await(file, "Connected to server. Login required.", marker);
+      action("2\n" + name + "\nDemoPass123!\n", "Authorized snapshot synchronized.");
     }
 
     public void close() throws Exception {
@@ -85,7 +104,7 @@ public class ProcessSmoke {
         try {
           send("9\n0\n");
           input.close();
-          finished(process);
+          finish(process);
         } catch (Exception e) {
           process.destroyForcibly();
           throw e;
@@ -93,149 +112,148 @@ public class ProcessSmoke {
     }
   }
 
-  public static void main(String[] args) throws Exception {
-    root = Path.of(args.length == 0 ? "." : args[0]).toAbsolutePath().normalize();
-    work = root.resolve(".local/testing/member2-smoke-" + UUID.randomUUID());
-    Files.createDirectories(work.resolve("config"));
-    evidence = root.getParent().resolve("docs/verification/evidence/member2-fixed/process-smoke");
-    Files.createDirectories(evidence);
-    javaExecutable = Path.of(System.getProperty("java.home"), "bin", "java.exe").toString();
-    Files.writeString(
-        work.resolve("config/server.properties"),
-        "server.host=127.0.0.1\nserver.port=0\nserver.maxConnections=32\ndatabase.path=demo.db\n");
-    finished(start("server", "seed.log", "--seed"));
-    if (!Files.exists(work.resolve("demo.db")))
-      throw new IllegalStateException("Configured database was not seeded");
-    Process server = start("server", "server.log");
-    try {
-      String serverLog = await("server.log", "TCP server listening on");
-      int port =
-          Integer.parseInt(lastMatch("TCP server listening on 127\\.0\\.0\\.1:(\\d+)", serverLog));
-      try (Client operator = new Client("operator", port, "OPERATOR");
-          Client citizen = new Client("citizen1", port, "CITIZEN");
-          Client police = new Client("police1", port, "RESPONDER");
-          Client ambulance = new Client("ambulance1", port, "RESPONDER");
-          Client fire = new Client("fire1", port, "RESPONDER");
-          Client replacement = new Client("fire2", port, "RESPONDER")) {
-        citizen.send("2\n");
-        citizen.waitFor("PONG");
-        operator.send("3\n\n\n\n");
-        String teams = operator.waitFor("police1 simulated team");
-        String policeId = teamId(teams, "police1"),
-            ambulanceId = teamId(teams, "ambulance1"),
-            fireId = teamId(teams, "fire1"),
-            replacementId = teamId(teams, "fire2");
-        citizen.send(
-            "3\nROAD_ACCIDENT\nFictional campus gate\nAcademic accident demonstration\n\n\n");
-        String id =
-            lastMatch(
-                "Confirmed incident reference: (" + UUID_PATTERN + ")",
-                citizen.waitFor("Confirmed incident reference:"));
-        operator.waitFor("INCIDENT_CREATED");
-        operator.send("7\n" + id + "\nHIGH\ny\n");
-        operator.waitFor("\"priority\" : \"HIGH\"");
-        String[] ids = {policeId, ambulanceId, fireId};
-        Client[] responders = {police, ambulance, fire};
-        for (int i = 0; i < ids.length; i++) {
-          operator.send("8\n" + id + "\n" + ids[i] + "\ny\n");
-          responders[i].waitFor("ASSIGNMENT_OFFERED");
-        }
-        for (Client responder : responders) {
-          responder.send("5\n");
-          responder.waitFor("My offers/current assignment");
-        }
-        citizen.send("5\n" + id + "\n");
-        citizen.waitFor("POLICE: OFFERED");
-        citizen.waitFor("AMBULANCE: OFFERED");
-        citizen.waitFor("FIRE_RESCUE: OFFERED");
-        String assignmentId =
-            lastMatch(
-                "\"assignment\"\\s*:\\s*\\{\\s*\"id\"\\s*:\\s*\"(" + UUID_PATTERN + ")\"",
-                log("fire1.log"));
-        operator.send("10\n" + id + "\n" + assignmentId + "\nINTERNAL-SMOKE-REASON\ny\n");
-        fire.waitFor("\"state\" : \"CANCELLED\"");
-        operator.send("8\n" + id + "\n" + replacementId + "\ny\n");
-        replacement.waitFor("ASSIGNMENT_OFFERED");
-        citizen.send("3\nOTHER\nFictional duplicate\nReject this academic example\n\n\n");
-        long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(20);
-        String rejectedId = id;
-        while (rejectedId.equals(id) && System.nanoTime() < deadline) {
-          Thread.sleep(40);
-          rejectedId =
-              lastMatch(
-                  "Confirmed incident reference: (" + UUID_PATTERN + ")", log("citizen1.log"));
-        }
-        if (rejectedId.equals(id)) throw new IllegalStateException("Second report not confirmed");
-        operator.send("11\n" + rejectedId + "\nPublic duplicate explanation\ny\n");
-        citizen.waitFor("\"state\" : \"REJECTED\"");
-        operator.send("4\n");
-        operator.waitFor("TEST_NOTIFICATION");
-        for (String name : List.of("citizen1", "police1", "ambulance1", "fire1", "fire2"))
-          if (log(name + ".log").contains("INTERNAL-SMOKE-REASON"))
-            throw new IllegalStateException("Private note leaked to " + name);
-        if (log("police1.log").contains("\"serviceType\" : \"AMBULANCE\"")
-            || log("ambulance1.log").contains("\"serviceType\" : \"POLICE\""))
-          throw new IllegalStateException("Offer routed to unrelated team");
-        System.out.println(
-            "PASS: actual server + six client JVMs; report -> operator event -> priority -> three"
-                + " service offers -> citizen service timeline -> cancel -> replacement offer ->"
-                + " reject; private notes and offer recipients checked.");
-      }
-      for (String name : List.of("operator", "citizen1", "police1", "ambulance1", "fire1", "fire2"))
-        if (!log(name + ".log").contains("Logged out"))
-          throw new IllegalStateException(name + " did not log out cleanly");
-      System.out.println("PASS: all console clients logged out and exited.");
-      server.destroy();
-      if (!server.waitFor(10, TimeUnit.SECONDS))
-        throw new IllegalStateException("Server did not stop");
-      server = start("server", "server-restart.log");
-      String restarted = await("server-restart.log", "TCP server listening on");
-      int restartPort =
-          Integer.parseInt(lastMatch("TCP server listening on 127\\.0\\.0\\.1:(\\d+)", restarted));
-      Process recovered = start("client", "citizen-restart.log");
-      String firstId =
-          lastMatch(
-              "Confirmed incident reference: (" + UUID_PATTERN + ")",
-              log("citizen1.log")
-                  .substring(
-                      0,
-                      log("citizen1.log").indexOf("Confirmed incident reference:")
-                          + "Confirmed incident reference: ".length()
-                          + 36));
-      try (Writer writer =
-          new OutputStreamWriter(recovered.getOutputStream(), StandardCharsets.UTF_8)) {
-        writer.write(
-            "127.0.0.1\n"
-                + restartPort
-                + "\n2\ncitizen1\nDemoPass123!\n5\n"
-                + firstId
-                + "\n9\n0\n");
-      }
-      finished(recovered);
-      String recoveredLog = log("citizen-restart.log");
-      if (!recoveredLog.contains("POLICE: OFFERED")
-          || !recoveredLog.contains("AMBULANCE: OFFERED")
-          || !recoveredLog.contains("FIRE_RESCUE: CANCELLED")
-          || !recoveredLog.contains("Logged out"))
-        throw new IllegalStateException(
-            "Saved incident/service timeline was not recovered after process restart");
-      System.out.println(
-          "PASS: restarted server and a new citizen JVM recover the saved report, service"
-              + " assignments and timeline. Evidence: "
-              + evidence);
-    } finally {
-      server.destroy();
-      if (!server.waitFor(10, TimeUnit.SECONDS)) server.destroyForcibly();
-    }
-  }
-
   static String teamId(String text, String name) {
-    return lastMatch(
+    return match(
         "\"id\"\\s*:\\s*\"("
             + UUID_PATTERN
             + ")\"\\s*,\\s*\"name\"\\s*:\\s*\""
             + name
             + " simulated team\"",
         text);
+  }
+
+  static void progress(Client client, String next) throws Exception {
+    client.action("8\nPRIVATE-PROGRESS-NOTE\ny\n", "\"state\" : \"" + next + "\"");
+  }
+
+  static void freshCitizen(int port, String account, String file, String tail) throws Exception {
+    Process client = start("client", file);
+    try (Writer writer = new OutputStreamWriter(client.getOutputStream(), StandardCharsets.UTF_8)) {
+      writer.write("127.0.0.1\n" + port + "\n2\n" + account + "\nDemoPass123!\n" + tail);
+    }
+    finish(client);
+  }
+
+  public static void main(String[] args) throws Exception {
+    root = Path.of(args.length == 0 ? "." : args[0]).toAbsolutePath().normalize();
+    work = root.resolve(".local/testing/final-smoke-" + UUID.randomUUID());
+    Files.createDirectories(work.resolve("config"));
+    evidence =
+        root.getParent().resolve("docs/verification/evidence/member3-finalized/process-smoke");
+    Files.createDirectories(evidence);
+    javaExecutable = Path.of(System.getProperty("java.home"), "bin", "java.exe").toString();
+    int port;
+    try (ServerSocket reserved = new ServerSocket(0)) {
+      port = reserved.getLocalPort();
+    }
+    Files.writeString(
+        work.resolve("config/server.properties"),
+        "server.host=127.0.0.1\nserver.port="
+            + port
+            + "\nserver.maxConnections=32\ndatabase.path=demo.db\n");
+    finish(start("server", "seed.log", "--seed"));
+    Process server = start("server", "server.log");
+    String incidentId;
+    try {
+      await("server.log", "TCP server listening on", 0);
+      try (Client op = new Client("operator", "OPERATOR", port);
+          Client citizen = new Client("citizen1", "CITIZEN", port);
+          Client police = new Client("police1", "RESPONDER", port);
+          Client ambulance = new Client("ambulance1", "RESPONDER", port);
+          Client fire = new Client("fire1", "RESPONDER", port);
+          Client replacement = new Client("fire2", "RESPONDER", port)) {
+        citizen.action("2\n", "PONG");
+        String teams = op.action("3\n\n\n\n", "police1 simulated team");
+        String reference =
+            citizen.action(
+                "3\nROAD_ACCIDENT\nFictional campus gate\nAcademic accident example\n\n\n",
+                "Confirmed incident reference:");
+        incidentId = match("Confirmed incident reference: (" + UUID_PATTERN + ")", reference);
+        await(op.file, "INCIDENT_CREATED", 0);
+        op.action("7\n" + incidentId + "\nHIGH\ny\n", "\"priority\" : \"HIGH\"");
+        for (String team : List.of("police1", "ambulance1", "fire1"))
+          op.action(
+              "8\n" + incidentId + "\n" + teamId(teams, team) + "\ny\n", "\"state\" : \"OFFERED\"");
+        for (Client responder : List.of(police, ambulance, fire)) {
+          await(responder.file, "ASSIGNMENT_OFFERED", 0);
+          responder.action("5\n", "\"assignment\"");
+        }
+        fire.action("7\nPRIVATE-DECLINE-REASON\ny\n", "\"state\" : \"DECLINED\"");
+        op.action(
+            "8\n" + incidentId + "\n" + teamId(teams, "fire2") + "\ny\n",
+            "\"state\" : \"OFFERED\"");
+        await(replacement.file, "ASSIGNMENT_OFFERED", 0);
+        for (Client responder : List.of(police, ambulance, replacement))
+          responder.action("6\n\ny\n", "\"state\" : \"ACCEPTED\"");
+        progress(police, "EN_ROUTE");
+        List<Client> all = List.of(op, citizen, police, ambulance, fire, replacement);
+        Map<String, Integer> markers = new HashMap<>();
+        for (Client client : all) markers.put(client.file, log(client.file).length());
+        server.destroy();
+        if (!server.waitFor(10, TimeUnit.SECONDS))
+          throw new IllegalStateException("Server shutdown timed out");
+        server = start("server", "server-restart.log");
+        await("server-restart.log", "TCP server listening on", 0);
+        for (Client client : all) client.relogin(markers.get(client.file));
+        if (!log(police.file).substring(markers.get(police.file)).contains("POLICE: EN_ROUTE"))
+          throw new IllegalStateException(
+              "Busy responder state was not restored by authorized snapshot");
+        op.action("12\n" + incidentId + "\nPremature closure must fail\ny\n", "INVALID_TRANSITION");
+        progress(police, "ARRIVED");
+        String states = citizen.action("5\n" + incidentId + "\n\n", "POLICE: ARRIVED");
+        if (!states.contains("AMBULANCE: ACCEPTED") || !states.contains("FIRE_RESCUE: ACCEPTED"))
+          throw new IllegalStateException("Service progress was not displayed independently");
+        progress(police, "COMPLETED");
+        for (Client responder : List.of(ambulance, replacement)) {
+          progress(responder, "EN_ROUTE");
+          progress(responder, "ARRIVED");
+          progress(responder, "COMPLETED");
+        }
+        op.action(
+            "12\n" + incidentId + "\nPublic academic resolution\ny\n", "\"state\" : \"CLOSED\"");
+        citizen.action("6\n", "\"state\" : \"CLOSED\"");
+        fire.action("10\n", "PRIVATE-DECLINE-REASON");
+        if (log(citizen.file).contains("PRIVATE-DECLINE-REASON")
+            || log(citizen.file).contains("PRIVATE-PROGRESS-NOTE"))
+          throw new IllegalStateException("Private notes leaked to citizen");
+        if (log(police.file).contains("\"serviceType\" : \"AMBULANCE\""))
+          throw new IllegalStateException("Unrelated responder assignment leaked");
+        System.out.println(
+            "PASS: six separate console client JVMs; report -> notify -> three service offers ->"
+                + " decline -> replacement -> accept -> independent EN_ROUTE/ARRIVED/COMPLETED ->"
+                + " eligible closure and histories.");
+        System.out.println(
+            "PASS: server process restart; clients reconnect while menu input is idle, require"
+                + " login again, and restore BUSY service state through authorized snapshots.");
+      }
+      for (String name : List.of("operator", "citizen1", "police1", "ambulance1", "fire1", "fire2"))
+        if (!log(name + ".log").contains("Logged out"))
+          throw new IllegalStateException("Client did not log out: " + name);
+      freshCitizen(
+          port, "citizen1", "closed-history-restart.log", "5\n" + incidentId + "\n\n9\n0\n");
+      if (!log("closed-history-restart.log").contains("\"state\" : \"CLOSED\"")
+          || !log("closed-history-restart.log").contains("POLICE: COMPLETED"))
+        throw new IllegalStateException("Closed history was not preserved for a new citizen JVM");
+      // EOF after address intentionally leaves an unsent partial draft, not a dispatched report.
+      freshCitizen(port, "citizen2", "draft-incomplete.log", "3\nOTHER\nSaved draft campus\n");
+      freshCitizen(
+          port,
+          "citizen2",
+          "draft-recovered.log",
+          "3\ny\n\n\nRecovered draft description\n\n\n9\n0\n");
+      String draft = log("draft-recovered.log");
+      if (!draft.contains("Resume your saved unsent report?")
+          || !draft.contains("Saved draft campus")
+          || !draft.contains("Confirmed incident reference:"))
+        throw new IllegalStateException("Unsent draft did not survive a client process restart");
+      System.out.println(
+          "PASS: a fresh citizen JVM recovers closed service history; an unsent report draft"
+              + " survives client EOF/restart; privacy checks and all console exits passed."
+              + " Evidence: "
+              + evidence);
+    } finally {
+      server.destroy();
+      if (!server.waitFor(10, TimeUnit.SECONDS)) server.destroyForcibly();
+    }
   }
 }

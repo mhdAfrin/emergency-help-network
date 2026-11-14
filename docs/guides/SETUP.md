@@ -1,9 +1,9 @@
-# Emergency Help Network — Member 1 foundation
+# Emergency Help Network — complete project setup
 
 University of Ruhuna · Faculty of Engineering · EC5205 Operating Systems & Network Programming.
 Academic demonstration — no real emergency dispatch.
 
-Member 1 foundations and Member 2 reporting/assignment are implemented. Responder progress, closure and recovery remain Member 3 work. See docs/handoff/MEMBER1-CHECKLIST.md and docs/handoff/HANDOFF.md.
+All three implementation stages are implemented: foundation, reporting/assignment, responder progress/closure and recovery. See docs/handoff/MEMBER3-CHECKLIST.md and docs/handoff/HANDOFF.md.
 
 ## Build and run (PowerShell)
 
@@ -30,7 +30,7 @@ The optional .local/tools/ folder on this machine contains a checksum-verified J
 
 ## What to try
 
-Log in to several separate clients. Citizen: report/list/filter/detail/public timeline. Operator: filter/review/priority/team offers/cancel/reject. Responder: own team/availability/current offers. All roles retain identity, PING and logout. Logging the same user into another client notifies and closes the previous session. No heartbeat/inactivity policy or automatic reconnect is implemented yet; these remain Member 3 work.
+Log in to several separate clients. Citizen: report/list/filter/detail/public timeline. Operator: filter/review/priority/team offers/cancel/reject/close/history. Responder: own team/availability/current offers, accept/decline, next progress, history and assignment timeline. All roles retain identity, PING and logout. Logging the same user into another client notifies and closes the previous session. Heartbeat is 15 seconds, inbound inactivity deadline 45 seconds, and background reconnect requires login plus snapshot synchronization.
 
 Default connection limit 32; per-session outgoing limit 100 frames; max payload 65,536 bytes. config/server.properties can change host, port, maxConnections (1–200), and database path. All application logic is Java; no browser or GUI.
 
@@ -56,11 +56,11 @@ If bind fails, another server may own the port. If login fails, run --seed using
 - docs/design/DATABASE.md — schema and ER diagram
 - docs/design/PROTOCOL.md — envelopes, authorization, errors and extension contract
 - docs/verification/TEST-RESULTS.md — actual outcomes, measurements and untested items
-- docs/guides/DEMO.md — Member 1 demonstration script
-- docs/handoff/MEMBER1-CHECKLIST.md — all 25 tasks with evidence
-- docs/handoff/HANDOFF.md — next-member extension points and backlog
+- docs/guides/DEMO.md — complete demonstration script
+- docs/handoff/MEMBER1-CHECKLIST.md — historical Member 1 tasks with evidence
+- docs/handoff/HANDOFF.md — final handoff and manual delivery checks
 - docs/handoff/CONTRIBUTIONS.md — honest contribution and Git workflow
 
 For source handoff/submission, exclude .local/, target/ and local configuration; .local/tools/ contains large local JDK/build caches. Keep the Maven wrapper, source, POMs and docs. The wrapper is Apache-generated with one Windows quoting fix for cache paths containing spaces; its distribution checksum is pinned.
 
-This correction checkout already tracks Member 2's existing member2-submission-snapshot branch. No new commit/push was created by the repair session. Review the Member 2 checklist and PUSH-MEMBER2.md before publishing; Member 3 continues only after review/merge.
+The finalized checkout uses local member3-finalization based on e858384. No Member 3 commit/push was created automatically. Review the final checklists/results, merge the reviewed Member 2 stage first, then publish/review Member 3 using the group's actual author identities.

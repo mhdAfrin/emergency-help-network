@@ -6,65 +6,66 @@ University of Ruhuna, Faculty of Engineering · EC5205 — Operating Systems & N
 
 > Academic demonstration — no real emergency dispatch.
 
-Member 1's foundation and Member 2's reporting/assignment stage are implemented in this working copy. The original Member 2 snapshot is commit `8bdf413`; corrections remain on its existing branch, `member2-submission-snapshot`, ready for review. No commit or push is performed automatically.
-
-## What works
-
-- Citizen registration/login, single-session replacement, and server-side role/ownership checks.
-- Fictional incident reports, confirmed references, paginated listings, public timelines and separate service assignment views.
-- Operator state/priority filters, priority changes, team filters, and eligible public rejection.
-- Online/available team offers for three services on one incident; atomic BUSY reservations and revision checks.
-- Responder availability controls and private inspection of its own offers/current assignment.
-- Eligible cancellation with a private reason, reservation release, and reassignment.
-- Live authorized notifications after commit; canonical same-ID retries with no duplicate mutations or events.
-- A Pending actions menu retains timed-out business request IDs and input for same-session reconciliation/retry.
-
-Acceptance/decline, responder progress, closure, full histories, heartbeat, automatic reconnect and snapshot synchronization remain Member 3 work. These actions are not exposed as working controls.
+The complete Java 21 console prototype implements reporting, multi-service offers, responder acceptance/decline, independent progress, reassignment, eligible closure, persistent public/private history and disconnect recovery. It uses real TCP sockets, bounded platform threads, framed JSON and server-owned SQLite.
 
 ## Build and run
 
-From this folder in PowerShell, with Java 21 available:
+From this checkout folder in PowerShell:
 
 ```powershell
 .\application\scripts\project.ps1 build
-.\application\scripts\project.ps1 smoke
 .\application\scripts\project.ps1 seed
 .\application\scripts\project.ps1 server
 ```
 
-Use a separate terminal for every client:
+In a separate terminal for each citizen/operator/team:
 
 ```powershell
 .\application\scripts\project.ps1 client
 ```
 
-The helper uses `.local/tools/jdk-21.0.13+9` inside application/ when available, otherwise JAVA_HOME/Java on PATH. The local toolchain and caches are optional and ignored by Git. With a complete dependency cache, `build -Offline` avoids network downloads. A fresh clone requires Java 21 and internet for Maven/dependencies.
+The helper uses the local validation JDK when present, otherwise an installed Java 21 JDK via JAVA_HOME/PATH. First build needs internet for the pinned Maven wrapper/dependencies; with a complete cache use `build -Offline`.
 
-Default address: **127.0.0.1:5050**. Demo password: `DemoPass123!` for `operator`, `citizen1`, `citizen2`, `police1`, `ambulance1`, `fire1`, `fire2`. Seed is explicit and repeatable; it never resets saved passwords or availability.
+Default connection: **127.0.0.1:5050**. Demo password **DemoPass123!** for operator, citizen1, citizen2, police1, ambulance1, fire1 and fire2. Citizen registration also works. Seeding is explicit, repeatable and does not reset saved accounts.
 
-For custom settings copy `application/config/server.properties.example` to `application/config/server.properties`. The default database is `application/.local/data/emergency.db`. Run manual JAR/Eclipse launches with **application/** as the working directory. Clients never access SQLite.
+For custom host/port/DB/session limits copy application/config/server.properties.example to application/config/server.properties. Manual JAR/Eclipse launches use **application/** as working directory. Clients never access SQLite. The default DB is application/.local/data/emergency.db; local per-server/user draft and pending-request journals are in application/.local/client/.
 
-## Folder layout
+## Demonstration
+
+Report → notify operator → set priority → offer several services → accept/decline → replace declined/cancelled offers → EN_ROUTE → ARRIVED → COMPLETED independently → close when all assignments are terminal and at least one completed.
+
+Clients send heartbeat every 15 seconds and detect 45 seconds without inbound frames. Reconnect uses 1/2/4/8/up to 15 seconds with jitter, requires login again and synchronizes an authorized snapshot before applying newer buffered events. BUSY teams remain reserved through disconnect/restart. Report drafts and original uncertain request IDs survive client restart. Menu 90 explicitly reconciles/retries saved requests; it never silently invents a new report ID.
+
+## Verification and delivery
+
+```powershell
+.\application\scripts\project.ps1 smoke
+.\application\scripts\project.ps1 load
+.\application\scripts\project.ps1 package
+```
+
+Smoke uses a real server and six separate console client JVMs, server restart/re-login, closure/history and draft recovery. Load uses 20 authenticated real TCP sessions and measures 50 commit-to-operator-receipt samples with one monotonic clock. Package creates source and runnable JAR ZIPs under ignored application/.local/submission/.
+
+Actual results, including failed intermediate attempts and manual limits, are in [the test report](docs/verification/TEST-RESULTS.md). Separate-laptop LAN, physical keyboard/terminal behavior, Eclipse interaction and lecturer-specific submission requirements must be checked by the group; no claim is made they were performed automatically.
+
+## Documentation
+
+- [Documentation index](docs/README.md)
+- [Architecture/recovery sequence](docs/design/ARCHITECTURE.md), [database](docs/design/DATABASE.md), [protocol](docs/design/PROTOCOL.md), [state diagrams](docs/design/STATE-MACHINES.md)
+- [Setup/Eclipse/LAN](docs/guides/SETUP.md), [complete demo](docs/guides/DEMO.md), [troubleshooting and limits](docs/guides/TROUBLESHOOTING.md)
+- [All 29 Member 3 tasks](docs/handoff/MEMBER3-CHECKLIST.md), [final handoff](docs/handoff/HANDOFF.md), [actual contributions](docs/handoff/CONTRIBUTIONS.md)
+- [Acceptance-test traceability](docs/verification/TRACEABILITY.md), [LAN checklist](docs/verification/LAN-CHECKLIST.md), [submission checklist](docs/submission/CHECKLIST.md)
+
+## Repository and scope
 
 ```text
-member2-fixed/
-├── application/   Maven modules, configuration, scripts and ignored local runtime files
-├── docs/          Requirements, design, guides, handoff and verification evidence
+member3-finalized/
+├── application/   common/, server/, client/, config/, scripts/, Maven wrapper and build
+├── docs/          Requirements, design, verification evidence and delivery guides
 ├── .gitignore
 └── README.md
 ```
 
-application/ contains client/, common/, server/, config/, scripts/, the parent POM and Maven wrapper. Module target/ output, local databases, downloaded tools and private configuration stay out of Git.
+Local JDK/caches/journals/DBs, module target/ directories and generated submission ZIPs are ignored. This independent checkout is on **member3-finalization**, based on Member 2 commit **e858384**. Other member folders are preserved; no commit, push or merge is performed automatically. Merge/review Member 2 before merging this stage into main.
 
-## Read next
-
-- [Documentation index](docs/README.md)
-- [All 26 Member 2 tasks](docs/handoff/MEMBER2-CHECKLIST.md)
-- [Protocol and payloads](docs/design/PROTOCOL.md)
-- [Current test results](docs/verification/TEST-RESULTS.md)
-- [Demo and manual checks](docs/guides/DEMO.md)
-- [Member 3 handoff](docs/handoff/HANDOFF.md)
-- [Review and push on Member 2's branch](docs/handoff/PUSH-MEMBER2.md)
-- [Eclipse, direct commands and LAN troubleshooting](docs/guides/SETUP.md)
-
-Use fictional data on localhost or a permitted trusted LAN. TCP is unencrypted. Separate-laptop LAN behavior and interactive typing during notifications still need manual verification. Console events print independently of input, with prompt redraw and Asia/Colombo timestamps. No heartbeat/inactivity deadline or automatic reconnect is implemented at this stage.
+This is a fictional trusted-localhost/LAN prototype. TCP is unencrypted; no real agencies, production hosting, arrival guarantees or third-party dispatch services are involved.

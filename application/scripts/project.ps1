@@ -1,5 +1,5 @@
 param(
-    [ValidateSet('build', 'seed', 'server', 'client', 'smoke')]
+    [ValidateSet('build', 'seed', 'server', 'client', 'smoke', 'load', 'package')]
     [string]$Action = 'build',
     [switch]$Offline
 )
@@ -35,6 +35,14 @@ try {
         $repository = Join-Path $localTools 'm2'
         if (Test-Path -LiteralPath $repository) { $mavenArguments += "-Dmaven.repo.local=$repository" }
         & (Join-Path $projectRoot 'mvnw.cmd') @mavenArguments
+    } elseif ($Action -eq 'package') {
+        & $javaExecutable 'scripts/testing/CreateSubmission.java' (Split-Path -Parent $projectRoot)
+    } elseif ($Action -eq 'load') {
+        $serverJar = Join-Path $projectRoot 'server/target/server-1.0.0-SNAPSHOT.jar'
+        $clientJar = Join-Path $projectRoot 'client/target/client-1.0.0-SNAPSHOT.jar'
+        if (-not (Test-Path -LiteralPath $serverJar) -or -not (Test-Path -LiteralPath $clientJar)) { throw 'Build before running load checks.' }
+        $classpath = $serverJar + [IO.Path]::PathSeparator + $clientJar
+        & $javaExecutable --class-path $classpath 'scripts/testing/LocalLoadTest.java'
     } elseif ($Action -eq 'smoke') {
         & $javaExecutable 'scripts/testing/ProcessSmoke.java'
     } else {

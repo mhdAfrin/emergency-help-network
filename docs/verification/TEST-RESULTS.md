@@ -1,67 +1,67 @@
-# Actual verification — Member 2 fixed
+# Actual verification — Member 3 finalized
 
-13 November 2026, Asia/Colombo. Checkout: member2-fixed; branch member2-submission-snapshot; baseline commit 8bdf413. Source corrections remain uncommitted. This report is based on actual execution, not on the presence of test files.
+13 November 2026, Asia/Colombo. Checkout: member3-finalized; local branch member3-finalization; baseline e858384. Final Member 3 changes remain uncommitted. This report describes actual execution, with manual obligations recorded separately.
 
-## Result
+## Verified results
 
-**Java 21 clean Maven verification passed: 60 tests, zero failures, zero errors, zero skipped.** The final recorded run finished at 15:32:16 +05:30 in 2 minutes 54 seconds. The original snapshot baseline passed 37 tests; 23 regression cases were added (20 server integration cases and three client pending-action cases).
+**Clean Java 21 Maven verification passed: 87 tests, zero failures/errors/skips.** The final checkout run ended at 19:12:30 +05:30 in 2 minutes 18 seconds. All 60 prior Member 1/2 cases remain included, with 27 Member 3 cases added. See [build log](evidence/member3-finalized/clean-build.txt) and [parsed suite summary](evidence/member3-finalized/suite-summary.txt).
 
-**The packaged process smoke passed** with one server JVM and six actual client JVMs. It drove console input through report creation, live operator event, priority, three service offers, independent citizen service views/public timeline, cancellation, a replacement fire team, a separate public rejection, private recipient/note checks, logout, then a restarted server and new citizen JVM recovering the saved report/service timeline. All processes were stopped. This is scripted console verification; physical keyboard usability remains a manual check.
+| Module | Suite | Tests |
+|---|---|---:|
+| common | FrameCodecTest | 6 |
+| common | ValidationTest | 12 |
+| server | DatabaseMechanismsTest | 3 |
+| server | FinalWorkflowTest | 13 |
+| server | FoundationIntegrationTest | 7 |
+| server | IncidentValidationTest | 4 |
+| server | Member2IntegrationTest | 20 |
+| server | RevisionTransactionTest | 2 |
+| server | SlowWriterTest | 2 |
+| client | ConnectionManagerTest | 1 |
+| client | HeartbeatTest | 2 |
+| client | LiveStateTest | 4 |
+| client | LocalJournalTest | 4 |
+| client | PendingActionsTest | 3 |
+| client | RecoveryIntegrationTest | 4 |
+| Total | | 87 |
 
-| Suite | Tests |
-|---|---:|
-| FrameCodecTest | 6 |
-| ValidationTest | 12 |
-| DatabaseMechanismsTest | 3 |
-| FoundationIntegrationTest | 7 |
-| IncidentValidationTest | 4 |
-| Member2IntegrationTest | 20 |
-| RevisionTransactionTest | 2 |
-| SlowWriterTest | 2 |
-| ConnectionManagerTest | 1 |
-| PendingActionsTest | 3 |
-| Total | 60 |
+**Separate-process console smoke passed:** one server JVM and six console client JVMs exercised report, live operator notification, three services, decline/replacement, accept, independent EN_ROUTE/ARRIVED/COMPLETED, eligible closure and histories. A restarted server caused background client reconnect while console input was idle; explicit re-login and authorized snapshots restored BUSY/EN_ROUTE. A fresh citizen process recovered closed history; an incomplete report draft survived EOF/restart and resumed. Recipient/private-note checks and process exits passed. See [result](evidence/member3-finalized/process-smoke-result.txt) and [actual console logs](evidence/member3-finalized/process-smoke/README.md).
 
-## Evidence and reproduction
+**Clean source-export verification passed:** the source ZIP was extracted into a fresh directory without target output or bundled local tools/data. Its own Maven wrapper/source built with the external Java 21 toolchain and an existing offline dependency cache; all 87 cases passed (finished 19:21:42 +05:30, 2 minutes 53 seconds). That export seeded successfully and passed the same complete multi-process smoke. See [build](evidence/member3-finalized/clean-export-build.txt), [seed](evidence/member3-finalized/clean-export-seed.txt), [smoke](evidence/member3-finalized/clean-export-smoke.txt). Later changes were delivery documentation/evidence and helper formatting, with source consistency checked during final packaging. This is a fresh source-export check; an exact clone of the final Git commit awaits that actual commit.
 
-- [Snapshot baseline build](evidence/member2-fixed/snapshot-baseline-build.txt)
-- [Final clean build](evidence/member2-fixed/clean-build.txt)
-- [Suite summary](evidence/member2-fixed/suite-summary.txt)
-- [Actual process smoke result](evidence/member2-fixed/process-smoke-result.txt)
-- [Console/server logs](evidence/member2-fixed/process-smoke/README.md)
-- [Earlier verification history](PREVIOUS-VERIFICATION.md)
+## Actual load and latency measurement
 
-Executed from the checkout root in PowerShell with the local Java 21 toolchain and complete local cache:
+20 authenticated real TCP sessions completed 500 PING exchanges without failed requests. While those sessions stayed connected, 50 sequential CREATE_INCIDENT notifications were measured. Start: System.nanoTime immediately after JDBC commit returned in the database executor. End: System.nanoTime in the operator background callback after decoding INCIDENT_CREATED. One JVM supplies a shared monotonic clock; messages still travel through actual loopback sockets. The interval includes post-commit routing, queueing, TCP and decoding, and excludes the database write itself.
+
+**Median: 0.939600 ms; p95 (nearest rank): 1.311500 ms; n=50.** [Raw CSV](evidence/member3-finalized/load-latency.csv), [method/environment/results](evidence/member3-finalized/load-latency.txt). Windows 11 10.0 amd64, OpenJDK 21.0.13+9-LTS, Intel64 Family 6 Model 186 Stepping 2 GenuineIntel, 16 available processors; JVM max heap 4,219,469,824 bytes (not physical RAM). Network: 127.0.0.1, one machine. These values do not measure separate-laptop LAN performance or physical terminal repaint. The console smoke separately verified event handling while menus waited for input.
+
+## What the new tests establish
+
+- Real responder transitions enforce ownership, all expected revisions, required decline reasons and strict next-state ordering. Terminal release/reassignment and multi-service independence persist atomically with timeline/dedup records.
+- Closure requires ACTIVE, at least one COMPLETED assignment and every assignment terminal; retries do not duplicate timeline changes. Declined/cancelled incidents stay visible while coordination remains necessary.
+- Citizen/event projections hide operational notes; responders see only their own assignment/timeline notes. Operators retain private operational detail access.
+- Heartbeats run without menu input; idle and stalled partial-frame sockets expire while a healthy peer survives. A real deliberately slow socket reader is isolated, in addition to deterministic blocked-writer/queue tests.
+- Socket-owned frozen snapshots use one epoch/watermark, authorization and bounded paging. Client buffers/swaps correctly, rejects stale revisions/old epochs and refuses incomplete/overflowed synchronization.
+- Disconnect/restart preserves BUSY reservations; new connections require login and recover active assignments. Backoff constants and capped jitter are tested.
+- Durable pending requests/drafts survive new journal instances, merge concurrent writers, exclude credentials and remain user-scoped. A real committed mutation with an unread acknowledgement is retried from a new client using the original ID and payload, returning the saved result once. The ACK may already have reached a TCP buffer; this does not claim exactly-once network delivery.
+
+## Reproduction
+
+From the checkout root in PowerShell:
 
 ```powershell
-$env:MAVEN_ARGS = '--offline'
 .\application\scripts\project.ps1 build
 .\application\scripts\project.ps1 smoke
+.\application\scripts\project.ps1 load
+.\application\scripts\project.ps1 package
 ```
 
-The helper also supports the equivalent `build -Offline` option. Leave offline mode unset on a fresh machine until Maven/dependencies have been downloaded. Tools are pinned by the existing wrapper/POMs (Maven 3.9.9, Java release 21); this machine used Temurin 21.0.13+9. Test traffic used localhost. Temporary DBs isolate test changes from user records.
+Use build -Offline only after the wrapper/dependencies are cached. Java 21 is required; the pinned Maven wrapper uses 3.9.9. The ignored local toolchain/cache on this machine is optional and excluded from source ZIPs. Automated tests use temporary databases and loopback sockets. Smoke/load use isolated local databases, not the demo database.
 
-## What the regression tests actually prove
+## Failed attempt and verification limits
 
-- Committed report/timeline/processed response exist before operators receive INCIDENT_CREATED; unrelated citizens/responders receive no report event.
-- Citizen ownership, operator state/priority filters, public details/paging, Unicode and finite coordinate validation, unknown privileged fields, explicit missing revisions, and stale updates are enforced through the router.
-- Same ID/content replays; reordering JSON object keys still replays; changed content conflicts; replay does not duplicate records/reservations/recipient events. A golden canonical encoding checks cross-JVM-stable hashing.
-- Online/available teams become BUSY; offline/unavailable/busy/stale teams are refused; unassigned responders alone change availability; a different team cannot be selected through spoofed payload fields.
-- Three services coexist on one incident; responders inspect only their own active offers; unrelated responders receive no offer.
-- Two concurrent operators competing for the same team or same incident/service cannot both commit. Database partial unique indexes remain covered by the original schema tests.
-- Cancellation checks assignment/incident/team revisions, allows OFFERED/ACCEPTED, refuses EN_ROUTE/ARRIVED/terminal fixtures, releases availability and permits replacement. Private reasons are saved but absent from citizen details/events and responder updates.
-- Never-assigned rejection is public and terminal; historical assignments block rejection. Premature closure remains reserved and returns INVALID_TRANSITION.
-- Injected timeline failures roll back report/offer/incident/team changes and the processed response. No success notification is sent for failed work.
-- BUSY reservations and saved report/assignment records persist after disconnect and DB/server restart. This does not claim complete Member 3 snapshot/reconnect behavior.
-- A client intentionally drops an unread acknowledgement after observing the server's committed processed-request row; reauthentication and the same ID replay the saved result. The ACK may already have reached a TCP buffer; no packet-loss window or exactly-once delivery is claimed.
-- PendingActions tests use controlled delayed responses to verify retained input, late-response reconciliation, identical-ID retry, cross-user isolation and unresolved outcomes on disconnect. Production waits ten seconds; tests inject short waits rather than claiming a measured ten-second latency.
+An intermediate full run had one login socket timeout after an unusually long elapsed run (~2 hours 10 minutes). It is preserved as [failed attempt](evidence/member3-finalized/intermediate-failed-build.txt), not counted as a pass. The isolated failing case passed on rerun; the subsequent full 87-case run and independent clean-export 87-case run both passed. The underlying host scheduling delay was not established as a proven cause.
 
-Accepted/advanced assignment states are direct test fixtures because actual responder transitions belong to Member 3. The process smoke never invokes those future endpoints.
+Not executed: separate-laptop LAN/firewall/device-isolation, physical keyboard/terminal repaint checks, interactive Eclipse use, a final-commit Git clone, lecturer-specific formatting checks or actual LMS upload. Follow [LAN checklist](LAN-CHECKLIST.md), [all 29 tasks](../handoff/MEMBER3-CHECKLIST.md) and [submission checklist](../submission/CHECKLIST.md). No unavailable machine, reviewer, student identity, upload or approval is fabricated.
 
-## Limits and remaining manual checks
-
-Separate-laptop LAN/firewall/device isolation, Eclipse interaction and physical typing while events arrive are not tested here. No median/p95 committed-change latency benchmark was performed. The original one-sample PBKDF2 measurements remain historical evidence, not a performance guarantee.
-
-Automatic heartbeat/reconnect, snapshots/event buffering, durable pending drafts, responder acceptance/progress, completion/closure and complete histories remain Member 3 work. SlowWriterTest is a deterministic blocked-output test, not a real LAN slow-reader saturation benchmark. There is no persistent offline event journal, TLS, real dispatch or production deployment.
-
-The fixed checkout uses fresh isolated/demo DBs. Old snapshot business databases with noncanonical fingerprints/unreserved offers were preserved in their original folder and are not silently migrated. Protocol DTOs/revisions changed; use the matching rebuilt client/server pair.
+Prototype limits: trusted localhost/LAN only, unencrypted TCP, no real dispatch; bounded active snapshots (5,000 combined records, 5 records/page, 30-second lease), client event buffer 1,000 and pending journal 20 per user. Overflow requires fresh synchronization; no durable offline event stream. Historical terminal data uses explicit paged queries. Pair matching rebuilt clients/server. Prior snapshot databases with old fingerprints are not silently migrated. Existing Member 1/2 evidence remains historical: [Member 2 report](MEMBER2-VERIFICATION.md), [earlier verification](PREVIOUS-VERIFICATION.md).

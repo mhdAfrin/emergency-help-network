@@ -96,4 +96,17 @@ public final class TeamRepository {
         Availability.valueOf(r.getString("availability")),
         r.getLong("revision"));
   }
+
+  public void reconcile(Connection c) throws SQLException {
+    try (var s = c.createStatement()) {
+      s.executeUpdate(
+          "UPDATE teams SET availability='BUSY',revision=revision+1 WHERE availability<>'BUSY' AND"
+              + " EXISTS(SELECT 1 FROM assignments WHERE team_id=teams.id AND state IN"
+              + " ('OFFERED','ACCEPTED','EN_ROUTE','ARRIVED'))");
+      s.executeUpdate(
+          "UPDATE teams SET availability='AVAILABLE',revision=revision+1 WHERE availability='BUSY'"
+              + " AND NOT EXISTS(SELECT 1 FROM assignments WHERE team_id=teams.id AND state IN"
+              + " ('OFFERED','ACCEPTED','EN_ROUTE','ARRIVED'))");
+    }
+  }
 }
