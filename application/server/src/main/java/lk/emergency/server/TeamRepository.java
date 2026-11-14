@@ -4,39 +4,78 @@ import static lk.emergency.common.Types.*;
 
 import java.sql.*;
 import java.util.*;
+import java.util.function.Predicate;
 import lk.emergency.common.Dtos.*;
 
 public final class TeamRepository {
-  public List<TeamView> list(
-      Connection c, String responderId, java.util.function.Predicate<String> online)
-      throws SQLException {
-    String sql =
-        "SELECT * FROM teams"
-            + (responderId == null ? "" : " WHERE responder_user_id=?")
-            + " ORDER BY name";
-    List<TeamView> teams = new ArrayList<>();
-    try (PreparedStatement p = c.prepareStatement(sql)) {
-      if (responderId != null) p.setString(1, responderId);
-      try (ResultSet r = p.executeQuery()) {
-        while (r.next())
-          teams.add(
-              new TeamView(
-                  r.getString("id"),
-                  r.getString("name"),
-                  ServiceType.valueOf(r.getString("service_type")),
-                  Availability.valueOf(r.getString("availability")),
-                  r.getLong("revision"),
-                  online.test(r.getString("responder_user_id"))
-                      ? Presence.ONLINE
-                      : Presence.OFFLINE));
+  public record Team(
+      String id,
+      String responderUserId,
+      String name,
+      ServiceType serviceType,
+      Availability availability,
+      long revision) {
+    public TeamView view(Predicate<String> online) {
+      return new TeamView(
+          id,
+          name,
+          serviceType,
+          availability,
+          revision,
+          online.test(responderUserId) ? Presence.ONLINE : Presence.OFFLINE);
+    }
+  }
+
+  public Team find(Connection c, String id) throws SQLException {
+    try (var p = c.prepareStatement("SELECT * FROM teams WHERE id=?")) {
+      p.setString(1, id);
+      try (var rows = p.executeQuery()) {
+        return rows.next() ? read(rows) : null;
       }
     }
-    return teams;
+  }
+
+  public Team forUser(Connection c, String id) throws SQLException {
+    try (var p = c.prepareStatement("SELECT * FROM teams WHERE responder_user_id=?")) {
+      p.setString(1, id);
+      try (var rows = p.executeQuery()) {
+        return rows.next() ? read(rows) : null;
+      }
+    }
+  }
+
+  public List<TeamView> list(Connection c, String responderId, Predicate<String> online)
+      throws SQLException {
+    List<TeamView> result = new ArrayList<>();
+    try (var p =
+        c.prepareStatement(
+            "SELECT * FROM teams"
+                + (responderId == null ? "" : " WHERE responder_user_id=?")
+                + " ORDER BY name")) {
+      if (responderId != null) p.setString(1, responderId);
+      try (var rows = p.executeQuery()) {
+        while (rows.next()) result.add(read(rows).view(online));
+      }
+    }
+    return result;
+  }
+
+  public void availability(Connection c, Team team, Availability next) throws SQLException {
+    try (var p =
+        c.prepareStatement(
+            "UPDATE teams SET availability=?,revision=revision+1 WHERE id=? AND revision=? AND"
+                + " availability=?")) {
+      p.setString(1, next.name());
+      p.setString(2, team.id());
+      p.setLong(3, team.revision());
+      p.setString(4, team.availability().name());
+      MutationSupport.requireUpdated(p.executeUpdate());
+    }
   }
 
   public void seed(Connection c, String userId, String name, ServiceType service)
       throws SQLException {
-    try (PreparedStatement p =
+    try (var p =
         c.prepareStatement(
             "INSERT INTO teams(id,responder_user_id,name,service_type,availability,revision)"
                 + " VALUES(?,?,?,?,'AVAILABLE',0) ON CONFLICT(responder_user_id) DO NOTHING")) {
@@ -46,5 +85,15 @@ public final class TeamRepository {
       p.setString(4, service.name());
       p.executeUpdate();
     }
+  }
+
+  private Team read(ResultSet r) throws SQLException {
+    return new Team(
+        r.getString("id"),
+        r.getString("responder_user_id"),
+        r.getString("name"),
+        ServiceType.valueOf(r.getString("service_type")),
+        Availability.valueOf(r.getString("availability")),
+        r.getLong("revision"));
   }
 }

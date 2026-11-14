@@ -1,0 +1,3 @@
+PASS: actual server + six client JVMs; report -> operator event -> priority -> three service offers -> citizen service timeline -> cancel -> replacement offer -> reject; private notes and offer recipients checked.
+PASS: all console clients logged out and exited.
+PASS: restarted server and a new citizen JVM recover the saved report, service assignments and timeline. Evidence: C:\Users\Afrin\Desktop\5TH SEM\Network Programming\project\member2-fixed\docs\verification\evidence\member2-fixed\process-smoke

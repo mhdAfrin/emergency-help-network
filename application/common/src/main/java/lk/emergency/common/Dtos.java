@@ -27,6 +27,32 @@ public final class Dtos {
 
   public record RevisionInput(String id, long expectedRevision) {}
 
+  public record IncidentQuery(
+      String id, Long expectedRevision, Integer assignmentOffset, Integer timelineOffset) {}
+
+  public record IncidentFilter(
+      IncidentState state, Priority priority, Integer offset, Integer limit) {}
+
+  public record TeamFilter(ServiceType serviceType, Availability availability, Presence presence) {}
+
+  public record AssignmentFilter(Integer offset, Integer limit) {}
+
+  public record PriorityUpdateInput(String id, Priority priority, Long expectedRevision) {}
+
+  public record AssignmentInput(
+      String incidentId, String teamId, Long expectedIncidentRevision, Long expectedTeamRevision) {}
+
+  public record AssignmentCancellationInput(
+      String assignmentId,
+      String reason,
+      Long expectedRevision,
+      Long expectedIncidentRevision,
+      Long expectedTeamRevision) {}
+
+  public record IncidentRejectionInput(String incidentId, String reason, Long expectedRevision) {}
+
+  public record TeamAvailabilityInput(Availability availability, Long expectedRevision) {}
+
   public record IncidentView(
       String id,
       String citizenId,
@@ -60,6 +86,19 @@ public final class Dtos {
       String eventType,
       String publicMessage,
       String createdAt) {}
+
+  public record IncidentDetails(
+      IncidentView incident,
+      List<AssignmentView> assignments,
+      List<PublicTimelineEvent> timeline,
+      int assignmentOffset,
+      int timelineOffset,
+      boolean moreAssignments,
+      boolean moreTimeline) {}
+
+  public record IncidentUpdate(IncidentView incident, AssignmentView assignment) {}
+
+  public record AssignmentOffer(AssignmentView assignment, IncidentView incident) {}
 
   public record Snapshot(
       UserView user,

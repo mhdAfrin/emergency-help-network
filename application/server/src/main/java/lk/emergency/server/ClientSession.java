@@ -66,7 +66,7 @@ public final class ClientSession implements AutoCloseable {
     ScheduledFuture<?> deadline = null;
     try {
       socket.setTcpNoDelay(true);
-      socket.setSoTimeout(60_000);
+      socket.setSoTimeout(0);
       writer = new Thread(this::writeLoop, "session-writer");
       writer.start();
       deadline =
@@ -86,7 +86,7 @@ public final class ClientSession implements AutoCloseable {
         send(router.route(this, request));
       }
     } catch (IOException e) {
-      /* Invalid frames or dead peers close only this connection; never dump payloads. */
+      // Invalid frames and ordinary disconnects terminate only this session.
     } finally {
       if (finishing && writer != null)
         try {

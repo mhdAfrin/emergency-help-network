@@ -6,55 +6,65 @@ University of Ruhuna, Faculty of Engineering · EC5205 — Operating Systems & N
 
 > Academic demonstration — no real emergency dispatch.
 
-## Project folders
+Member 1's foundation and Member 2's reporting/assignment stage are implemented in this working copy. The original Member 2 snapshot is commit `8bdf413`; corrections remain on its existing branch, `member2-submission-snapshot`, ready for review. No commit or push is performed automatically.
 
-```text
-project/
-├── application/   Complete Java application, build tools and local runtime files
-├── docs/          Requirements, design, guides, handoff and verification evidence
-├── .gitignore     Excludes local tools, databases and generated build files
-└── README.md      Start here
-```
+## What works
 
-All implementation files are inside **application/**. It contains the Maven modules (`client`, `common`, `server`), configuration examples, scripts, wrapper and parent POM. Its `.local/` directory holds the existing database and downloaded tools and is excluded from Git. Each module's generated `target/` directory is also excluded.
+- Citizen registration/login, single-session replacement, and server-side role/ownership checks.
+- Fictional incident reports, confirmed references, paginated listings, public timelines and separate service assignment views.
+- Operator state/priority filters, priority changes, team filters, and eligible public rejection.
+- Online/available team offers for three services on one incident; atomic BUSY reservations and revision checks.
+- Responder availability controls and private inspection of its own offers/current assignment.
+- Eligible cancellation with a private reason, reservation release, and reassignment.
+- Live authorized notifications after commit; canonical same-ID retries with no duplicate mutations or events.
+- A Pending actions menu retains timed-out business request IDs and input for same-session reconciliation/retry.
+
+Acceptance/decline, responder progress, closure, full histories, heartbeat, automatic reconnect and snapshot synchronization remain Member 3 work. These actions are not exposed as working controls.
 
 ## Build and run
 
-Use Java 21. From this project folder in PowerShell:
+From this folder in PowerShell, with Java 21 available:
 
 ```powershell
 .\application\scripts\project.ps1 build
+.\application\scripts\project.ps1 smoke
 .\application\scripts\project.ps1 seed
 .\application\scripts\project.ps1 server
 ```
 
-Start each client in a separate terminal:
+Use a separate terminal for every client:
 
 ```powershell
 .\application\scripts\project.ps1 client
 ```
 
-The helper selects the existing local Java 21 JDK when available and runs commands from `application/` automatically. For a fresh checkout, install a Java 21 JDK and set JAVA_HOME. The first build needs internet access.
+The helper uses `.local/tools/jdk-21.0.13+9` inside application/ when available, otherwise JAVA_HOME/Java on PATH. The local toolchain and caches are optional and ignored by Git. With a complete dependency cache, `build -Offline` avoids network downloads. A fresh clone requires Java 21 and internet for Maven/dependencies.
 
-Connect to **127.0.0.1:5050**. Demo accounts: `operator`, `citizen1`, `citizen2`, `police1`, `ambulance1`, `fire1`, `fire2`. Password: `DemoPass123!`.
+Default address: **127.0.0.1:5050**. Demo password: `DemoPass123!` for `operator`, `citizen1`, `citizen2`, `police1`, `ambulance1`, `fire1`, `fire2`. Seed is explicit and repeatable; it never resets saved passwords or availability.
 
-Custom configuration: copy `application/config/server.properties.example` to `application/config/server.properties`. Existing records are preserved in `application/.local/data/emergency.db`.
+For custom settings copy `application/config/server.properties.example` to `application/config/server.properties`. The default database is `application/.local/data/emergency.db`. Run manual JAR/Eclipse launches with **application/** as the working directory. Clients never access SQLite.
 
-## Documentation and verification
+## Folder layout
 
-- [Documentation index](docs/README.md)
-- [Setup, Eclipse and LAN instructions](docs/guides/SETUP.md)
-- [Architecture](docs/design/ARCHITECTURE.md), [database](docs/design/DATABASE.md), [protocol](docs/design/PROTOCOL.md)
-- [Member 1 checklist](docs/handoff/MEMBER1-CHECKLIST.md) and [handoff](docs/handoff/HANDOFF.md)
-- [Test results](docs/verification/TEST-RESULTS.md)
-- [Folder layout](docs/guides/REPOSITORY-LAYOUT.md)
-
-Run the separate-process verification after building:
-
-```powershell
-.\application\scripts\project.ps1 smoke
+```text
+member2-fixed/
+├── application/   Maven modules, configuration, scripts and ignored local runtime files
+├── docs/          Requirements, design, guides, handoff and verification evidence
+├── .gitignore
+└── README.md
 ```
 
-Member 1's networking, database and authentication foundation is implemented. Reporting, assignment, responder progress and recovery remain Members 2/3 work. Use Ping before the current 60-second socket timeout; automatic heartbeat/reconnect belongs to Member 3. Eclipse GUI operation and separate-laptop LAN checks remain manual follow-ups.
+application/ contains client/, common/, server/, config/, scripts/, the parent POM and Maven wrapper. Module target/ output, local databases, downloaded tools and private configuration stay out of Git.
 
-No commit or push has been performed.
+## Read next
+
+- [Documentation index](docs/README.md)
+- [All 26 Member 2 tasks](docs/handoff/MEMBER2-CHECKLIST.md)
+- [Protocol and payloads](docs/design/PROTOCOL.md)
+- [Current test results](docs/verification/TEST-RESULTS.md)
+- [Demo and manual checks](docs/guides/DEMO.md)
+- [Member 3 handoff](docs/handoff/HANDOFF.md)
+- [Review and push on Member 2's branch](docs/handoff/PUSH-MEMBER2.md)
+- [Eclipse, direct commands and LAN troubleshooting](docs/guides/SETUP.md)
+
+Use fictional data on localhost or a permitted trusted LAN. TCP is unencrypted. Separate-laptop LAN behavior and interactive typing during notifications still need manual verification. Console events print independently of input, with prompt redraw and Asia/Colombo timestamps. No heartbeat/inactivity deadline or automatic reconnect is implemented at this stage.

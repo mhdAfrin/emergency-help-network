@@ -17,3 +17,9 @@ Group workflow: use one shared repository; each member uses their real author id
 11 November 2026: at the student's request, reorganized configuration/documentation/scripts, grouped local tools/logs/database under ignored .local/, added navigation and text conventions, formatted Maven POMs, and verified all 21 automated tests plus the separate-process smoke check. The existing database was preserved byte-for-byte. No Git author identity, commit, push or reviewer approval was created.
 
 Follow-up organization: grouped all implementation/build/runtime files under application/ so the top level contains only application/, docs/, .gitignore and README.md. Database unchanged; 21 tests and separate-process smoke passed again. No commit or push.
+
+## Member 2 correction session — 13 November 2026
+
+The student requested a separate member2-fixed checkout based on Member 2's existing member2-submission-snapshot branch at 8bdf413. The original snapshot implementation and commit history remain intact. This Codex-assisted correction session completed the Member 2 gaps: private post-commit notifications, reservations/presence checks, revision/cancellation/closure corrections, canonical retries, responder controls, public timelines/filtering, pending-input UX, regression tests and updated documentation.
+
+No claim is made that another group member personally authored these corrections, reviewed them or approved them. No new Git author identity, commit, push, PR or merge was created. Member 2's actual identity/review and any later commit links should be recorded when those actions occur. Test results are recorded separately after actual execution.

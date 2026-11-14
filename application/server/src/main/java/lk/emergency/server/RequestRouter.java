@@ -3,6 +3,7 @@ package lk.emergency.server;
 import static lk.emergency.common.Types.*;
 
 import java.util.*;
+import java.util.function.Consumer;
 import lk.emergency.common.*;
 import lk.emergency.common.Dtos.*;
 
@@ -10,11 +11,19 @@ public final class RequestRouter {
   private final AuthService auth;
   private final Database db;
   private final SessionRegistry registry;
+  private final IncidentService incidents;
+  private final AssignmentService assignments;
+  private final MutationSupport mutations;
+  private final NotificationService notifications;
 
   public RequestRouter(AuthService auth, Database db, SessionRegistry registry) {
     this.auth = auth;
     this.db = db;
     this.registry = registry;
+    incidents = new IncidentService(db);
+    assignments = new AssignmentService(db);
+    mutations = new MutationSupport(db);
+    notifications = new NotificationService(db, registry);
   }
 
   public Envelope route(ClientSession session, Envelope request) {
@@ -47,7 +56,7 @@ public final class RequestRouter {
         return Envelope.success(
             request, auth.register(Validation.payload(request.payload(), Registration.class)));
       if (type == RequestType.LOGIN) {
-        UserView user = auth.login(Validation.payload(request.payload(), Login.class));
+        var user = auth.login(Validation.payload(request.payload(), Login.class));
         synchronized (registry) {
           registry.login(session, user);
           return Envelope.success(request, user);
@@ -55,8 +64,8 @@ public final class RequestRouter {
       }
       synchronized (registry) {
         registry.requireCurrent(session);
-        // Every protected action is authorized from the socket's identity, never a payload role.
         Role role = session.user().role();
+        String user = session.user().id();
         switch (type) {
           case LOGOUT -> {
             Validation.empty(request.payload());
@@ -68,27 +77,116 @@ public final class RequestRouter {
             return Envelope.success(request, session.user());
           }
           case LIST_TEAMS -> {
-            Validation.empty(request.payload());
             requireRole(role, Role.OPERATOR, Role.RESPONDER);
-            String own = role == Role.RESPONDER ? session.user().id() : null;
+            var filter = Validation.payload(request.payload(), TeamFilter.class);
             return Envelope.success(
-                request, db.call(c -> new TeamRepository().list(c, own, registry::online)));
+                request,
+                db
+                    .call(
+                        c ->
+                            new TeamRepository()
+                                .list(c, role == Role.RESPONDER ? user : null, registry::online))
+                    .stream()
+                    .filter(
+                        t ->
+                            filter.serviceType() == null || t.serviceType() == filter.serviceType())
+                    .filter(
+                        t ->
+                            filter.availability() == null
+                                || t.availability() == filter.availability())
+                    .filter(t -> filter.presence() == null || t.presence() == filter.presence())
+                    .toList());
+          }
+          case CREATE_INCIDENT -> {
+            requireRole(role, Role.CITIZEN);
+            var input = Validation.payload(request.payload(), IncidentInput.class);
+            return mutate(
+                user,
+                request,
+                c -> Envelope.success(request, incidents.createIncident(c, user, input)),
+                e -> notifications.created(convert(e, IncidentView.class)));
+          }
+          case GET_INCIDENT -> {
+            requireRole(role, Role.CITIZEN, Role.OPERATOR);
+            var query = Validation.payload(request.payload(), IncidentQuery.class);
+            return Envelope.success(request, incidents.details(user, role, query));
+          }
+          case LIST_INCIDENTS -> {
+            requireRole(role, Role.CITIZEN, Role.OPERATOR);
+            var filter = Validation.payload(request.payload(), IncidentFilter.class);
+            return Envelope.success(request, incidents.list(user, role, filter));
+          }
+          case SET_PRIORITY -> {
+            requireRole(role, Role.OPERATOR);
+            var input = Validation.payload(request.payload(), PriorityUpdateInput.class);
+            return mutate(
+                user,
+                request,
+                c -> Envelope.success(request, incidents.updatePriority(c, user, role, input)),
+                e -> notifications.incident(convert(e, IncidentView.class)));
+          }
+          case ASSIGN_TEAM -> {
+            requireRole(role, Role.OPERATOR);
+            var input = Validation.payload(request.payload(), AssignmentInput.class);
+            return mutate(
+                user,
+                request,
+                c ->
+                    Envelope.success(
+                        request, assignments.assignTeam(c, user, role, input, registry::online)),
+                e -> notifications.assignment(convert(e, AssignmentView.class), true));
+          }
+          case CANCEL_ASSIGNMENT -> {
+            requireRole(role, Role.OPERATOR);
+            var input = Validation.payload(request.payload(), AssignmentCancellationInput.class);
+            return mutate(
+                user,
+                request,
+                c -> Envelope.success(request, assignments.cancelAssignment(c, user, role, input)),
+                e -> notifications.assignment(convert(e, AssignmentView.class), false));
+          }
+          case REJECT_INCIDENT -> {
+            requireRole(role, Role.OPERATOR);
+            var input = Validation.payload(request.payload(), IncidentRejectionInput.class);
+            return mutate(
+                user,
+                request,
+                c -> Envelope.success(request, incidents.rejectIncident(c, user, role, input)),
+                e -> notifications.incident(convert(e, IncidentView.class)));
+          }
+          case SET_TEAM_AVAILABILITY -> {
+            requireRole(role, Role.RESPONDER);
+            var input = Validation.payload(request.payload(), TeamAvailabilityInput.class);
+            return mutate(
+                user,
+                request,
+                c ->
+                    Envelope.success(
+                        request, assignments.changeAvailability(c, user, input, registry::online)),
+                e -> notifications.team(convert(e, TeamView.class)));
+          }
+          case LIST_ASSIGNMENTS -> {
+            requireRole(role, Role.RESPONDER);
+            var input = Validation.payload(request.payload(), AssignmentFilter.class);
+            return Envelope.success(request, assignments.offers(user, input));
           }
           case TEST_EVENT -> {
-            Validation.empty(request.payload());
             requireRole(role, Role.OPERATOR);
-            // Foundation-only diagnostic: private delivery to the authenticated requesting
-            // operator.
+            Validation.empty(request.payload());
             session.send(
                 Envelope.event(
                     "TEST_NOTIFICATION", Map.of("message", "Authorized socket event received")));
             return Envelope.success(request, Map.of("message", "Private test event queued"));
           }
           default -> {
-            requireRoleForReservedAction(type, role);
+            switch (type) {
+              case CLOSE_INCIDENT -> requireRole(role, Role.OPERATOR);
+              case RESPOND_ASSIGNMENT, UPDATE_ASSIGNMENT_STATUS ->
+                  requireRole(role, Role.RESPONDER);
+              default -> {}
+            }
             throw new DomainException(
-                ErrorCode.INVALID_TRANSITION,
-                "This business action belongs to the next implementation stages");
+                ErrorCode.INVALID_TRANSITION, "This action is reserved for Member 3");
           }
         }
       }
@@ -101,19 +199,24 @@ public final class RequestRouter {
     }
   }
 
-  private void requireRole(Role actual, Role... allowed) {
-    if (Arrays.stream(allowed).noneMatch(r -> r == actual))
-      throw new DomainException(ErrorCode.FORBIDDEN, "Action is not permitted for this role");
+  private Envelope mutate(
+      String user, Envelope request, Database.Work<Envelope> work, Consumer<Envelope> afterCommit) {
+    var result = mutations.execute(user, request, work);
+    if (!result.replayed())
+      try {
+        afterCommit.accept(result.response());
+      } catch (RuntimeException e) {
+        System.err.println("Committed change notification failed: " + e.getClass().getSimpleName());
+      }
+    return result.response();
   }
 
-  private void requireRoleForReservedAction(RequestType type, Role role) {
-    switch (type) {
-      case CREATE_INCIDENT -> requireRole(role, Role.CITIZEN);
-      case SET_PRIORITY, ASSIGN_TEAM, CANCEL_ASSIGNMENT, CLOSE_INCIDENT, REJECT_INCIDENT ->
-          requireRole(role, Role.OPERATOR);
-      case RESPOND_ASSIGNMENT, UPDATE_ASSIGNMENT_STATUS, SET_TEAM_AVAILABILITY ->
-          requireRole(role, Role.RESPONDER);
-      default -> {}
-    }
+  private <T> T convert(Envelope e, Class<T> type) {
+    return Validation.payload(e.payload(), type);
+  }
+
+  private void requireRole(Role actual, Role... allowed) {
+    if (Arrays.stream(allowed).noneMatch(r -> r == actual))
+      throw new DomainException(ErrorCode.FORBIDDEN, "Action not permitted for this role");
   }
 }

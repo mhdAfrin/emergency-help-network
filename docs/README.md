@@ -1,14 +1,13 @@
 # Documentation
 
-Read the [project overview](../README.md) first, then use the sections below.
-
-| Area | Documents |
+| Area | Read |
 |---|---|
-| Requirements | [Original supplied brief](requirements/project-brief.txt) — preserved verbatim |
-| Design | [Architecture](design/ARCHITECTURE.md), [database model](design/DATABASE.md), [protocol](design/PROTOCOL.md) |
-| Running the project | [Setup and Eclipse guide](guides/SETUP.md), [demonstration script](guides/DEMO.md) |
-| Sequential handoff | [All 25 Member 1 tasks](handoff/MEMBER1-CHECKLIST.md), [next-member handoff](handoff/HANDOFF.md), [actual contributions](handoff/CONTRIBUTIONS.md) |
-| Verification | [Test report](verification/TEST-RESULTS.md), [evidence index](verification/evidence/README.md) |
-| File organization | [Repository layout and migration notes](guides/REPOSITORY-LAYOUT.md) |
+| Requirements | [Original supplied project brief](requirements/project-brief.txt) |
+| Design | [Architecture](design/ARCHITECTURE.md), [database](design/DATABASE.md), [protocol](design/PROTOCOL.md) |
+| Run/demo | [Setup/Eclipse/LAN](guides/SETUP.md), [Member 2 demo](guides/DEMO.md), [layout](guides/REPOSITORY-LAYOUT.md) |
+| Completion | [Member 1 checklist](handoff/MEMBER1-CHECKLIST.md), [Member 2 checklist](handoff/MEMBER2-CHECKLIST.md) |
+| Handoff | [Member 3 tasks](handoff/HANDOFF.md), [original Member 1 handoff](handoff/MEMBER1-HANDOFF.md) |
+| Review/Git | [Actual contribution record](handoff/CONTRIBUTIONS.md), [push to Member 2 branch](handoff/PUSH-MEMBER2.md) |
+| Verification | [Actual results](verification/TEST-RESULTS.md), [evidence index](verification/evidence/README.md) |
 
-Documents distinguish completed foundation functionality from future business features and unverified manual checks. Source/build/configuration paths are relative to application/ unless stated otherwise. Paths beginning docs/ refer to the top-level documentation folder.
+Build/source/config paths are relative to application/; docs/ paths refer to the checkout root. Historical evidence is kept with its original timestamps/paths. Current results distinguish implemented Member 2 behavior from Member 3 backlog and unverified manual checks.

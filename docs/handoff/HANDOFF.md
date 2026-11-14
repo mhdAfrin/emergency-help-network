@@ -1,21 +1,26 @@
-# Handoff to Member 2
+# Handoff to Member 3
 
-Import/build/run instructions are in README. Review this foundation before merging it. No member names, Git authorship or review approvals have been fabricated.
+Continue from Member 2's reviewed and merged branch. Read the full brief in ../requirements/project-brief.txt, the current protocol, the Member 2 checklist, and actual test results. The original Member 1 handoff is preserved in MEMBER1-HANDOFF.md.
 
-Implemented: common protocol/types/DTOs; exact framing; bounded TCP sessions/writers; console input and background networking; response correlation; SQLite migration/full schema; serialized transactions; users/teams repositories; PBKDF2; registration/login/logout; socket identity/role checks; single-session replacement; repeatable seed; read-only teams/identity and authorized private event diagnostic; revision/idempotency helpers; automated tests and documentation.
+## Implemented foundation for your stage
 
-Extension points:
+Persistent reports/public timelines; citizen ownership; operator filters/priority; online/available team selection; transactional three-service offers and BUSY reservation; own-offer inspection; availability controls; eligible cancellation/reassignment and public rejection; post-commit private events; canonical saved-response replay; explicit revision checks; ten-second pending outcomes with retained same-session input/ID. Full schema and partial active-assignment indexes remain unchanged.
 
-1. Add incident/timeline repositories accepting Connection. Keep all related SQL inside Database.transaction or MutationSupport.execute; do not nest executor calls.
-2. Add request DTOs to common and route real actions through RequestRouter. Reject unknown payload fields using Validation.payload. Derive actor from session.user, not request input.
-3. Build incident service/ownership filters, report validation (display the required disclaimer before reporting), operator filtering, priority revision updates and authorized projections. No ownership service exists yet because no incidents can be created in Member 1.
-4. Use MutationSupport.execute for authenticated business mutations. Check expectedRevision in SQL; persist response atomically. Send success and then role-restricted events only after commit; suppress duplicate events on replay. Callback must never write to sockets or call the registry.
-5. Extend SessionRegistry with recipient routing by authenticated role/user, using short critical sections. Existing TEST_EVENT intentionally delivers only to its requesting operator. Do not broadcast operational/private payloads indiscriminately.
-6. Add transactional team availability, reservation, multi-service offers, cancellation and rejection. Partial indexes are ready. Keep later responder acceptance/progress unexposed until Member 3 implements them.
-7. Extend console menus only when each server action is real. Preserve reporting input/IDs when adding confirmation-pending UX; use existing ConnectionManager IDs/futures as the starting point.
+Use the existing AssignmentRepository/Service and MutationSupport. Accept a server-authenticated user and derive its team from TeamRepository.forUser. Mutations must run on the supplied Connection, not recursively enter the database executor. Commit state + timelines + team/incident revisions + success response atomically, then publish through NotificationService only when replayed=false. Public DTOs contain no private notes.
 
-Member 2 owns all Section 17 tasks, including full operator team filtering and availability controls; the current read-only team list is a foundation diagnostic. Member 3 owns ordered responder transitions, closure/histories, 15s/45s heartbeat, jittered reconnect requiring login, authorized snapshots/event buffering, BUSY reservation recovery, final privacy/race/retry/LAN/latency tests, and final delivery. Full required enums and schema do not mean those services are implemented.
+## All Member 3 work still required
 
-Known foundation limits: plaintext trusted-LAN TCP; demo passwords; no TLS/rate-limiting/account recovery; 60-second read timeout until Member 3 heartbeat; no durable client pending journal, automatic reconnect, snapshots or offline events; login hashing occupies bounded session threads; registry protected routing serializes short foundation actions; console redraw is best-effort with ordinary terminal echo. Never use real incident/contact data.
+1. Implement responder accept/decline and ordered ACCEPTED -> EN_ROUTE -> ARRIVED -> COMPLETED transitions. Reject skipped/backward/stale/unauthorized changes. Decline requires a private reason.
+2. Release reservations on terminal responder outcomes and support reassignment after decline. Preserve ACTIVE incidents needing another offer.
+3. Route progress events privately to the citizen/operators/relevant responder; retain separate service states and revision handling.
+4. Implement closure only for ACTIVE incidents with at least one COMPLETED assignment and ALL assignments terminal. CLOSE_INCIDENT is currently reserved. Do not restore the snapshot's premature closure behavior.
+5. Complete histories and appropriate public/operational projections, keeping private cancellation/decline notes out of citizen responses.
+6. Add heartbeat every 15 seconds, 45-second inbound inactivity detection, and reconnect backoff 1/2/4/8/up to 15 seconds with jitter. Require login again. Current readers block; no automatic reconnect is claimed.
+7. Implement authorized snapshots, subscribe-before-snapshot ordering, event buffering and revision application without gaps. GET_SNAPSHOT is currently reserved.
+8. Add durable draft/pending-action recovery across disconnection/process exit. PendingActions currently keeps up to 20 in-memory requests isolated by user; it retains the original envelope/future after timeout and supports menu 90 same-ID retries. Do not blindly issue a new ID after an uncertain commit.
+9. Reconcile BUSY state from active assignments on startup/reconnect, preserving disconnected reservations. Stage 2 already persists BUSY atomically; tests verify it is not freed on disconnect/restart, but complete responder synchronization remains your task.
+10. Finish shutdown/slow-reader isolation, complete workflow testing, permitted separate-laptop LAN verification, clean-clone delivery and measured event latency (method, samples, median, p95, machine/network). No such final measurements are claimed here.
 
-Original instructions and every later requirement remain in docs/requirements/project-brief.txt. Complete Section 20 acceptance cases as their business features become available. TEST-RESULTS distinguishes executed foundation checks from future/unverified cases.
+The Member 2 process smoke uses six real client JVMs and an isolated DB. Extend it for acceptance/progress/closure once those actions exist. Full acceptance remains governed by Sections 18 and 20 of the original brief, not only the passing tests currently present.
+
+Known limits: plaintext trusted-LAN TCP; demo accounts; no real dispatch; best-effort events without offline journal; same-session pending input only; no automatic presence notifications or snapshots; public detail/list pages are bounded; ordinary terminal echo can split partially typed input despite prompt redraw. Private notes are stored but not exposed by the Member 2 public detail endpoint. Eclipse interaction and separate-laptop LAN still need manual checks.
