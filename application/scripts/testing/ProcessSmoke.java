@@ -10,6 +10,9 @@ import java.util.regex.*;
 public class ProcessSmoke {
   static Path root, work, evidence;
   static String javaExecutable;
+  static String clientHost = "127.0.0.1";
+  static boolean lanMode;
+  static int actualPort;
   static final String UUID_PATTERN = "[0-9]{5}";
 
   static Process start(String module, String log, String... args) throws Exception {
@@ -20,6 +23,8 @@ public class ProcessSmoke {
                 "-jar",
                 root.resolve(module + "/target/" + module + "-1.0.0-SNAPSHOT.jar").toString()));
     command.addAll(List.of(args));
+    if (module.equals("client") && lanMode)
+      command.addAll(List.of("--host", clientHost, "--port", Integer.toString(actualPort)));
     return new ProcessBuilder(command)
         .directory(work.toFile())
         .redirectErrorStream(true)
@@ -72,7 +77,7 @@ public class ProcessSmoke {
       process = start("client", file);
       input = new OutputStreamWriter(process.getOutputStream(), StandardCharsets.UTF_8);
       try {
-        send("127.0.0.1\n" + port + "\n2\n" + name + "\nDemoPass123!\n");
+        send((lanMode ? "" : clientHost + "\n" + port + "\n") + "2\n" + name + "\nDemoPass123!\n");
         await(file, "[" + role + "]", 0);
       } catch (Exception e) {
         process.destroyForcibly();
@@ -125,25 +130,29 @@ public class ProcessSmoke {
   static void freshCitizen(int port, String account, String file, String tail) throws Exception {
     Process client = start("client", file);
     try (Writer writer = new OutputStreamWriter(client.getOutputStream(), StandardCharsets.UTF_8)) {
-      writer.write("127.0.0.1\n" + port + "\n2\n" + account + "\nDemoPass123!\n" + tail);
+      writer.write((lanMode ? "" : clientHost + "\n" + port + "\n") + "2\n" + account + "\nDemoPass123!\n" + tail);
     }
     finish(client);
   }
 
   public static void main(String[] args) throws Exception {
     root = Path.of(args.length == 0 ? "." : args[0]).toAbsolutePath().normalize();
+    if (args.length > 1) { clientHost = args[1]; lanMode = true; }
     work = root.resolve(".local/testing/final-smoke-" + UUID.randomUUID());
     Files.createDirectories(work.resolve("config"));
-    evidence = root.getParent().resolve("docs/verification/current/process-smoke");
+    evidence = root.getParent().resolve("docs/verification/evaluation/" + (lanMode ? "console-wifi-interface" : "console-loopback"));
     Files.createDirectories(evidence);
     javaExecutable = Path.of(System.getProperty("java.home"), "bin", "java.exe").toString();
     int port;
     try (ServerSocket reserved = new ServerSocket(0)) {
       port = reserved.getLocalPort();
     }
+    actualPort = port;
+    System.out.println("Test topology: one physical laptop; six separate client JVMs; destination " + clientHost + ":" + port
+        + "; bind " + (lanMode ? "0.0.0.0" : "127.0.0.1") + ". Not an independent-laptop Wi-Fi test.");
     Files.writeString(
         work.resolve("config/server.properties"),
-        "server.host=127.0.0.1\nserver.port="
+        "server.host=" + (lanMode ? "0.0.0.0" : "127.0.0.1") + "\nserver.port="
             + port
             + "\nserver.maxConnections=32\ndatabase.path=demo.db\n");
     finish(start("server", "seed.log", "--seed"));

@@ -1,0 +1,6 @@
+PASS: all 178 original Project Evaluation source/doc hashes match the pre-copy record. Original project source preserved.
+PASS: EHN-UI-SERVER-WINDOWS-X64.zip final CRC, bundled javaw/legal notices, current JAR and launcher paths, clean runtime data. Size 51054436 bytes.
+PASS: EHN-UI-CLIENT-WINDOWS-X64.zip final CRC, bundled javaw/legal notices, current JAR and launcher paths, clean runtime data. Size 36726757 bytes.
+PASS: client distribution contains no server implementation or SQLite JDBC classes.
+PASS: every module JAR contains the current compiled class files.
+PASS: local Markdown guide/evidence/preview links resolve.

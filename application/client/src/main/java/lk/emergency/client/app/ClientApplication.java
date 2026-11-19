@@ -16,16 +16,40 @@ public final class ClientApplication {
   private ClientApplication() {}
 
   public static void main(String[] args) {
+    int exitCode = start(args);
+    if (exitCode != 0) System.exit(exitCode);
+  }
+
+  private static int start(String[] args) {
     System.setOut(new PrintStream(System.out, true, java.nio.charset.StandardCharsets.UTF_8));
     System.setErr(new PrintStream(System.err, true, java.nio.charset.StandardCharsets.UTF_8));
     ConsoleIO io = new ConsoleIO();
     io.heading("EMERGENCY HELP NETWORK");
     io.print(Validation.DISCLAIMER);
     try {
-      String host = io.ask("Server host [127.0.0.1]: ").strip();
-      if (host.isEmpty()) host = "127.0.0.1";
-      String portText = io.ask("Server port [5050]: ").strip();
-      int port = portText.isEmpty() ? 5050 : Integer.parseInt(portText);
+      ClientOptions options = ClientOptions.parse(args);
+      if (options.help()) { io.print(ClientOptions.HELP); return 0; }
+      String host = options.host();
+      if (host == null) {
+        host = io.ask("Server host [127.0.0.1]: ").strip();
+        if (host.isEmpty()) host = "127.0.0.1";
+      }
+      host = ClientOptions.validateHost(host);
+      int port;
+      if (options.port() != null) port = options.port();
+      else if (options.host() != null) port = 5050;
+      else {
+        String portText = io.ask("Server port [5050]: ").strip();
+        port = portText.isEmpty() ? 5050 : ClientOptions.parsePort(portText);
+      }
+      if (options.check()) {
+        double elapsed = ServerProbe.check(host, port);
+        io.print("PASS: EHN protocol PING/PONG at " + host + ":" + port
+            + String.format(java.util.Locale.ROOT, " (%.1f ms, connection + protocol check).", elapsed));
+        io.print("This confirms connectivity, not login permissions or the full incident workflow.");
+        return 0;
+      }
+      io.print("Server destination: " + host + ":" + port);
       LiveState state = new LiveState();
       LocalJournal journal =
           new LocalJournal(java.nio.file.Path.of(".local/client"), host + ":" + port);
@@ -39,9 +63,13 @@ public final class ClientApplication {
               io::print)) {
         run(new ClientContext(io, network, state, journal));
       }
+      return 0;
     } catch (EOFException ignored) {
+      return 0;
     } catch (Exception failure) {
       io.print("Client stopped: " + failure.getMessage());
+      io.print("For LAN: check the server's Wi-Fi IP/port, start its LAN launcher, and check firewall/client isolation.");
+      return 1;
     }
   }
 

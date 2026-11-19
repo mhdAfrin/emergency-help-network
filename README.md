@@ -1,63 +1,47 @@
-# Emergency Help Network
+# Emergency Help Network Desktop UI
 
-Java 21 console project for coordinating fictional Police, Ambulance and Fire & Rescue teams. Academic demonstration only; no real emergency dispatch.
-
-This final edition starts from merged main d3c81ea and implements the user's simplified terminal interface. All three roles have seven main choices, readable result cards, short permanent numeric references and address-only reporting. The original brief is retained in docs/requirements/; the user's later UI/reference changes supersede its old coordinate and menu requirements.
+A simple Java Swing desktop edition of the finished Wi-Fi TCP project. Citizen, operator and responder dashboards use readable tables, selected-row actions, live updates and short numeric references. No browser or UI library dependency is required.
 
 ## Run
 
-1. Double-click **RUN-SERVER.cmd**. It builds if necessary, prepares demo accounts and starts the server. Leave that window open.
-2. Double-click **RUN-CLIENT.cmd** once per user. Login as a different role in each client window. Press Enter for host 127.0.0.1 and port 5050.
+1. Open **RUN-SERVER.cmd** on the server laptop. In Server control choose the port and click **Start server**.
+2. Open **RUN-CLIENT.cmd** for every client window. Enter the server laptop's Wi-Fi IP and matching port, click **Connect / check**, then sign in.
+3. For a three-laptop demo: A runs server + operator, B runs citizen, C runs responder windows. With two laptops, B can host citizen and responder windows together.
 
-| Role | Demo username | Demo password |
+The normal launchers use javaw and leave no terminal open. OPEN-SERVER.vbs / OPEN-CLIENT.vbs also avoid the brief CMD startup flash. RUN-LAN-* aliases open the same GUI. Development/build commands can use a terminal.
+
+| Role | Username | Demo password |
 |---|---|---|
 | Citizen | citizen1 or citizen2 | DemoPass123! |
 | Operator | operator | DemoPass123! |
-| Responder | police1, ambulance1, fire1 or fire2 | DemoPass123! |
+| Responder | police1, ambulance1, fire1, fire2 | DemoPass123! |
 
-The local ignored Java 21/tool cache supports this machine. On another machine install a Java 21 JDK and set JAVA_HOME. The project never requires a website or graphical toolkit.
+Each window uses a different account. Citizen registration is available after connecting. Passwords are masked and not stored in endpoint settings.
 
-## Main menus
+## Laptop-ready files
 
-| Choice | Citizen | Operator | Responder |
-|---|---|---|---|
-| 1 | Report an incident | Open reports | Current assignment |
-| 2 | My open reports | Assign a team | Accept / decline |
-| 3 | View report / progress | Manage incident | Next progress |
-| 4 | History | Teams / availability | My team / availability |
-| 5 | Account / saved actions | History / account | History / saved actions |
-| 6 | Logout | Logout | Logout |
-| 0 | Exit | Exit | Exit |
+- DEMO-PACKAGES/EHN-UI-SERVER-WINDOWS-X64.zip: GUI server + bundled Java runtime.
+- DEMO-PACKAGES/EHN-UI-CLIENT-WINDOWS-X64.zip: GUI client + bundled Java runtime; send this to the other laptops.
+- DEMO-PACKAGES/EHN-UI-SOURCE.zip: clean source/docs; requires a Java 21 JDK to build.
 
-Operator Manage groups details, priority, closure, rejection and cancellation. Nothing required for coordination was removed. Ping and recovery work automatically; no diagnostic buttons are needed. Empty lists say "Nothing to show yet". Every prompt expects the answer it displays: a filter is a state/priority name, not another main-menu number.
+Extract the complete Windows x64 package into a writable folder. Do not run from inside a ZIP. Other architectures/operating systems need their own Java 21 installation. The portable runtime includes java.desktop for Swing and retains its license notices.
 
-Reports ask for category, address/landmark and description. No coordinate prompts or coordinate output appear. New accounts, teams, incidents, assignments and timeline rows receive permanent five-digit numeric references beginning at 10000. They are database IDs, not truncated UUIDs or temporary menu aliases. Message retry IDs remain internal; saved actions are selected by menu number.
+## Simple workflow
 
-## Build and verify
+Citizen submits a report -> operator sees it live -> operator selects the report and assigns an online/available team -> responder accepts -> en route -> arrived -> completed -> operator closes the report -> citizen history. Multi-service assignments remain independent. Tables can be sorted; selecting a row keeps its real server reference. Extra operator actions sit under More actions. Details show authorized service progress and timelines.
 
-From this folder in PowerShell:
+The server alone owns SQLite. UI server data is application/.local/data/emergency-ui.db (portable package: .local/data/emergency-ui.db). Client journals/drafts are under .local/client-ui/. Older project folders/databases are preserved. Restart from the same folder/port, then re-login to restore authorized state. Saved actions reuse original request IDs for uncertain outcomes; new mutations are blocked until the pending action is reconciled.
 
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\application\scripts\project.ps1 build
-powershell -NoProfile -ExecutionPolicy Bypass -File .\application\scripts\project.ps1 smoke
-powershell -NoProfile -ExecutionPolicy Bypass -File .\application\scripts\project.ps1 load
-powershell -NoProfile -ExecutionPolicy Bypass -File .\application\scripts\project.ps1 package
-```
+## Guides and code
 
-See [actual results](docs/verification/RESULTS.md). Smoke uses real separate client/server processes and isolated test data; it does not leave an operator running for your manual session. Load measures localhost, not a separate-laptop LAN. Generated packages are under application/.local/submission/ and exclude tools, databases, journals and target output.
+- [Tamil GUI setup and evaluation demo](docs/guides/UI-DEMO-TAMIL.md)
+- [Network and firewall notes](docs/guides/WIFI-DEMO-TAMIL.md)
+- [Actual UI verification and limitations](docs/verification/UI-RESULTS.md)
+- [Code map](docs/guides/CODE-MAP.md), [architecture](docs/design/ARCHITECTURE.md), [protocol](docs/design/PROTOCOL.md)
+- [Physical laptop rehearsal checklist](docs/guides/EVALUATION-CHECKLIST.md)
 
-## Documentation
+GUI code is grouped under common/.../desktop/, client/.../desktop/ and server/.../desktop/. Networking, authorization, transactional state rules and recovery remain in their existing packages. Socket/database work runs on background workers, with Swing updates on its event thread.
 
-- [Setup and terminal display](docs/guides/SETUP.md)
-- [Step-by-step demo](docs/guides/DEMO.md)
-- [Code map: where to edit each feature](docs/guides/CODE-MAP.md)
-- [Architecture](docs/design/ARCHITECTURE.md), [database and IDs](docs/design/DATABASE.md), [protocol](docs/design/PROTOCOL.md), [state rules](docs/design/STATE-MACHINES.md)
-- [LAN and troubleshooting](docs/guides/LAN.md)
+BUILD-PROJECT.cmd runs the clean regression suite. MAKE-DEMO-PACKAGES.cmd creates fresh GUI packages; rename existing ZIPs before regenerating them. Console entry points and scripts remain for automated checks/diagnostics. Earlier evaluation verification is historical baseline, not proof of this GUI edition.
 
-## Data and scope
-
-This separate folder uses a fresh demo database. Earlier project folders and their user records are preserved. Do not copy an older live DB/journal into this edition without a migration plan: existing UUID references are intentionally not rewritten, because changing referenced records and saved responses could break uncertain-request reconciliation. V002 adds the new reference sequence while keeping V001 intact. The 10000-99999 range holds 90,000 global records, including timelines; exhaustion is refused explicitly.
-
-The client never sends coordinates; optional legacy protocol/database fields remain for existing test/compatibility contracts and are hidden from the interface. Authorization, transactions, revisions, replay protection, service privacy, heartbeat, reconnect/re-login and snapshots remain active. TCP is for trusted fictional localhost/LAN demonstrations, without TLS or real agency connections. Separate-laptop LAN and physical terminal checks remain manual.
-
-Source changes are uncommitted. No Git commit, push, merge or external upload is performed by this editing session. Use honest assisted-work/review attribution when publishing.
+Use a permitted Wi-Fi/hotspot that allows device-to-device TCP. 127.0.0.1 means the current laptop, while 0.0.0.0 is a server bind address. Optional server-only ALLOW-LAN-FIREWALL.cmd requires administrator action on a trusted Private network. The fictional academic protocol has no TLS and contacts no real agencies. Cross-laptop Wi-Fi/firewall behavior still needs the group's rehearsal.

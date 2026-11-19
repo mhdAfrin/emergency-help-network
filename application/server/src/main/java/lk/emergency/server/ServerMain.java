@@ -4,6 +4,7 @@ import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 import lk.emergency.common.Validation;
+import lk.emergency.server.config.ServerSettings;
 import lk.emergency.server.data.*;
 import lk.emergency.server.network.*;
 import lk.emergency.server.service.*;
@@ -15,27 +16,23 @@ public final class ServerMain {
     System.setErr(
         new java.io.PrintStream(System.err, true, java.nio.charset.StandardCharsets.UTF_8));
     System.out.println(Validation.DISCLAIMER);
-    Properties config = new Properties();
-    Path configPath = Path.of("config/server.properties");
-    // Accept the original local configuration when upgrading an existing checkout.
-    if (!Files.exists(configPath)) configPath = Path.of("server.properties");
-    if (Files.exists(configPath))
-      try (InputStream in = Files.newInputStream(configPath)) {
-        config.load(in);
-      }
-    Path dbPath = Path.of(config.getProperty("database.path", ".local/data/emergency.db"));
-    try (Database db = new Database(dbPath)) {
+    if (Arrays.asList(args).contains("--help")) {
+      System.out.println(ServerSettings.HELP);
+      return;
+    }
+    ServerSettings config = ServerSettings.load(args);
+    try (Database db = new Database(config.database())) {
       AuthService auth = new AuthService(db);
-      if (Arrays.asList(args).contains("--seed")) {
+      if (config.seed()) {
         auth.seed();
         System.out.println("Demo accounts seeded without resetting existing passwords or teams.");
         return;
       }
       try (TcpServer server =
           new TcpServer(
-              config.getProperty("server.host", "127.0.0.1"),
-              Integer.parseInt(config.getProperty("server.port", "5050")),
-              Integer.parseInt(config.getProperty("server.maxConnections", "32")),
+              config.host(),
+              config.port(),
+              config.maxConnections(),
               db,
               auth)) {
         Thread shutdown =
@@ -48,9 +45,12 @@ public final class ServerMain {
         Runtime.getRuntime().addShutdownHook(shutdown);
         System.out.println(
             "TCP server listening on "
-                + config.getProperty("server.host", "127.0.0.1")
+                + config.host()
                 + ":"
                 + server.port());
+        System.out.println("Database: " + config.database().toAbsolutePath().normalize());
+        if (config.host().equals("0.0.0.0"))
+          System.out.println("LAN mode: clients must use this laptop's Wi-Fi IPv4 address, port " + server.port() + ".");
         try {
           server.await();
         } finally {

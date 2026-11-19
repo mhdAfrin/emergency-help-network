@@ -1,0 +1,4 @@
+Test topology: one physical laptop; six separate client JVMs; destination 172.20.10.5:10823; bind 0.0.0.0. Not an independent-laptop Wi-Fi test.
+PASS: six separate console client JVMs; report -> notify -> three service offers -> decline -> replacement -> accept -> independent EN_ROUTE/ARRIVED/COMPLETED -> eligible closure and histories.
+PASS: server process restart; clients reconnect while menu input is idle, require login again, and restore BUSY service state through authorized snapshots.
+PASS: a fresh citizen JVM recovers closed service history; an unsent report draft survives client EOF/restart; privacy checks and all console exits passed. Evidence: C:\Users\Afrin\Desktop\5TH SEM\Network Programming\Project Evaluation\docs\verification\evaluation\console-wifi-interface

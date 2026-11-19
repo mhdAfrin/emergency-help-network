@@ -1,0 +1,4 @@
+PASS: original project source matches all 119 pre-copy SHA-256 records. No old DB or client journal was copied.
+PASS: EHN-SERVER-WINDOWS-X64.zip: CRC, bundled runtime/legal notices, current JAR hash, and absence of runtime records/build output verified.
+PASS: EHN-CLIENT-WINDOWS-X64.zip: CRC, bundled runtime/legal notices, current JAR hash, and absence of runtime records/build output verified.
+PASS: all local Markdown link destinations exist.

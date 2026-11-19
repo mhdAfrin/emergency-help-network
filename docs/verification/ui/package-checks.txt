@@ -1,0 +1,5 @@
+PASS: EHN-UI-SERVER-WINDOWS-X64.zip CRC/unique entries, current JAR hash, javaw/runtime/legal notices, no DB/journals/tools/build metadata.
+PASS: EHN-UI-CLIENT-WINDOWS-X64.zip CRC/unique entries, current JAR hash, javaw/runtime/legal notices, no DB/journals/tools/build metadata.
+PASS: portable runtime includes java.desktop (Swing) and java.sql; client/server core stays separate.
+PASS: extracted portable runtime and current server/client JARs pass the actual Swing Start/Stop and three-role button/dialog workflow, reconnect/re-login, privacy and history checks.
+PASS: actual source CMD/VBS launchers were launched and native server/sign-in windows inspected; no persistent terminal was needed.

@@ -27,3 +27,8 @@ Thumbs.db
 
 # Intentional current console verification evidence
 !docs/verification/current/**/*.log
+
+# Generated classroom demo packages contain binaries and a portable runtime.
+/DEMO-PACKAGES/
+hs_err_pid*.log
+replay_pid*.log

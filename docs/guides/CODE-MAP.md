@@ -4,10 +4,22 @@ Maven root: application/. Three modules separate shared contracts, server logic 
 
 | Change | File/package under application/ |
 |---|---|
-| Main menu wording/options | client/src/main/java/lk/emergency/client/ui/MenuRenderer.java |
+| Desktop theme / fonts / buttons | common/src/main/java/lk/emergency/common/desktop/DesktopTheme.java |
+| Desktop client lifecycle | client/.../desktop/ClientDesktop.java |
+| Desktop auth / business adapter | client/.../desktop/DesktopSession.java |
+| Desktop role screens / tables / dialogs | client/.../desktop/view/ |
+| Desktop server control | server/.../desktop/ServerDesktop.java |
+| Hidden GUI launch / portable packages | scripts/desktop/ |
+| Console menu wording/options | client/src/main/java/lk/emergency/client/ui/MenuRenderer.java |
 | Readable cards, labels, wrapping | client/.../ui/RecordPrinter.java |
 | Terminal prompts/colors/date formatting | client/.../ui/ConsoleIO.java |
 | Client startup and routing | client/.../app/ClientApplication.java |
+| CLI server binding / port / DB validation | server/.../config/ServerSettings.java |
+| Client endpoint flags / validation | client/.../network/ClientOptions.java |
+| Real EHN protocol connectivity check | client/.../network/ServerProbe.java |
+| Wi-Fi launchers, IP list, endpoint memory | scripts/lan/LanDemo.ps1, scripts/lan/Common.ps1 |
+| Scoped optional firewall rule / cleanup | scripts/lan/Firewall.ps1 |
+| Laptop-ready server/client/source packages | scripts/lan/PackageLan.ps1 |
 | Report input/list/detail | client/.../actions/CitizenActions.java |
 | Assign/cancel/reject/close/priority | client/.../actions/OperatorActions.java |
 | Accept/decline/progress/availability | client/.../actions/ResponderActions.java |
@@ -27,4 +39,4 @@ Maven root: application/. Three modules separate shared contracts, server logic 
 
 The `...` in this table abbreviates the corresponding Java package path. Entry-point classes remain tiny stable launch targets. Network services never read console input. SQL access stays on the database executor. Private-field filtering stays on the server; presentation only decides which authorized fields to print.
 
-Before publishing changes run build, smoke and load. Do not edit an already applied V001 migration; add a numbered migration and its runner entry. Keep .local/ and target/ out of Git. They contain generated tools/cache/data/logs, not application source. Earlier historical stage notes/evidence were removed from this copy; regression tests and original requirements were retained.
+Before publishing changes run build and the workflow smoke check, then rehearse with the actual laptops using the evaluation checklist. Do not edit an already applied V001 migration; add a numbered migration and its runner entry. Keep .local/, target/ and DEMO-PACKAGES/ out of Git. Earlier final-edition evidence is retained as historical baseline; this edition's results are in docs/verification/EVALUATION-RESULTS.md.
