@@ -1,4 +1,4 @@
-# Copy to config/server.properties. Run the server from the repository root.
+# Copy to config/server.properties. Run Java from application/ (the helpers do this).
 server.host=127.0.0.1
 server.port=5050
 server.maxConnections=32

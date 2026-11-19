@@ -1,0 +1,21 @@
+98 tests; failures 0; errors 0; skipped 0
+
+common  6  lk.emergency.common.FrameCodecTest
+common 12  lk.emergency.common.ValidationTest
+server  3  lk.emergency.server.DatabaseMechanismsTest
+server 13  lk.emergency.server.FinalWorkflowTest
+server  7  lk.emergency.server.FoundationIntegrationTest
+server  4  lk.emergency.server.IncidentValidationTest
+server 20  lk.emergency.server.Member2IntegrationTest
+server  2  lk.emergency.server.RevisionTransactionTest
+server  3  lk.emergency.server.ServerSettingsTest
+server  2  lk.emergency.server.ShortReferenceTest
+server  2  lk.emergency.server.SlowWriterTest
+client  1  lk.emergency.client.network.ConnectionManagerTest
+client  2  lk.emergency.client.network.HeartbeatTest
+client  3  lk.emergency.client.network.LanConnectionTest
+client  4  lk.emergency.client.recovery.LiveStateTest
+client  4  lk.emergency.client.recovery.LocalJournalTest
+client  3  lk.emergency.client.recovery.PendingActionsTest
+client  4  lk.emergency.client.recovery.RecoveryIntegrationTest
+client  3  lk.emergency.client.ui.PresentationTest

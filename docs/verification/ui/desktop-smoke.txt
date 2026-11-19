@@ -1,0 +1,4 @@
+PASS: desktop server Start/Stop buttons seed the isolated database, bind TCP, answer EHN PING and refresh session/report counts.
+PASS: real Swing forms/buttons/dialogs over TCP: citizen report, operator row/dropdown assignment, responder acceptance and ordered progress, closure, live history, details and minimum-size layout.
+PASS: server restart removes all authenticated dashboards, reconnect enables sign-in, and authorized snapshots restore EN_ROUTE before completion.
+Screenshots are actual Swing component renders from isolated generated data, not mockups. One physical laptop; no separate-laptop Wi-Fi or OS keystroke automation claimed.

@@ -1,0 +1,8 @@
+PASS: extracted SERVER Windows x64 ZIP starts its actual CMD/PowerShell launcher with bundled Java, seeds SQLite, and binds 0.0.0.0 on a selected TCP port.
+PASS: extracted CLIENT package checks real EHN PING/PONG using its bundled runtime and saves the validated endpoint; no installed Java/Maven is used.
+PASS: portable client login, report creation with five-digit ID, logout/exit, and reuse of saved endpoint all pass with the stripped Java runtime.
+PASS: restarting the portable server from the same extracted folder preserves the reported incident; reseeding does not erase records.
+PASS: wildcard client destinations and a wrong-service/mismatched request reply fail the preflight with a nonzero exit code.
+PASS: source network-info helper and portable firewall WhatIf preview work. No firewall rules or network profiles were changed during verification.
+
+Topology: extracted packages on one Windows x64 physical laptop. Remote-laptop firewall/AP behavior remains a manual rehearsal.

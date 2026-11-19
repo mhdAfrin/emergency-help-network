@@ -1,3 +1,5 @@
+> Console development reference. For current desktop launchers use [UI-DEMO-TAMIL.md](UI-DEMO-TAMIL.md).
+
 # Setup
 
 Use the repository root containing RUN-SERVER.cmd and application/. Java 21 is required. No Python is required to build or run this project.

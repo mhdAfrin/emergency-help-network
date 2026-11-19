@@ -1,3 +1,5 @@
+> Console development reference. For current desktop launchers use [UI-DEMO-TAMIL.md](UI-DEMO-TAMIL.md).
+
 # Simple demonstration
 
 1. Start server, then three clients: citizen1, operator, fire1. Login is startup choice 2. All demo passwords: DemoPass123!.

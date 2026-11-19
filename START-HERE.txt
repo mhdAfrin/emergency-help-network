@@ -1,0 +1,38 @@
+EMERGENCY HELP NETWORK - SIMPLE DESKTOP UI
+
+SERVER LAPTOP
+  Open RUN-SERVER.cmd -> choose port 5050 -> click Start server.
+  Share the active Wi-Fi IP shown in the window.
+
+CLIENT LAPTOPS
+  Open RUN-CLIENT.cmd -> server Wi-Fi IP + port -> Connect / check -> Sign in.
+  No terminal remains open. OPEN-*.vbs also avoids a brief CMD startup flash.
+
+3 laptops: A server + operator, B citizen, C responders.
+2 laptops: A server + operator, B citizen + responder windows.
+
+Demo password: DemoPass123!
+Citizen: citizen1/citizen2. Operator: operator.
+Responders: police1/ambulance1/fire1/fire2. Different windows use different accounts.
+
+SEND TO FRIENDS
+  DEMO-PACKAGES/EHN-UI-CLIENT-WINDOWS-X64.zip
+  Full extraction required. Bundled Java supports Windows x64; no JDK/Maven install needed.
+  For a different server laptop send EHN-UI-SERVER-WINDOWS-X64.zip.
+
+DEMO
+  Citizen Report incident -> operator selects row / Assign team -> responder Accept ->
+  Mark en route -> Mark arrived -> Mark completed -> operator Close report -> citizen History.
+
+READ THE FULL TAMIL GUIDE
+  docs/guides/UI-DEMO-TAMIL.md
+CHECK EXECUTED RESULTS
+  docs/verification/UI-RESULTS.md
+
+All laptops use the same permitted Wi-Fi and server endpoint.
+127.0.0.1 is the current laptop. Other laptops need the SERVER Wi-Fi IPv4.
+Firewall help is in the guide and server window. Do not disable the firewall.
+Keep the same server folder/database across restart; clients sign in again after reconnect.
+Saved actions reconcile uncertain original requests; do not duplicate a report.
+
+The earlier Evaluation project has been preserved. This GUI copy uses its own UI database.

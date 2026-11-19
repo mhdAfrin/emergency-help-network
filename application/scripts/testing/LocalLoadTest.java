@@ -25,7 +25,7 @@ public class LocalLoadTest {
     Path root = Path.of(args.length == 0 ? "." : args[0]).toAbsolutePath().normalize();
     Path work = root.resolve(".local/testing/load-" + UUID.randomUUID());
     Files.createDirectories(work);
-    Path evidence = root.getParent().resolve("docs/verification/current");
+    Path evidence = root.getParent().resolve("docs/verification/evaluation");
     Files.createDirectories(evidence);
     AtomicLong committed = new AtomicLong();
     List<ConnectionManager> peers = new ArrayList<>();
